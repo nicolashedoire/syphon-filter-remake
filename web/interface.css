@@ -142,3 +142,14 @@
 .overlay:not(.briefing) #start[data-gamepad-selected="true"]::before,.overlay:not(.briefing) #help-brief[data-gamepad-selected="true"]::before,.overlay:not(.briefing) #start:hover::before,.overlay:not(.briefing) #start:focus-visible::before{opacity:1}
 .gamepad-status{display:none}
 .overlay:not(.briefing) .gamepad-status{display:block;position:absolute;top:3%;right:3%;max-width:58%;color:#d2eed0;text-align:right;text-shadow:1px 1px #000;font:700 clamp(9px,1vw,12px)/1.3 'Courier New',monospace;pointer-events:none}
+.lock-status{position:absolute;z-index:2;left:50%;top:calc(50% + 34px);transform:translateX(-50%);color:#ffdf85;text-shadow:1px 1px 2px #000;font:700 11px 'Courier New',monospace;pointer-events:none;white-space:nowrap}.lock-status:empty{display:none}
+.overlay:not(.briefing) #start{bottom:23%}
+.overlay:not(.briefing) #continue-game{position:absolute;right:4%;bottom:14%;width:36%;min-width:0;margin:0;padding:7px 7px 7px 24px;border:0;background:none;box-shadow:none;text-align:left;pointer-events:auto;cursor:pointer;color:#a7f878;font:900 clamp(13px,2vw,22px)/1.2 'Arial Black',Arial,sans-serif;text-shadow:2px 2px #001a02,0 0 7px #38a748}
+.overlay:not(.briefing) #continue-game::before{content:'▶';position:absolute;left:2px;color:#d5ffaf;font-size:.7em;line-height:1.8;opacity:0}.overlay:not(.briefing) #continue-game[data-gamepad-selected="true"]::before,.overlay:not(.briefing) #continue-game:hover::before,.overlay:not(.briefing) #continue-game:focus-visible::before{opacity:1}
+#continue-game[hidden]{display:none!important}
+.overlay.briefing #continue-game{display:none!important}
+/* A quieter play view; mission information is available from the pause menu. */
+.mission-header,.objectives,.help-open,.controls-hint,.agent-label{display:none}
+.message{background:none;border:0;box-shadow:none;text-shadow:1px 1px 3px #000;padding:0;bottom:104px}
+.tutorial-actions{flex-wrap:wrap}#help-save-quit[hidden]{display:none!important}
+.hud-bottom{bottom:25px}.pause-dialog{width:min(510px,calc(100vw - 32px))}.pause-actions{display:grid;gap:10px;margin-top:25px}.pause-actions button{background:#243976;border:2px solid #97afe5;color:white;text-align:left;padding:13px 16px;font:700 12px 'Courier New',monospace;cursor:pointer}.pause-actions button:hover,.pause-actions button:focus-visible{background:#4561a7;outline:2px solid #f4dc86;outline-offset:2px}.pause-hint,#pause-feedback{font:11px/1.5 'Courier New',monospace;color:#c3d1f0}.reticle[data-locked="true"]{border-color:#ff725c;box-shadow:0 0 7px #ff4930}
