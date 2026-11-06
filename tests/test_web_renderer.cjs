@@ -135,3 +135,17 @@ armedRenderer.person({...body,deathTime:1},true,false);
 const fallback=models[models.length-1];
 assert.ok(Math.abs(fallback[5])<.01,'A missing asset falls back to a horizontal procedural body');
 console.log('Original enemy fall, persistent body, marker removal and fallback tests passed.');
+// The metro terrain atlas has different pages; actors must keep the original
+// character atlas instead of falling back to flat colors in that mission.
+context.SF_CHARACTER_TEXTURED_SCENE=context.SF_TEXTURED_SCENE;
+vm.runInContext(fs.readFileSync('web/assets/subway2-textured.js','utf8'),context,{filename:'web/assets/subway2-textured.js'});
+vm.runInContext(fs.readFileSync('web/assets/cbdc.js','utf8'),context,{filename:'web/assets/cbdc.js'});
+context.SF_TEXTURED_SCENE=context.SF_SUBWAY2_TERRAIN;
+context.SF_PROPS=null;
+const metroRenderer=new context.SFRenderer(canvas,context.SF_SUBWAY2_TERRAIN);
+for(const actor of ['gabe','terro','cbdc']){
+  assert.ok(metroRenderer.characters[actor].uv,actor+' has original texture coordinates in the metro');
+  assert.ok(metroRenderer.characters[actor].textureReady,actor+' uses the separate character atlas');
+  assert.notEqual(metroRenderer.characters[actor].texture,metroRenderer.atlasTexture,actor+' does not use the metro terrain atlas');
+}
+console.log('Metro actors retain their original character texture atlas.');
