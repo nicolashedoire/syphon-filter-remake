@@ -13,6 +13,9 @@ assert.ok(d.left[1]>23 && d.left[1]<24,'light sits on original police car roof')
 let calls=[];const r={visibleRooms:new Set([74]),box(...args){calls.push(args);}};
 SFSceneDetails.draw(r,d,0);assert.equal(calls.length,8);
 const red=calls[0].at(-1),blue=calls[1].at(-1);
+const oldHeight=calls[0][1];calls=[];SFSceneDetails.draw(r,d,0,-.18);
+assert.ok(Math.abs(calls[0][1]-(oldHeight-.18))<1e-6,'New car lights follow the lower Meshy roof');
+assert.equal(calls[3][1],d.marks[0][1],'Road details keep their original height');
 calls=[];SFSceneDetails.draw(r,d,.51);assert.notDeepEqual(calls[0].at(-1),red);assert.notDeepEqual(calls[1].at(-1),blue);
 calls=[];r.visibleRooms=new Set([73]);SFSceneDetails.draw(r,d,0);assert.equal(calls.length,0,'do not draw unrelated rooms');
 calls=[];r.visibleRooms=new Set([67]);SFSceneDetails.draw(r,d,0);assert.equal(calls.length,8,'draw door trims only in the entrance room');

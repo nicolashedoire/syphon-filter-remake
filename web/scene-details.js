@@ -4,7 +4,7 @@
   'use strict';
   const RED=[.95,.09,.07],BLUE=[.08,.22,.98],DIM_RED=[.31,.045,.035],DIM_BLUE=[.035,.065,.32];
   const SILVER=[.49,.51,.53],PAPER=[.44,.43,.38],ROAD=[.075,.075,.07],BRASS=[.42,.34,.20],LAMP=[.94,.72,.31];
-  function box(renderer,item,color){renderer.box(item[0],item[1],item[2],item[3],item[4],item[5],item[6],color);}
+  function box(renderer,item,color,offsetY=0){renderer.box(item[0],item[1]+offsetY,item[2],item[3],item[4],item[5],item[6],color);}
   function bounds(props,o){
     if(!o||o.start<0||o.count<=0||(o.start+o.count)*3>props.positions.length)return null;
     const min=[Infinity,Infinity,Infinity],max=[-Infinity,-Infinity,-Infinity];
@@ -49,12 +49,12 @@
       ]
     };
   }
-  function draw(renderer,details,time){
+  function draw(renderer,details,time,lightOffset=0){
     if(!details||!renderer||typeof renderer.box!=='function')return;
     if(!renderer.visibleRooms||renderer.visibleRooms.has(details.room)){
       const phase=Math.floor(Math.max(0,Number.isFinite(time)?time:0)*2)%2;
-      box(renderer,details.left,phase?DIM_RED:RED);box(renderer,details.right,phase?BLUE:DIM_BLUE);
-      box(renderer,details.bridge,SILVER);
+      box(renderer,details.left,phase?DIM_RED:RED,lightOffset);box(renderer,details.right,phase?BLUE:DIM_BLUE,lightOffset);
+      box(renderer,details.bridge,SILVER,lightOffset);
       details.marks.forEach((item,i)=>box(renderer,item,i<2?ROAD:PAPER));
     }
     if(!renderer.visibleRooms||renderer.visibleRooms.has(details.entranceRoom))
