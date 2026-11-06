@@ -1,5 +1,9 @@
 # Syphon Filter — Remake Research and Prototype
 
+![Syphon Filter French PlayStation cover](assets/syphon-filter-ps1-fr.jpg)
+
+*French PlayStation cover, SCES-01911. Source: [PSX Data Center](https://psxdatacenter.com/games/SCES-01911.html).*
+
 This repository contains the first steps toward an unofficial French-language remake of the original PlayStation *Syphon Filter*. Eidetic's original source code has not been found; the community projects referenced below are separate efforts. The 3D remake and its French localization have not yet been completed.
 
 ## French PS1 Disc Image
