@@ -53,9 +53,14 @@ The community briefing parser expects a `HH:MM` time, while the 22 date strings 
 
 The manual also describes mission objectives and parameters, mission updates, maps, radio communications and checkpoints. The web save system is a browser-specific reconstruction, not an emulation of the PS1 save system.
 
+## New controlled runtime observation
+
+A manual RetroArch / PCSX ReARMed HLE run reached a controllable French Georgia Street mission: forward movement and pistol ammunition consumption were observed, alongside the initial objective screen and two armed characters. [Runtime observations and model-record inventories](ps1-georgia-runtime-observations.md) document the test and remaining limits. This does not yet establish enemy AI, timing, damage rules or full mission parity.
+
 ## Additional investigation
 
 - The [cinematic and audio inventory](ps1-cinematics-inventory.md) records all 39 STR files, audio metadata and gaps in the web version. Playback triggers and spoken language have not been established.
+- The [Ghidra cross-check](ps1-ghidra-cross-check.md) independently decompiled one candidate MIPS routine and records a new REA pointer-structure investigation.
 - The [combat-table investigation](ps1-combat-static-investigation.md) documents REA observations, 26 candidate records and the unverified enemy-AI questions.
 - The [runtime investigation](ps1-runtime-investigation.md) records emulator and CPU-probe results; a bootable, instrumented French runtime remains necessary to establish gameplay behavior.
 
