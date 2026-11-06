@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#07100e">
   <title>Syphon Filter — Georgia Street</title>
-  <link rel="stylesheet" href="web/interface.css?v=3">
+  <link rel="stylesheet" href="web/interface.css?v=6">
 </head>
 <body>
   <main class="game-shell" aria-label="Syphon Filter, mission Georgia Street">
@@ -17,7 +17,7 @@
     <div class="message" id="message" aria-live="polite">EN ATTENTE DE L’AGENT</div>
     <div class="hud-bottom"><div class="health"><div class="hud-label">INTÉGRITÉ <strong id="health-hud">100</strong></div><div class="meter"><div id="health-bar"></div></div></div><div class="agent-label"><span>AGENT DE TERRAIN</span><strong>GABE LOGAN</strong></div><div class="ammo"><span>9 MM · SILENCIEUX</span><strong id="ammo-hud">15 / 45</strong></div></div>
     <button class="help-open" id="help-open" type="button" aria-haspopup="dialog">? &nbsp; COMMANDES PC · H</button>
-    <div class="controls-hint">ZQSD <span>SE DÉPLACER</span><i>·</i> SOURIS <span>VISER</span><i>·</i> CLIC <span>TIRER</span><i>·</i> R <span>RECHARGER</span><i>·</i> ÉCHAP <span>LIBÉRER LA SOURIS</span></div>
+    <div class="controls-hint">Z / S <span>AVANCER / RECULER</span><i>·</i> Q / D <span>TOURNER</span><i>·</i> SOURIS <span>VISER</span><i>·</i> CLIC <span>TIRER</span><i>·</i> R <span>RECHARGER</span><i>·</i> ÉCHAP <span>LIBÉRER LA SOURIS</span></div>
     <div class="sr-only" aria-hidden="true"><span id="health-side">100 %</span><span id="ammo-side">15 / 45</span><span id="status-side">EN ATTENTE</span></div>
     <div class="cinematics" id="cinematics" hidden><video id="intro-video" playsinline preload="none" aria-label="Cinématique originale du jeu"></video><button type="button" id="skip-intro">PASSER LES CINÉMATIQUES <span>→</span></button></div>
     <div class="overlay" id="overlay">
@@ -29,6 +29,7 @@
           <div class="briefing-label">WASHINGTON D.C. <span>/</span> GEORGIA STREET</div>
           <h2 id="overlay-title">GEORGIA<br><em>STREET.</em></h2>
           <p id="overlay-text">Les terroristes sont dans le secteur. Neutralisez les menaces et rejoignez la zone d’extraction. Restez vigilant, agent.</p>
+          <div class="briefing-hint">▼ &nbsp; FAIS DÉFILER LE TEXTE POUR LIRE LES OBJECTIFS</div>
           <button id="start" type="button">LANCER L’OPÉRATION <span>→</span></button>
           <button class="help-link" id="help-brief" type="button" aria-haspopup="dialog">? &nbsp; VOIR LES COMMANDES PC</button>
           <div class="overlay-meta"><span>CLAVIER + SOURIS</span><span>PROTOTYPE JOUABLE</span></div>
@@ -43,7 +44,7 @@
     <dialog id="controls-dialog" class="controls-dialog" aria-labelledby="controls-title">
       <div class="tutorial-heading"><span>GUIDE DE TERRAIN / PC</span><h2 id="controls-title">COMMANDES <em>PC</em></h2><p>Prends le temps de t’entraîner : la partie est en pause pendant la lecture.</p></div>
       <div class="tutorial-grid">
-        <div><div class="tutorial-keys"><kbd>Z</kbd><kbd>Q</kbd><kbd>S</kbd><kbd>D</kbd><span>ou</span><kbd>↑</kbd><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd></div><strong>Se déplacer</strong><p>Z avance, S recule, Q et D déplacent à gauche et à droite.</p></div>
+        <div><div class="tutorial-keys"><kbd>Z</kbd><kbd>Q</kbd><kbd>S</kbd><kbd>D</kbd><span>ou</span><kbd>↑</kbd><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd></div><strong>Se déplacer</strong><p>Z avance, S recule ; Q et D font tourner Gabe à gauche et à droite.</p></div>
         <div><div class="tutorial-keys"><kbd>SOURIS</kbd></div><strong>Regarder et viser</strong><p>Bouge la souris pour tourner la caméra et placer le viseur sur une cible.</p></div>
         <div><div class="tutorial-keys"><kbd>CLIC GAUCHE</kbd></div><strong>Tirer</strong><p>Clique pour tirer. Les murs et les véhicules arrêtent les balles.</p></div>
         <div><div class="tutorial-keys"><kbd>R</kbd><kbd>MAJ</kbd></div><strong>Recharger / marcher</strong><p>R recharge. Maintiens Maj pour te déplacer plus lentement.</p></div>
@@ -52,16 +53,17 @@
       <div class="tutorial-actions"><span>Appuie sur H pour rouvrir ce guide à tout moment.</span><button type="button" id="help-close">J’AI COMPRIS <b>→</b></button></div>
     </dialog>
   </main>
-  <script src="web/assets/intro-briefing.js?v=3"></script>
-  <script src="web/assets/georgia-street.js?v=3"></script>
-  <script src="web/assets/georgia-textured.js?v=3"></script>
-  <script src="web/assets/characters.js?v=3"></script>
-  <script src="web/assets/animations.js?v=3"></script>
-  <script src="web/assets/props.js?v=3"></script>
-  <script src="web/math.js?v=3"></script>
-  <script src="web/renderer.js?v=3"></script>
-  <script src="web/tutorial.js?v=3"></script>
-  <script src="web/ps1-rules.js?v=3"></script>
-  <script src="web/game.js?v=3"></script>
+  <script src="web/assets/intro-briefing.js?v=6"></script>
+  <script src="web/assets/georgia-street.js?v=6"></script>
+  <script src="web/assets/georgia-textured.js?v=6"></script>
+  <script src="web/assets/characters.js?v=6"></script>
+  <script src="web/assets/animations.js?v=6"></script>
+  <script src="web/assets/props.js?v=6"></script>
+  <script src="web/math.js?v=6"></script>
+  <script src="web/renderer.js?v=6"></script>
+  <script src="web/tutorial.js?v=6"></script>
+  <script src="web/mission.js?v=6"></script>
+  <script src="web/ps1-rules.js?v=6"></script>
+  <script src="web/game.js?v=6"></script>
 </body>
 </html>

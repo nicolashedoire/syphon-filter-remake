@@ -210,7 +210,8 @@ void main(){
           const name=person.moving?(person.running?'run':'walk'):'idle';
           const clip=global.SF_ANIMATIONS.gabe[name];
           if(clip&&clip.frames&&clip.frames.length){
-            const frame=Math.floor((Number.isFinite(person.animationTime)?person.animationTime:this.animationTime||0)*clip.fps)%clip.frames.length;
+            const phase=Math.floor((Number.isFinite(person.animationTime)?person.animationTime:this.animationTime||0)*clip.fps)%clip.frames.length;
+            const frame=person.reverse&&name!=='idle'?clip.frames.length-1-phase:phase;
             if(original.clip!==name||original.frame!==frame){
               this.gl.bindBuffer(this.gl.ARRAY_BUFFER,original.buffer);
               this.gl.bufferSubData(this.gl.ARRAY_BUFFER,0,sceneVertices(clip.frames[frame]));
@@ -220,10 +221,6 @@ void main(){
         }
         // The exported HMD's visible front faces the reverse of the game heading.
         this.draw(original,M.model(x,y,z,a+Math.PI,1,1,1),[1,1,1],false);
-        // Temporary weapon mesh until the original weapon attachment is decoded.
-        const gx=x+c*.32-s*.27,gz=z-s*.32-c*.27;
-        this.box(gx,y+1.12,gz,a,.11,.14,.43,[.08,.085,.08]);
-        if(firing)this.box(gx-s*.29,y+1.12,gz-c*.29,a,.13,.13,.18,[1,.72,.24]);
         return;
       }
       const part=(dx,dy,dz,sx,sy,sz,color) => this.box(x+c*dx+s*dz,y+dy,z-s*dx+c*dz,a,sx,sy,sz,color);
@@ -241,7 +238,16 @@ void main(){
       const dpr=Math.min(global.devicePixelRatio||1,2),w=Math.max(1,Math.round(this.canvas.clientWidth*dpr)),h=Math.max(1,Math.round(this.canvas.clientHeight*dpr));
       if(this.canvas.width!==w||this.canvas.height!==h){this.canvas.width=w;this.canvas.height=h;}
       gl.viewport(0,0,w,h);gl.clearColor(.055,.077,.074,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.useProgram(this.program);
-      const yaw=Number.isFinite(state.cameraYaw)?state.cameraYaw:0,pitch=Math.max(-.7,Math.min(.8,Number.isFinite(state.cameraPitch)?state.cameraPitch:.1)),distance=Math.max(1,Math.min(15,state.cameraDistance||3.8));
+      const desiredYaw=Number.isFinite(state.cameraYaw)?state.cameraYaw:0;
+      const frameDelta=this.animationTime-(this.yawTime??this.animationTime);
+      if(!Number.isFinite(this.viewYaw)||frameDelta<0||state.cameraImmediate)this.viewYaw=desiredYaw;
+      else if(frameDelta>0){
+        const delta=Math.atan2(Math.sin(desiredYaw-this.viewYaw),Math.cos(desiredYaw-this.viewYaw));
+        const next=this.viewYaw+delta*(1-Math.exp(-12*Math.min(.1,frameDelta)));
+        this.viewYaw=Math.atan2(Math.sin(next),Math.cos(next));
+      }
+      this.yawTime=this.animationTime;
+      const yaw=this.viewYaw,pitch=Math.max(-.7,Math.min(.8,Number.isFinite(state.cameraPitch)?state.cameraPitch:.1)),distance=Math.max(1,Math.min(15,state.cameraDistance||3.8));
       const anchor=[p.x,p.y+1.45,p.z],sy=Math.sin(yaw),cy=Math.cos(yaw),cp=Math.cos(pitch),sp=Math.sin(pitch);
       const eye=[anchor[0]+sy*cp*distance+cy*.65,anchor[1]+sp*distance+.25,anchor[2]+cy*cp*distance-sy*.65];
       const desiredFraction=cameraFraction(this.cameraWalls,anchor,eye);
@@ -261,7 +267,7 @@ void main(){
       if(state.impact){const i=state.impact;this.box(i.x,i.y,i.z,0,.17,.17,.17,i.hit?[1,.72,.18]:[.9,.85,.55]);}
       this.person(p,false,!!state.impact);
       if(Array.isArray(state.enemies)) for(const enemy of state.enemies) if(enemy.alive!==false) this.person(enemy,true);
-      return {eye,target};
+      return {eye,target,yaw};
     }
   }
   global.SFRenderer=SFRenderer;
