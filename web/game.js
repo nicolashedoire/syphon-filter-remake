@@ -251,7 +251,9 @@
   // Browsers may expose a standard gamepad only after its first button press.
   // Polling also makes disconnection safe even when the event is missed.
   function gamepadStatus(text){const status=$('gamepad-status');if(status&&status.textContent!==text)status.textContent=text;}
-  function titleMenuItems(){return [start,...(continueGame&&!continueGame.hidden?[continueGame]:[]),$('help-brief')].filter(Boolean);}
+  // Continue only belongs to the title screen; briefing styles hide it even
+  // when a valid save exists, so never let the gamepad select it there.
+  function titleMenuItems(){return [start,...(phase==='introduction'&&continueGame&&!continueGame.hidden?[continueGame]:[]),$('help-brief')].filter(Boolean);}
   function selectGamepadMenu(selection){
     const items=titleMenuItems();gamepadMenuSelection=Math.max(0,Math.min(items.length-1,selection));
     for(const node of [start,continueGame,$('help-brief')])if(node&&node.dataset)node.dataset.gamepadSelected=node===items[gamepadMenuSelection]?'true':'false';
@@ -265,14 +267,14 @@
     const pad=Array.from(pads).find(p=>p&&p.connected!==false&&(p.mapping==='standard'||!p.mapping));
     if(!pad){if(lockHeld)clearLock();gamepadStatus(available?'MANETTE : APPUYEZ SUR UNE TOUCHE':'MANETTE : NAVIGATEUR NON COMPATIBLE');if(gamepadIndex!==null)gamepadNeedsRelease=true;gamepadIndex=null;gamepadButtons=[];gamepadMenuAxis=0;return;}
     gamepadStatus('MANETTE CONNECTÉE · CROIX / OPTIONS : VALIDER');
-    const firstDetection=gamepadIndex===null;
     if(gamepadIndex!==null&&gamepadIndex!==pad.index)gamepadNeedsRelease=true;
     gamepadIndex=pad.index;
     const buttons=Array.from(pad.buttons||[],b=>!!(b&&(b.pressed||b.value>=.5)));
-    // A browser may reveal a controller only on its first press. Accept that
-    // press in menus even if the window previously lost focus; in gameplay we
-    // still require a release after disconnect or focus loss to prevent shots.
-    if(firstDetection&&inputFocused&&!running&&phase!=='cinematics')gamepadNeedsRelease=false;
+    // A first press can arrive in the very first frame after focus returns,
+    // even when the browser kept exposing the pad while the page was blurred.
+    // Menu actions are edge-triggered, so allow that fresh press immediately;
+    // in gameplay retain the release gate to avoid unintended shots.
+    if(inputFocused&&!running&&phase!=='cinematics')gamepadNeedsRelease=false;
     if(!inputFocused||gamepadNeedsRelease){
       if(lockHeld)clearLock();
       if(inputFocused&&!buttons.some(Boolean))gamepadNeedsRelease=false;
@@ -331,6 +333,7 @@
     ui.text.classList.add('briefing-text');
     ui.text.textContent=briefing.directives.join('\n\n')+'\n\nOBJECTIFS DU DOSSIER :\n• '+briefing.objectives.join('\n• ')+'\n\nPARAMÈTRES :\n• '+briefing.parameters.join('\n• ');
     start.innerHTML='COMMENCER LA MISSION <span>→</span>';
+    gamepadMenuSelection=0;
   }
   function playNextIntro(){
     if(phase!=='cinematics')return;
