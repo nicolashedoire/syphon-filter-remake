@@ -1,0 +1,155 @@
+:root{color-scheme:dark;--ink:#dce9d7;--accent:#bfe875;--muted:#95a79a;--panel:#101a17}*{box-sizing:border-box}html,body{height:100%;margin:0;background:#09110f;color:var(--ink);font-family:Arial,system-ui,sans-serif;overflow:hidden}.game-shell{position:relative;width:100%;height:100%;min-height:360px;overflow:hidden;background:#101b16}canvas{display:block;width:100%;height:100%;outline:none;cursor:crosshair}.screen-shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(to bottom,rgba(3,8,7,.62),transparent 20%,transparent 69%,rgba(3,8,7,.8)),linear-gradient(90deg,rgba(3,8,7,.25),transparent 30%,transparent 70%,rgba(3,8,7,.25))}.mission-header,.objectives,.hud-bottom,.controls-hint,.message,.overlay-kicker,.briefing-label,.overlay-meta{font-family:ui-monospace,Consolas,monospace;letter-spacing:.11em}.mission-header{position:absolute;inset:27px 32px auto;display:flex;align-items:start;justify-content:space-between;pointer-events:none}.mission-id span,.mission-id strong{display:block}.mission-id span{font-size:9px;color:#a1b5a1}.mission-id strong{font-size:14px;letter-spacing:.14em;margin-top:7px}.connection{font-size:10px;color:#d5e4cd}.connection i{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 9px var(--accent);margin-right:8px}.objectives{position:absolute;right:32px;top:95px;min-width:232px;padding:14px 16px;background:rgba(6,14,10,.75);border-left:2px solid #a5cc70;font-size:10px;pointer-events:none}.objectives-title{display:flex;justify-content:space-between;gap:12px;color:#a4b7a3;padding-bottom:10px;border-bottom:1px solid #455844}.objectives-title span{color:var(--accent);font-size:9px}.objective{display:flex;align-items:center;gap:10px;margin-top:11px;color:#d3dfcc;letter-spacing:.02em}.objective b{display:grid;place-items:center;border:1px solid #70826e;width:23px;height:23px;font-size:9px;font-weight:400}.objective.done b{background:var(--accent);border-color:var(--accent);color:#0a120a}.reticle{position:absolute;top:50%;left:50%;width:27px;height:27px;transform:translate(-50%,-50%);border:1px solid rgba(211,239,192,.7);border-radius:50%;pointer-events:none}.reticle:before,.reticle:after,.reticle i:before,.reticle i:after{content:'';position:absolute;background:#dcf4d1}.reticle:before,.reticle:after{height:1px;width:7px;top:12px}.reticle:before{left:-7px}.reticle:after{right:-7px}.reticle i:before,.reticle i:after{width:1px;height:7px;left:12px}.reticle i:before{top:-7px}.reticle i:after{bottom:-7px}.message{position:absolute;left:50%;bottom:120px;transform:translateX(-50%);background:rgba(5,13,8,.75);padding:8px 13px;font-size:10px;color:#d6ebc5;white-space:nowrap;pointer-events:none}.hud-bottom{position:absolute;bottom:50px;left:32px;right:32px;display:flex;align-items:end;gap:18px;pointer-events:none}.health{width:180px}.hud-label,.ammo span,.agent-label span{display:block;color:#a8bba7;font-size:9px}.hud-label strong{float:right;color:#f0f6eb;font-size:15px}.meter{height:6px;background:#344337;border:1px solid #63765e;margin-top:9px}.meter>div{width:100%;height:100%;background:var(--accent)}.agent-label{border-left:1px solid #667b66;padding-left:17px}.agent-label strong{display:block;margin-top:7px;font-size:12px}.ammo{margin-left:auto;text-align:right}.ammo strong{display:block;margin-top:5px;font-size:25px;font-weight:700;color:#f5f9ed;letter-spacing:.02em}.controls-hint{position:absolute;bottom:18px;left:32px;right:32px;color:#c6d6c1;font-size:9px;pointer-events:none}.controls-hint span{color:#8b9c8a}.controls-hint i{font-style:normal;color:var(--accent);padding:0 8px}.overlay{position:absolute;inset:0;display:flex;align-items:center;padding:6vw;background:linear-gradient(90deg,rgba(4,10,7,.97),rgba(4,10,7,.88) 34%,rgba(4,10,7,.36) 68%,rgba(4,10,7,.22))}.overlay[hidden]{display:none}.overlay-card{width:min(550px,100%)}.overlay-kicker{color:var(--accent);font-size:10px}.overlay-kicker span{display:inline-block;width:22px;height:2px;vertical-align:middle;background:var(--accent);margin-right:9px}.overlay h1{font-size:clamp(20px,3vw,34px);letter-spacing:-.04em;margin:25px 0 18px;font-weight:900}.overlay h1 em,.overlay h2 em{font-style:normal;color:var(--accent)}.rule{width:100%;height:1px;background:#52664e}.briefing-label{font-size:10px;color:#a6b9a2;margin-top:25px}.briefing-label span{color:var(--accent);margin:0 6px}.overlay h2{font-size:clamp(50px,7vw,96px);line-height:.88;letter-spacing:-.055em;margin:18px 0;font-weight:900}.overlay p{max-width:390px;color:#b3c2af;font-size:15px;line-height:1.65;margin:0 0 27px}.overlay button{background:var(--accent);color:#101a0d;border:0;padding:17px 20px;font:700 11px ui-monospace,monospace;letter-spacing:.07em;cursor:pointer}.overlay button:hover{background:#e4ffa9}.overlay button span{font-size:16px;margin-left:25px}.overlay button:disabled{opacity:.4;cursor:default}.overlay-meta{display:flex;gap:20px;margin-top:28px;font-size:9px;color:#829580}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}@media(max-width:700px){.mission-header{inset:18px 18px auto}.objectives{right:18px;top:75px;min-width:190px}.hud-bottom{left:18px;right:18px;bottom:42px}.health{width:110px}.agent-label{display:none}.controls-hint{left:18px;right:18px;bottom:12px;font-size:8px}.controls-hint i{padding:0 3px}.message{bottom:105px;max-width:90%;overflow:hidden;text-overflow:ellipsis}.overlay{padding:7vw}.overlay p{font-size:13px}.overlay h2{font-size:52px}.overlay-meta{margin-top:18px}}
+
+.cinematics{position:absolute;inset:0;z-index:5;background:#000;display:flex;align-items:center;justify-content:center}.cinematics[hidden]{display:none}.cinematics video{display:block;width:100%;height:100%;object-fit:contain}.cinematics button{position:absolute;right:28px;bottom:28px;background:rgba(4,12,8,.8);border:1px solid #9cb98c;color:#e4f1dc;padding:12px 16px;font:700 10px ui-monospace,monospace;letter-spacing:.08em;cursor:pointer}.cinematics button span{padding-left:12px}.overlay p.briefing-text{max-height:32vh;overflow:auto;white-space:pre-line;font-size:13px}.overlay.briefing .overlay-card{max-height:94vh;overflow:auto}.overlay.briefing h2{font-size:clamp(30px,4vw,54px);line-height:1;margin:12px 0}.overlay.briefing .overlay-meta{margin-top:14px}
+
+/* The briefing overlay pairs the mission dossier with the original cover. */
+.overlay {
+  z-index: 3;
+  padding: clamp(24px, 5vw, 76px);
+  overflow: auto;
+  background:
+    radial-gradient(ellipse at 76% 43%, rgba(36, 70, 79, .35), transparent 39%),
+    linear-gradient(100deg, rgba(5, 11, 14, .99) 0%, rgba(5, 13, 16, .96) 48%, rgba(5, 12, 15, .87) 100%);
+}
+.overlay-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 420px);
+  gap: clamp(45px, 8vw, 140px);
+  align-items: center;
+  width: min(100%, 1220px);
+  margin: auto;
+}
+.overlay-card { width: 100%; max-width: 570px; min-width: 0; }
+.overlay-kicker { color: #bde67e; letter-spacing: .16em; }
+.overlay h1 { font-size: clamp(22px, 2.7vw, 33px); letter-spacing: .025em; margin: 28px 0 20px; }
+.overlay h1 em { color: #d8ecd0; }
+.rule { background: linear-gradient(90deg, #718b6c, rgba(113,139,108,.1)); }
+.briefing-label { margin-top: 34px; color: #b2c6b1; }
+.overlay h2 { margin: 22px 0; font-size: clamp(56px, 7.3vw, 108px); letter-spacing: -.06em; }
+.overlay h2 em { color: #caf18a; }
+.overlay p { max-width: 450px; color: #becbc0; font-size: clamp(14px,1.05vw,16px); line-height: 1.65; }
+.overlay button { padding: 18px 20px; min-width: 250px; text-align: left; background: #c8ed88; box-shadow: 0 10px 32px rgba(140,191,92,.1); }
+.overlay button span { float: right; margin-left: 24px; }
+.overlay button:focus-visible,.cinematics button:focus-visible { outline: 3px solid #f3fff0; outline-offset: 4px; }
+.overlay-meta { margin-top: 30px; color: #94a692; }
+.overlay-meta span + span:before { content: '◆'; color: #bde67e; margin-right: 20px; }
+.cover-display { margin: 0; width: 100%; position: relative; }
+.cover-display:before { content: ''; position: absolute; inset: 28% -12% -9% 13%; background: #70b99a; filter: blur(95px); opacity: .12; pointer-events: none; }
+.cover-topline,.cover-display figcaption { position: relative; display: flex; justify-content: space-between; gap: 12px; font: 9px ui-monospace,Consolas,monospace; letter-spacing: .12em; color: #9bb4ab; }
+.cover-topline { margin-bottom: 12px; }
+.cover-frame { position: relative; padding: 6px; border: 1px solid rgba(184,220,189,.45); background: rgba(12,22,26,.8); box-shadow: 0 26px 70px rgba(0,0,0,.45),0 0 50px rgba(80,155,125,.1); }
+.cover-frame:before,.cover-frame:after { content: ''; position: absolute; width: 16px; height: 16px; border-color: #c5ed8b; pointer-events: none; z-index: 1; }
+.cover-frame:before { top: -3px; left: -3px; border-top: 2px solid; border-left: 2px solid; }
+.cover-frame:after { bottom: -3px; right: -3px; border-bottom: 2px solid; border-right: 2px solid; }
+.cover-frame img { display: block; width: 100%; height: auto; }
+.cover-display figcaption { margin-top: 14px; }
+.cover-display figcaption b { color: #c8ed88; padding: 0 4px; }
+.overlay.briefing .overlay-inner { align-items: center; }
+.overlay.briefing .overlay-card { max-height: min(90vh, 850px); padding-right: 4px; }
+.overlay.briefing p.briefing-text { max-height: min(38vh, 360px); color: #c4d0c3; padding-right: 12px; }
+@media(max-width: 850px) {
+  .overlay-inner { grid-template-columns: minmax(0,1fr) minmax(155px,34%); gap: 30px; }
+  .overlay h2 { font-size: clamp(48px,8vw,72px); }
+}
+@media(max-width: 600px) {
+  .overlay { align-items: flex-start; padding: 25px 22px; }
+  .overlay-inner { grid-template-columns: minmax(0,1fr) 112px; gap: 14px; align-items: start; }
+  .overlay-card { display: contents; }
+  .overlay-kicker,.overlay h1,.rule,.briefing-label,.overlay h2,.overlay p,.overlay button,.overlay-meta { grid-column: 1 / -1; }
+  .overlay-kicker { margin-top: 3px; }
+  .overlay h1 { margin: 4px 0 0; font-size: 24px; }
+  .rule { margin: 0; }
+  .briefing-label { grid-column: 1; margin: 4px 0 0; line-height: 1.6; }
+  .overlay h2 { grid-column: 1; font-size: clamp(38px,10vw,56px); margin: 0; }
+  .overlay p { grid-column: 1 / -1; margin: 0; font-size: 13px; line-height: 1.5; }
+  .overlay button { margin-top: 2px; width: 100%; }
+  .overlay-meta { margin-top: 0; font-size: 8px; }
+  .cover-display { grid-column: 2; grid-row: 4 / span 2; }
+  .cover-topline,.cover-display figcaption { display: none; }
+  .cover-frame { padding: 3px; }
+  .overlay.briefing .overlay-card { display: contents; }
+  .overlay.briefing p.briefing-text { max-height: 30vh; }
+}
+@media(max-height: 600px) and (min-width: 601px) {
+  .overlay { padding-block: 18px; }
+  .overlay-inner { grid-template-columns: minmax(0,1fr) minmax(160px, min(36vh,300px)); }
+  .overlay h1 { margin: 12px 0; }
+  .briefing-label { margin-top: 14px; }
+  .overlay h2 { margin: 10px 0; font-size: clamp(40px,10vh,65px); }
+  .overlay p { margin-bottom: 12px; }
+  .overlay-meta { margin-top: 12px; }
+}
+.help-open{position:absolute;z-index:2;right:32px;bottom:90px;border:1px solid #91a98e;background:rgba(5,13,8,.8);color:#e0ecd9;padding:10px 13px;font:700 10px ui-monospace,monospace;letter-spacing:.08em;cursor:pointer}.overlay .help-link{display:block;min-width:0;margin-top:13px;padding:7px 0;background:transparent;box-shadow:none;color:#c9dfbc;border:0;font-size:10px;letter-spacing:.08em;text-align:left}.overlay .help-link:hover{background:transparent;color:#f2ffe9}.controls-dialog{width:min(760px,calc(100vw - 32px));max-height:min(90vh,850px);overflow:auto;border:1px solid #698364;background:#101a17;color:#e3efdf;padding:clamp(20px,4vw,38px);box-shadow:0 30px 100px #000}.controls-dialog::backdrop{background:rgba(2,7,5,.87)}.tutorial-heading>span,.tutorial-actions span{font:10px ui-monospace,monospace;letter-spacing:.1em;color:#9eb39d}.tutorial-heading h2{font-size:clamp(34px,5vw,55px);letter-spacing:-.04em;margin:12px 0 8px}.tutorial-heading h2 em{font-style:normal;color:#c7ec8a}.tutorial-heading p,.tutorial-grid p{color:#a9baaa;line-height:1.5;font-size:13px;margin:7px 0}.tutorial-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding:25px 0}.tutorial-grid>div{border-top:1px solid #465b48;padding-top:14px}.tutorial-grid strong{display:block;color:#edf6e8;font-size:14px;margin-top:11px}.tutorial-keys{display:flex;align-items:center;gap:4px;flex-wrap:wrap}.tutorial-keys kbd{font:700 10px ui-monospace,monospace;min-width:25px;text-align:center;border:1px solid #708771;background:#203023;color:#e5f3dc;padding:7px}.tutorial-keys span{color:#91a391;font-size:11px;padding:0 3px}.tutorial-actions{display:flex;align-items:center;justify-content:space-between;gap:20px;border-top:1px solid #465b48;padding-top:20px}.tutorial-actions button{border:0;background:#c8ed88;color:#101a0d;padding:14px 18px;cursor:pointer;font:700 11px ui-monospace,monospace;white-space:nowrap}.tutorial-actions b{margin-left:16px}.help-open:focus-visible,.help-link:focus-visible,.tutorial-actions button:focus-visible{outline:3px solid #fff;outline-offset:3px}@media(max-width:700px){.help-open{right:18px;bottom:90px}.tutorial-grid{grid-template-columns:1fr;gap:12px}.tutorial-actions{align-items:stretch;flex-direction:column}.tutorial-actions button{width:100%}}
+@media (min-width: 701px) and (max-height: 800px){.controls-dialog{padding:24px 30px}.tutorial-heading h2{font-size:42px;margin:7px 0}.tutorial-heading p{margin:5px 0}.tutorial-grid{gap:12px 20px;padding:14px 0}.tutorial-grid>div{padding-top:9px}.tutorial-grid strong{margin-top:7px}.tutorial-grid p{margin:4px 0;font-size:12px}.tutorial-actions{padding-top:13px}}
+/* Retro console presentation: hard-edged panels, scanlines and a compact HUD. */
+:root{--ink:#e8eeff;--accent:#f4d777;--muted:#aebde7;--panel:#101c4b}
+.game-shell{background:#05091b}
+.game-shell::after{content:'';position:absolute;inset:0;z-index:4;pointer-events:none;background:repeating-linear-gradient(to bottom,rgba(3,8,22,.08) 0,rgba(3,8,22,.08) 1px,transparent 1px,transparent 4px)}
+.mission-header,.objectives,.hud-bottom,.controls-hint,.message,.overlay-kicker,.briefing-label,.overlay-meta,.tutorial-heading,.tutorial-grid,.tutorial-actions{font-family:'Courier New',ui-monospace,monospace;letter-spacing:.06em}
+.mission-id strong{font-size:16px;letter-spacing:.08em;color:#f4dfa2;text-shadow:2px 2px #000}
+.connection i{background:#f4d777;box-shadow:0 0 6px #ffd767}
+.objectives{background:rgba(10,21,60,.92);border:2px solid #7c9cda;box-shadow:inset 0 0 0 2px #162354,4px 4px 0 rgba(0,0,0,.55)}
+.objectives-title{color:#f4d777;border-color:#5873ac}.objectives-title span{color:#dce7ff}.objective b{border-color:#8ea9e8;color:#e8efff}.objective.done b{background:#f4d777;color:#16121a;border-color:#f4d777}
+.reticle{border:1px solid #f7d777;box-shadow:0 0 2px #000}.reticle:before,.reticle:after,.reticle i:before,.reticle i:after{background:#f7d777}
+.message{background:#0d1944;border:1px solid #7c9cda;color:#f8e5a9;box-shadow:3px 3px 0 rgba(0,0,0,.65)}
+.meter{background:#101b3d;border:1px solid #94a6c9}.meter>div{background:#efd070}.hud-label,.ammo span,.agent-label span{color:#d5dfff}.hud-label strong,.ammo strong{color:#fbe8a8;text-shadow:2px 2px #000}
+.help-open{background:#172457;border:2px solid #93b4ee;color:#fff;box-shadow:inset -2px -2px #080f29,inset 2px 2px #4e67a5}.help-open:hover{color:#ffebaa}
+.overlay{background:radial-gradient(ellipse at 78% 45%,rgba(40,78,142,.45),transparent 40%),linear-gradient(120deg,rgba(5,10,30,.98),rgba(9,20,58,.96) 55%,rgba(5,10,32,.92));}
+.overlay-inner{position:relative;z-index:1}.overlay-kicker,.briefing-label{color:#c1d5ff}.overlay-kicker span{background:#f4d777}.overlay h1{font-family:'Arial Black',Arial,sans-serif;letter-spacing:.02em;text-shadow:3px 3px #07112f}.overlay h1 em{color:#f6dd8d}.overlay h2{font-family:'Arial Black',Arial,sans-serif;color:#e7efff;letter-spacing:-.04em;text-shadow:4px 4px #050a20}.overlay h2 em{color:#f3d77c}.rule{height:2px;background:linear-gradient(90deg,#a4bdf6,#283b79)}.overlay p{color:#d3def6}.overlay button:not(.help-link){background:linear-gradient(#354f91,#17285e);border:2px solid #a6bff1;box-shadow:inset 2px 2px #6886cc,inset -3px -3px #0c1537,4px 4px 0 #050916;color:#fff;text-shadow:1px 1px #050a1c}.overlay button:not(.help-link):hover{background:linear-gradient(#5776bb,#253b7b);color:#ffebae}.overlay .help-link{color:#d9e4ff}.overlay-meta{color:#b4c8ef}.overlay-meta span+span:before{color:#f3d77c}
+.cover-display:before{background:#6c8bea;opacity:.15}.cover-topline,.cover-display figcaption{color:#c2d1f5}.cover-frame{padding:7px;background:#101a40;border:2px solid #a9c0ed;box-shadow:inset 2px 2px #6d87c2,inset -3px -3px #070d22,9px 9px 0 rgba(0,0,0,.55)}.cover-frame:before,.cover-frame:after{border-color:#f3d77c}.cover-display figcaption b{color:#f3d77c}
+.controls-dialog{background:#111d4b;border:3px solid #a4baf0;color:#edf1ff;box-shadow:inset 2px 2px #6075ba,inset -3px -3px #080e28,0 30px 100px #000}.tutorial-heading h2 em{color:#f3d77c}.tutorial-heading>span,.tutorial-actions span,.tutorial-grid p,.tutorial-heading p{color:#bfcef4}.tutorial-grid>div,.tutorial-actions{border-color:#50699f}.tutorial-keys kbd{border-color:#9fb5e8;background:#253977;color:#fff;box-shadow:inset -2px -2px #101b45}.tutorial-actions button{background:#e8cf7d;color:#10152e;box-shadow:inset 2px 2px #fff0b6,inset -3px -3px #907831}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important}}
+/* The dossier is framed like a 320x240 PlayStation screen. */
+.overlay{align-items:center;justify-content:center;padding:12px;background:#02030a}
+.overlay-inner{width:min(94vw,122vh,1000px);max-height:94vh;aspect-ratio:4/3;padding:clamp(20px,3.5vw,45px);grid-template-columns:minmax(0,1fr) minmax(150px,31%);gap:clamp(20px,4vw,48px);border:3px solid #8298d3;box-shadow:inset 2px 2px #b4c1eb,inset -3px -3px #1b2856,7px 7px 0 #000;background:linear-gradient(180deg,#0c1643 0%,#17265d 54%,#0b1236 100%);overflow:auto}
+.overlay-card{display:block;max-width:none}.overlay-kicker{font:700 10px 'Courier New',monospace;letter-spacing:.08em;color:#c8c8ff}.overlay-kicker span{background:#c8c8ff;width:14px;height:3px}.overlay h1{font:900 clamp(20px,3vw,32px) 'Courier New',monospace;letter-spacing:0;margin:16px 0 12px;text-shadow:2px 2px #050a24}.overlay h1 em{color:#e6df9c}.rule{height:1px;background:#8298d3}.briefing-label{font:700 10px 'Courier New',monospace;margin-top:20px;color:#c8c8ff}.overlay h2{font:900 clamp(34px,5vw,62px)/.96 'Courier New',monospace;letter-spacing:-.06em;margin:18px 0;text-shadow:3px 3px #060c29}.overlay h2 em{color:#f4dc86}.overlay p{font:14px/1.5 'Courier New',monospace;color:#f2f3ff;margin:0 0 18px;max-width:450px}.overlay button:not(.help-link){font:700 12px 'Courier New',monospace;letter-spacing:0;min-width:230px;padding:12px 14px}.overlay-meta{font:9px 'Courier New',monospace;margin-top:18px}.cover-display{max-width:290px;justify-self:end}.cover-display:before{display:none}.cover-topline,.cover-display figcaption{font:9px 'Courier New',monospace;color:#c8c8ff}.cover-frame{border:2px solid #a7b7df;padding:4px;box-shadow:4px 4px 0 #050719;background:#11183a}.cover-frame:before,.cover-frame:after{display:none}
+.overlay.briefing .overlay-inner{display:flex;align-items:center;justify-content:center}.overlay.briefing .overlay-card{width:100%;max-width:800px;max-height:100%;padding:clamp(16px,2.5vw,28px);border:2px solid #9babdb;box-shadow:inset 1px 1px #c1cbec,inset -2px -2px #283467;background:#273e7a;overflow:auto}.overlay.briefing .cover-display{display:none}.overlay.briefing .briefing-label{margin-top:12px}.overlay.briefing h2{font-size:clamp(25px,3.2vw,39px);margin:10px 0}.overlay.briefing p.briefing-text{max-height:34vh;color:#fff;font:13px/1.5 'Courier New',monospace;margin-bottom:14px}.overlay.briefing .overlay-meta{margin-top:12px}
+@media(max-width:600px){.overlay{align-items:center;padding:8px}.overlay-inner{width:96vw;max-height:94vh;aspect-ratio:auto;min-height:0;padding:16px;grid-template-columns:minmax(0,1fr) 105px;gap:10px}.overlay-card{display:contents}.overlay h1{font-size:22px;margin:2px 0}.briefing-label{margin:4px 0}.overlay h2{font-size:clamp(31px,9vw,45px);margin:4px 0}.overlay p{font-size:12px;margin:4px 0}.overlay button:not(.help-link){width:100%;min-width:0}.cover-display{grid-column:2;grid-row:4/span 2}.overlay.briefing .overlay-inner{display:block}.overlay.briefing .overlay-card{display:block;width:100%;max-height:82vh}.overlay.briefing p.briefing-text{max-height:34vh}}
+/* The title screen uses the original game's dark green palette; the dossier stays blue. */
+.overlay-inner{background:linear-gradient(180deg,#050b09 0%,#10261c 55%,#030807 100%);border-color:#7aa889;box-shadow:inset 2px 2px #a6cbb2,inset -3px -3px #1c392a,7px 7px 0 #000}.overlay h1{color:#d4f5d3}.overlay h1 em{color:#9ce994}.overlay h2 em{color:#9ce994}.overlay-kicker,.briefing-label,.cover-topline,.cover-display figcaption{color:#bedbc4}.rule{background:#739e7c}.overlay.briefing .overlay-inner{background:#060a20;border-color:#8298d3;box-shadow:inset 2px 2px #b4c1eb,inset -3px -3px #1b2856,7px 7px 0 #000}.overlay.briefing h2 em{color:#f4dc86}
+/* Keep the briefing controls visible while long mission text scrolls. */
+.overlay.briefing .overlay-card{display:flex;flex-direction:column;overflow:hidden}.overlay.briefing .overlay-card>*{flex-shrink:0}.overlay.briefing p.briefing-text{flex:1 1 auto;min-height:70px;max-height:none;max-width:none;overflow-y:auto}.overlay.briefing button:not(.help-link){align-self:flex-start}.overlay.briefing .overlay-meta{display:none}
+.briefing-hint{display:none}.overlay.briefing .briefing-hint{display:block;color:#d6ddff;font:9px 'Courier New',monospace;letter-spacing:.03em;margin:0 0 10px}
+/* Original PS1 title movie and compact menu; the French dossier remains separate. */
+.title-background{display:none}
+.overlay:not(.briefing){padding:0;background:#000;align-items:center;justify-content:center}
+.overlay:not(.briefing) .overlay-inner{position:relative;display:block;width:min(100vw,133.333vh);height:auto;max-height:100vh;aspect-ratio:4/3;padding:0;overflow:hidden;border:0;box-shadow:none;background:#030b05}
+.overlay:not(.briefing) .title-background{display:block;position:absolute;inset:0;width:100%;height:100%;object-fit:fill;image-rendering:pixelated}
+.overlay:not(.briefing) .overlay-inner::after{content:'';position:absolute;inset:56% 0 0;z-index:1;pointer-events:none;background:linear-gradient(transparent,rgba(0,0,0,.40) 40%,rgba(0,0,0,.72))}
+.overlay:not(.briefing) .overlay-card{display:block;position:absolute;inset:0;z-index:2;width:100%;max-width:none;pointer-events:none}
+.overlay:not(.briefing) .overlay-kicker,.overlay:not(.briefing) .rule,.overlay:not(.briefing) .briefing-label,.overlay:not(.briefing) .overlay-meta{display:none}
+.overlay:not(.briefing) .overlay-card h1{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.overlay:not(.briefing) #overlay-title{position:absolute;left:17%;bottom:17%;margin:0;color:#b7eeb1;font:700 clamp(12px,1.7vw,19px)/1.1 'Courier New',monospace;letter-spacing:.06em;text-shadow:2px 2px #000}
+.overlay:not(.briefing) #overlay-title em{color:#b7eeb1}.overlay:not(.briefing) #overlay-title br{display:none}
+.overlay:not(.briefing) #overlay-text{position:absolute;left:17%;bottom:6%;width:34%;max-width:none;max-height:9%;overflow:auto;margin:0;color:#d6ebd3;font:clamp(9px,1.15vw,13px)/1.35 'Courier New',monospace;text-shadow:1px 1px #000}
+.overlay:not(.briefing) #start,.overlay:not(.briefing) #help-brief{position:absolute;right:4%;width:36%;min-width:0;max-width:none;margin:0;padding:7px 7px 7px 24px;border:0;background:none;box-shadow:none;text-align:left;pointer-events:auto;cursor:pointer;color:#a7f878;font:900 clamp(13px,2vw,22px)/1.2 'Arial Black',Arial,sans-serif;letter-spacing:.02em;text-shadow:2px 2px #001a02,0 0 7px #38a748}
+.overlay:not(.briefing) #start{bottom:16%}.overlay:not(.briefing) #help-brief{bottom:8%;font-size:clamp(11px,1.55vw,17px);color:#8acb70}
+.overlay:not(.briefing) #start span{display:none}.overlay:not(.briefing) #start::before,.overlay:not(.briefing) #help-brief::before{content:'▶';position:absolute;left:2px;color:#d5ffaf;font-size:.7em;line-height:1.8;opacity:0}
+.overlay:not(.briefing) #start::before,.overlay:not(.briefing) #help-brief:hover::before,.overlay:not(.briefing) #help-brief:focus-visible::before{opacity:1}
+.overlay:not(.briefing) #start:hover,.overlay:not(.briefing) #help-brief:hover,.overlay:not(.briefing) #start:focus-visible,.overlay:not(.briefing) #help-brief:focus-visible{background:none;color:#e7ffd3;text-decoration:none}
+.overlay:not(.briefing) .cover-display{position:absolute;z-index:2;left:3%;bottom:4%;width:11%;max-width:100px;margin:0}.overlay:not(.briefing) .cover-topline,.overlay:not(.briefing) .cover-display figcaption{display:none}.overlay:not(.briefing) .cover-frame{padding:2px;border:1px solid #8ab284;background:#000;box-shadow:2px 2px 0 #000}
+@media(max-width:600px){.overlay:not(.briefing) .overlay-inner{width:100vw;min-height:0;aspect-ratio:4/3}.overlay:not(.briefing) #overlay-title{left:17%;bottom:19%;font-size:11px}.overlay:not(.briefing) #overlay-text{left:17%;bottom:5%;font-size:9px;line-height:1.15}.overlay:not(.briefing) #start{right:2%;bottom:16%;font-size:12px}.overlay:not(.briefing) #help-brief{right:2%;bottom:7%;font-size:10px}.overlay:not(.briefing) .cover-display{left:3%;bottom:5%;width:11%}}
+/* The first menu item uses the French sprite from the original PS1 title. */
+.overlay:not(.briefing) #start{width:31%;bottom:16%;padding:0 0 0 22px;overflow:visible}
+.overlay:not(.briefing) #start .title-start-label{display:block;position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.overlay:not(.briefing) #start .title-start-sprite{display:block;width:100%;height:auto;image-rendering:pixelated;filter:drop-shadow(1px 1px 1px #000)}
+.overlay:not(.briefing) #start::before{left:0;top:42%;line-height:1;opacity:1}
+.overlay:not(.briefing) #start:hover .title-start-sprite,.overlay:not(.briefing) #start:focus-visible .title-start-sprite{filter:brightness(1.3) drop-shadow(0 0 5px #64ff75)}
+/* The handgun indicator uses the two original PS1 interface sprites. */
+.ammo{display:flex;align-items:center;gap:10px}.weapon-icon{width:96px;height:auto;image-rendering:pixelated;filter:brightness(2) drop-shadow(1px 1px 1px #000)}
+@media(max-width:700px){.weapon-icon{width:64px}}
+.overlay:not(.briefing) #start::before{opacity:0}
+.overlay:not(.briefing) #start[data-gamepad-selected="true"]::before,.overlay:not(.briefing) #help-brief[data-gamepad-selected="true"]::before,.overlay:not(.briefing) #start:hover::before,.overlay:not(.briefing) #start:focus-visible::before{opacity:1}
+.gamepad-status{display:none}
+.overlay:not(.briefing) .gamepad-status{display:block;position:absolute;top:3%;right:3%;max-width:58%;color:#d2eed0;text-align:right;text-shadow:1px 1px #000;font:700 clamp(9px,1vw,12px)/1.3 'Courier New',monospace;pointer-events:none}
+.lock-status{position:absolute;z-index:2;left:50%;top:calc(50% + 34px);transform:translateX(-50%);color:#ffdf85;text-shadow:1px 1px 2px #000;font:700 11px 'Courier New',monospace;pointer-events:none;white-space:nowrap}.lock-status:empty{display:none}
+.overlay:not(.briefing) #start{bottom:23%}
+.overlay:not(.briefing) #continue-game{position:absolute;right:4%;bottom:14%;width:36%;min-width:0;margin:0;padding:7px 7px 7px 24px;border:0;background:none;box-shadow:none;text-align:left;pointer-events:auto;cursor:pointer;color:#a7f878;font:900 clamp(13px,2vw,22px)/1.2 'Arial Black',Arial,sans-serif;text-shadow:2px 2px #001a02,0 0 7px #38a748}
+.overlay:not(.briefing) #continue-game::before{content:'▶';position:absolute;left:2px;color:#d5ffaf;font-size:.7em;line-height:1.8;opacity:0}.overlay:not(.briefing) #continue-game[data-gamepad-selected="true"]::before,.overlay:not(.briefing) #continue-game:hover::before,.overlay:not(.briefing) #continue-game:focus-visible::before{opacity:1}
+#continue-game[hidden]{display:none!important}
+.overlay.briefing #continue-game{display:none!important}
+/* A quieter play view; mission information is available from the pause menu. */
+.mission-header,.objectives,.help-open,.controls-hint,.agent-label{display:none}
+.message{background:none;border:0;box-shadow:none;text-shadow:1px 1px 3px #000;padding:0;bottom:104px}
+.tutorial-actions{flex-wrap:wrap}#help-save-quit[hidden]{display:none!important}
+.hud-bottom{bottom:25px}.pause-dialog{width:min(510px,calc(100vw - 32px))}.pause-actions{display:grid;gap:10px;margin-top:25px}.pause-actions button{background:#243976;border:2px solid #97afe5;color:white;text-align:left;padding:13px 16px;font:700 12px 'Courier New',monospace;cursor:pointer}.pause-actions button:hover,.pause-actions button:focus-visible{background:#4561a7;outline:2px solid #f4dc86;outline-offset:2px}.pause-hint,#pause-feedback{font:11px/1.5 'Courier New',monospace;color:#c3d1f0}.reticle[data-locked="true"]{border-color:#ff725c;box-shadow:0 0 7px #ff4930}
