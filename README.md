@@ -56,7 +56,7 @@ python3 -m unittest discover -s tests -v
 for test in tests/*.cjs; do node "$test"; done
 ```
 
-See [the French PS1 behavior audit](docs/ps1-behavior-audit.md) for verified findings, current differences and outstanding questions. The [initial research](docs/french-ps1-research.md) records the earlier REA investigation.
+See [the French PS1 behavior audit](docs/ps1-behavior-audit.md) for verified findings, current differences and outstanding questions, including the cinematic inventory and REA combat investigation. The [initial research](docs/french-ps1-research.md) records the earlier REA investigation.
 
 ## Recovered PS1 Sources and PC Port
 

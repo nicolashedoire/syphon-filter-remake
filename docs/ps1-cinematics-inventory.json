@@ -1,0 +1,2519 @@
+{
+  "version": 1,
+  "disc_serial": "SCES-01911",
+  "track_format": "MODE2/2352",
+  "ffprobe_version": "9.0.2",
+  "note": "ISO extent size and raw sector byte count are distinct; candidate movie-to-mission mappings are not verified. No language inferred from filenames.",
+  "media": [
+    {
+      "disc_path": "/COMMON/BEEPSX.VB",
+      "lba": 1076,
+      "iso_directory_bytes": 5456,
+      "sector_count": 3,
+      "logical_payload_sha256": "285c195b0e76ba2bb996c045d6469441f6b08a51f7871b482f19c8767a06c5eb"
+    },
+    {
+      "disc_path": "/COMMON/BEEPSX.VH",
+      "lba": 1079,
+      "iso_directory_bytes": 6688,
+      "sector_count": 4,
+      "logical_payload_sha256": "77be4df8bc6007da9fd8dc76a165e9da468a9d1d3b4888502f0b99d1caf191d6"
+    },
+    {
+      "disc_path": "/COMMON/INGAMEF.XH",
+      "lba": 1087,
+      "iso_directory_bytes": 272,
+      "sector_count": 1,
+      "logical_payload_sha256": "953c25cfd923a01e2a9dd91c9f45e4d67b6c6aeed962c9544e88937f78cd52fd",
+      "embedded_path_ascii": "\\XA\\INGAMEF.XA;1",
+      "note": "Embedded reference observed; remaining fields not yet interpreted."
+    },
+    {
+      "disc_path": "/COMMON/TITLEF.HOG",
+      "lba": 1092,
+      "iso_directory_bytes": 63488,
+      "sector_count": 31,
+      "logical_payload_sha256": "7e3f55d1482b3c97e50d5e3696332a97b970afa1345141bccbf2e472fb53cf11"
+    },
+    {
+      "disc_path": "/CUT/CAT2.STR",
+      "lba": 144784,
+      "iso_directory_bytes": 9207808,
+      "sector_count": 4496,
+      "raw_extent_bytes": 10574592,
+      "raw_extent_sha256": "24baa4971248dbc424a56c6498e7102bb2835152e4e986051fd9087ee6c64786",
+      "raw_extent_definition": "concatenated complete 2352-byte sectors for ceil(ISO directory size/2048) sectors; includes headers and padding",
+      "invalid_mode2_sectors": 0,
+      "subheader_copy_mismatches": 0,
+      "submodes": {
+        "0x48": 3929,
+        "0x64": 561,
+        "0x00": 5,
+        "0xe4": 1
+      },
+      "audio_channel_sector_counts": {
+        "file=1,channel=1,coding=0x01": 562
+      },
+      "ffprobe_exit_code": 0,
+      "ffprobe_stderr": "",
+      "ffprobe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "mdec",
+            "codec_type": "video",
+            "width": 320,
+            "height": 160,
+            "r_frame_rate": "15/1",
+            "nb_read_frames": "449",
+            "estimated_video_duration_seconds": 29.933
+          },
+          {
+            "index": 1,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "562"
+          }
+        ],
+        "format": {
+          "format_name": "psxstr"
+        }
+      }
+    },
+    {
+      "disc_path": "/CUT/CATACOMB.STR",
+      "lba": 149280,
+      "iso_directory_bytes": 17055744,
+      "sector_count": 8328,
+      "raw_extent_bytes": 19587456,
+      "raw_extent_sha256": "42d9a6565b2aa6b19523dd976e3fccfc15a1e335d9b278d7c068864d658e114f",
+      "raw_extent_definition": "concatenated complete 2352-byte sectors for ceil(ISO directory size/2048) sectors; includes headers and padding",
+      "invalid_mode2_sectors": 0,
+      "subheader_copy_mismatches": 0,
+      "submodes": {
+        "0x48": 7280,
+        "0x64": 1040,
+        "0x00": 7,
+        "0xe4": 1
+      },
+      "audio_channel_sector_counts": {
+        "file=1,channel=1,coding=0x01": 1041
+      },
+      "ffprobe_exit_code": 0,
+      "ffprobe_stderr": "",
+      "ffprobe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "mdec",
+            "codec_type": "video",
+            "width": 320,
+            "height": 160,
+            "r_frame_rate": "15/1",
+            "nb_read_frames": "832",
+            "estimated_video_duration_seconds": 55.467
+          },
+          {
+            "index": 1,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "1041"
+          }
+        ],
+        "format": {
+          "format_name": "psxstr"
+        }
+      }
+    },
+    {
+      "disc_path": "/CUT/CHURCH2.STR",
+      "lba": 157608,
+      "iso_directory_bytes": 4620288,
+      "sector_count": 2256,
+      "raw_extent_bytes": 5306112,
+      "raw_extent_sha256": "10c656181e238ef5f3392bccdef7246dea776c50be120d15cd1328844a31dc9c",
+      "raw_extent_definition": "concatenated complete 2352-byte sectors for ceil(ISO directory size/2048) sectors; includes headers and padding",
+      "invalid_mode2_sectors": 0,
+      "subheader_copy_mismatches": 0,
+      "submodes": {
+        "0x48": 1969,
+        "0x64": 281,
+        "0x00": 5,
+        "0xe4": 1
+      },
+      "audio_channel_sector_counts": {
+        "file=1,channel=1,coding=0x01": 282
+      },
+      "ffprobe_exit_code": 0,
+      "ffprobe_stderr": "",
+      "ffprobe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "mdec",
+            "codec_type": "video",
+            "width": 320,
+            "height": 160,
+            "r_frame_rate": "15/1",
+            "nb_read_frames": "225",
+            "estimated_video_duration_seconds": 15.0
+          },
+          {
+            "index": 1,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "282"
+          }
+        ],
+        "format": {
+          "format_name": "psxstr"
+        }
+      }
+    },
+    {
+      "disc_path": "/CUT/MUSEUM.STR",
+      "lba": 159864,
+      "iso_directory_bytes": 6930432,
+      "sector_count": 3384,
+      "raw_extent_bytes": 7959168,
+      "raw_extent_sha256": "d4d3de33e6fd237c77a6802750d3b96f03c4db08a186866f94fb2c86b1ecb554",
+      "raw_extent_definition": "concatenated complete 2352-byte sectors for ceil(ISO directory size/2048) sectors; includes headers and padding",
+      "invalid_mode2_sectors": 0,
+      "subheader_copy_mismatches": 0,
+      "submodes": {
+        "0x48": 2958,
+        "0x64": 422,
+        "0x00": 3,
+        "0xe4": 1
+      },
+      "audio_channel_sector_counts": {
+        "file=1,channel=1,coding=0x01": 423
+      },
+      "ffprobe_exit_code": 0,
+      "ffprobe_stderr": "",
+      "ffprobe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "mdec",
+            "codec_type": "video",
+            "width": 320,
+            "height": 160,
+            "r_frame_rate": "15/1",
+            "nb_read_frames": "338",
+            "estimated_video_duration_seconds": 22.533
+          },
+          {
+            "index": 1,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "423"
+          }
+        ],
+        "format": {
+          "format_name": "psxstr"
+        }
+      },
+      "decoded_stream_md5": {
+        "v": {
+          "exit_code": 0,
+          "decoded_md5": "MD5=1e8b534bfd2b6eb31dd0fdf245db624d",
+          "stderr": ""
+        },
+        "a": {
+          "exit_code": 0,
+          "decoded_md5": "MD5=870f3ca5514b11dc3f8c7118942867b4",
+          "stderr": ""
+        }
+      }
+    },
+    {
+      "disc_path": "/CUT/MUSEUM1.STR",
+      "lba": 163248,
+      "iso_directory_bytes": 6930432,
+      "sector_count": 3384,
+      "raw_extent_bytes": 7959168,
+      "raw_extent_sha256": "16a02c401466569e26072b1d2652a01c704acc175289a463f38c0bcd0e6e3ae7",
+      "raw_extent_definition": "concatenated complete 2352-byte sectors for ceil(ISO directory size/2048) sectors; includes headers and padding",
+      "invalid_mode2_sectors": 0,
+      "subheader_copy_mismatches": 0,
+      "submodes": {
+        "0x48": 2958,
+        "0x64": 422,
+        "0x00": 3,
+        "0xe4": 1
+      },
+      "audio_channel_sector_counts": {
+        "file=1,channel=1,coding=0x01": 423
+      },
+      "ffprobe_exit_code": 0,
+      "ffprobe_stderr": "",
+      "ffprobe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "mdec",
+            "codec_type": "video",
+            "width": 320,
+            "height": 160,
+            "r_frame_rate": "15/1",
+            "nb_read_frames": "338",
+            "estimated_video_duration_seconds": 22.533
+          },
+          {
+            "index": 1,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "423"
+          }
+        ],
+        "format": {
+          "format_name": "psxstr"
+        }
+      },
+      "decoded_stream_md5": {
+        "v": {
+          "exit_code": 0,
+          "decoded_md5": "MD5=1e8b534bfd2b6eb31dd0fdf245db624d",
+          "stderr": ""
+        },
+        "a": {
+          "exit_code": 0,
+          "decoded_md5": "MD5=9f9143aea3e79e2985147faee323976e",
+          "stderr": ""
+        }
+      }
+    },
+    {
+      "disc_path": "/CUT/MUSEUM2.STR",
+      "lba": 166632,
+      "iso_directory_bytes": 1441792,
+      "sector_count": 704,
+      "raw_extent_bytes": 1655808,
+      "raw_extent_sha256": "b838e43595a4afd7c41a3508e622faf06c98ea3231cf1f0fd9d56dbcd7599f69",
+      "raw_extent_definition": "concatenated complete 2352-byte sectors for ceil(ISO directory size/2048) sectors; includes headers and padding",
+      "invalid_mode2_sectors": 0,
+      "subheader_copy_mismatches": 0,
+      "submodes": {
+        "0x48": 613,
+        "0x64": 87,
+        "0x00": 3,
+        "0xe4": 1
+      },
+      "audio_channel_sector_counts": {
+        "file=1,channel=1,coding=0x01": 88
+      },
+      "ffprobe_exit_code": 0,
+      "ffprobe_stderr": "",
+      "ffprobe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "mdec",
+            "codec_type": "video",
+            "width": 320,
+            "height": 160,
+            "r_frame_rate": "15/1",
+            "nb_read_frames": "70",
+            "estimated_video_duration_seconds": 4.667
+          },
+          {
+            "index": 1,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "88"
+          }
+        ],
+        "format": {
+          "format_name": "psxstr"
+        }
+      }
+    },
+    {
+      "disc_path": "/CUT/SILO.STR",
+      "lba": 167336,
+      "iso_directory_bytes": 12746752,
+      "sector_count": 6224,
+      "raw_extent_bytes": 14638848,
+      "raw_extent_sha256": "c639f71b1207dd0628546a08f7c8973ee18ae3d87a946cf733e17756d2e43747",
+      "raw_extent_definition": "concatenated complete 2352-byte sectors for ceil(ISO directory size/2048) sectors; includes headers and padding",
+      "invalid_mode2_sectors": 0,
+      "subheader_copy_mismatches": 0,
+      "submodes": {
+        "0x48": 5443,
+        "0x64": 777,
+        "0x00": 3,
+        "0xe4": 1
+      },
+      "audio_channel_sector_counts": {
+        "file=1,channel=1,coding=0x01": 778
+      },
+      "ffprobe_exit_code": 0,
+      "ffprobe_stderr": "",
+      "ffprobe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "mdec",
+            "codec_type": "video",
+            "width": 320,
+            "height": 160,
+            "r_frame_rate": "15/1",
+            "nb_read_frames": "622",
+            "estimated_video_duration_seconds": 41.467
+          },
+          {
+            "index": 1,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "778"
+          }
+        ],
+        "format": {
+          "format_name": "psxstr"
+        }
+      }
+    },
+    {
+      "disc_path": "/CUT/SILO2.STR",
+      "lba": 174081,
+      "iso_directory_bytes": 6275072,
+      "sector_count": 3064,
+      "raw_extent_bytes": 7206528,
+      "raw_extent_sha256": "2ad7c09973bacb96e46f9f9ae41e52ce0fea97234d41b8f376941c6656f89bef",
+      "raw_extent_definition": "concatenated complete 2352-byte sectors for ceil(ISO directory size/2048) sectors; includes headers and padding",
+      "invalid_mode2_sectors": 0,
+      "subheader_copy_mismatches": 0,
+      "submodes": {
+        "0x48": 2678,
+        "0x64": 382,
+        "0x00": 3,
+        "0xe4": 1
+      },
+      "audio_channel_sector_counts": {
+        "file=1,channel=1,coding=0x01": 383
+      },
+      "ffprobe_exit_code": 0,
+      "ffprobe_stderr": "",
+      "ffprobe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "mdec",
+            "codec_type": "video",
+            "width": 320,
+            "height": 160,
+            "r_frame_rate": "15/1",
+            "nb_read_frames": "306",
+            "estimated_video_duration_seconds": 20.4
+          },
+          {
+            "index": 1,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "383"
+          }
+        ],
+        "format": {
+          "format_name": "psxstr"
+        }
+      }
+    },
+    {
+      "disc_path": "/CUT/WHOUSE.STR",
+      "lba": 177145,
+      "iso_directory_bytes": 5718016,
+      "sector_count": 2792,
+      "raw_extent_bytes": 6566784,
+      "raw_extent_sha256": "1006135c9cdfafb0513f1d4e03704558a7601d69c8c71829b71e34a849131546",
+      "raw_extent_definition": "concatenated complete 2352-byte sectors for ceil(ISO directory size/2048) sectors; includes headers and padding",
+      "invalid_mode2_sectors": 0,
+      "subheader_copy_mismatches": 0,
+      "submodes": {
+        "0x48": 2442,
+        "0x64": 348,
+        "0x00": 1,
+        "0xe4": 1
+      },
+      "audio_channel_sector_counts": {
+        "file=1,channel=1,coding=0x01": 349
+      },
+      "ffprobe_exit_code": 0,
+      "ffprobe_stderr": "",
+      "ffprobe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "mdec",
+            "codec_type": "video",
+            "width": 320,
+            "height": 160,
+            "r_frame_rate": "15/1",
+            "nb_read_frames": "279",
+            "estimated_video_duration_seconds": 18.6
+          },
+          {
+            "index": 1,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "349"
+          }
+        ],
+        "format": {
+          "format_name": "psxstr"
+        }
+      }
+    },
+    {
+      "disc_path": "/EOL/BASE2.STR",
+      "lba": 180459,
+      "iso_directory_bytes": 2162688,
+      "sector_count": 1056,
+      "raw_extent_bytes": 2483712,
+      "raw_extent_sha256": "5cef3325ebd723c82f0ea03c4435a21d1e8672a61810367887bd697be39dda20",
+      "raw_extent_definition": "concatenated complete 2352-byte sectors for ceil(ISO directory size/2048) sectors; includes headers and padding",
+      "invalid_mode2_sectors": 0,
+      "subheader_copy_mismatches": 0,
+      "submodes": {
+        "0x48": 919,
+        "0x64": 131,
+        "0x00": 5,
+        "0xe4": 1
+      },
+      "audio_channel_sector_counts": {
+        "file=1,channel=1,coding=0x01": 132
+      },
+      "ffprobe_exit_code": 0,
+      "ffprobe_stderr": "",
+      "ffprobe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "mdec",
+            "codec_type": "video",
+            "width": 320,
+            "height": 160,
+            "r_frame_rate": "15/1",
+            "nb_read_frames": "105",
+            "estimated_video_duration_seconds": 7.0
+          },
+          {
+            "index": 1,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "132"
+          }
+        ],
+        "format": {
+          "format_name": "psxstr"
+        }
+      }
+    },
+    {
+      "disc_path": "/EOL/BASEEXT2.STR",
+      "lba": 181515,
+      "iso_directory_bytes": 2162688,
+      "sector_count": 1056,
+      "raw_extent_bytes": 2483712,
+      "raw_extent_sha256": "1ae832e8d3c8c3b906b0fbf883826f3111342f685e8b74a3864f6a3dcfd8f935",
+      "raw_extent_definition": "concatenated complete 2352-byte sectors for ceil(ISO directory size/2048) sectors; includes headers and padding",
+      "invalid_mode2_sectors": 0,
+      "subheader_copy_mismatches": 0,
+      "submodes": {
+        "0x48": 919,
+        "0x64": 131,
+        "0x00": 5,
+        "0xe4": 1
+      },
+      "audio_channel_sector_counts": {
+        "file=1,channel=1,coding=0x01": 132
+      },
+      "ffprobe_exit_code": 0,
+      "ffprobe_stderr": "",
+      "ffprobe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "mdec",
+            "codec_type": "video",
+            "width": 320,
+            "height": 160,
+            "r_frame_rate": "15/1",
+            "nb_read_frames": "105",
+            "estimated_video_duration_seconds": 7.0
+          },
+          {
+            "index": 1,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "132"
+          }
+        ],
+        "format": {
+          "format_name": "psxstr"
+        }
+      }
+    },
+    {
+      "disc_path": "/EOL/CATACOMB.STR",
+      "lba": 182571,
+      "iso_directory_bytes": 5292032,
+      "sector_count": 2584,
+      "raw_extent_bytes": 6077568,
+      "raw_extent_sha256": "b50313f6b31ed89d24c0b6981e366dc7d49788dfc66bcd7f374f4eebdf9681d2",
+      "raw_extent_definition": "concatenated complete 2352-byte sectors for ceil(ISO directory size/2048) sectors; includes headers and padding",
+      "invalid_mode2_sectors": 0,
+      "subheader_copy_mismatches": 0,
+      "submodes": {
+        "0x48": 2258,
+        "0x64": 322,
+        "0x00": 3,
+        "0xe4": 1
+      },
+      "audio_channel_sector_counts": {
+        "file=1,channel=1,coding=0x01": 323
+      },
+      "ffprobe_exit_code": 0,
+      "ffprobe_stderr": "",
+      "ffprobe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "mdec",
+            "codec_type": "video",
+            "width": 320,
+            "height": 160,
+            "r_frame_rate": "15/1",
+            "nb_read_frames": "258",
+            "estimated_video_duration_seconds": 17.2
+          },
+          {
+            "index": 1,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "323"
+          }
+        ],
+        "format": {
+          "format_name": "psxstr"
+        }
+      }
+    },
+    {
+      "disc_path": "/EOL/CAVE.STR",
+      "lba": 185155,
+      "iso_directory_bytes": 3014656,
+      "sector_count": 1472,
+      "raw_extent_bytes": 3462144,
+      "raw_extent_sha256": "d1fd5aec1e7810b1b180dfa3fa76a41d90af0426c270f0958e544d30f1735271",
+      "raw_extent_definition": "concatenated complete 2352-byte sectors for ceil(ISO directory size/2048) sectors; includes headers and padding",
+      "invalid_mode2_sectors": 0,
+      "subheader_copy_mismatches": 0,
+      "submodes": {
+        "0x48": 1287,
+        "0x64": 183,
+        "0x00": 1,
+        "0xe4": 1
+      },
+      "audio_channel_sector_counts": {
+        "file=1,channel=1,coding=0x01": 184
+      },
+      "ffprobe_exit_code": 0,
+      "ffprobe_stderr": "",
+      "ffprobe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "mdec",
+            "codec_type": "video",
+            "width": 320,
+            "height": 160,
+            "r_frame_rate": "15/1",
+            "nb_read_frames": "147",
+            "estimated_video_duration_seconds": 9.8
+          },
+          {
+            "index": 1,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "184"
+          }
+        ],
+        "format": {
+          "format_name": "psxstr"
+        }
+      }
+    },
+    {
+      "disc_path": "/EOL/CAVE2.STR",
+      "lba": 186627,
+      "iso_directory_bytes": 4112384,
+      "sector_count": 2008,
+      "raw_extent_bytes": 4722816,
+      "raw_extent_sha256": "9643fb6cf0fc6bd98c19aef0c762add977bf8cbc989ef2bdd1a90690f3d303f6",
+      "raw_extent_definition": "concatenated complete 2352-byte sectors for ceil(ISO directory size/2048) sectors; includes headers and padding",
+      "invalid_mode2_sectors": 0,
+      "subheader_copy_mismatches": 0,
+      "submodes": {
+        "0x48": 1750,
+        "0x64": 250,
+        "0x00": 7,
+        "0xe4": 1
+      },
+      "audio_channel_sector_counts": {
+        "file=1,channel=1,coding=0x01": 251
+      },
+      "ffprobe_exit_code": 0,
+      "ffprobe_stderr": "",
+      "ffprobe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "mdec",
+            "codec_type": "video",
+            "width": 320,
+            "height": 160,
+            "r_frame_rate": "15/1",
+            "nb_read_frames": "200",
+            "estimated_video_duration_seconds": 13.333
+          },
+          {
+            "index": 1,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "251"
+          }
+        ],
+        "format": {
+          "format_name": "psxstr"
+        }
+      }
+    },
+    {
+      "disc_path": "/EOL/CHOPPER.STR",
+      "lba": 188635,
+      "iso_directory_bytes": 4243456,
+      "sector_count": 2072,
+      "raw_extent_bytes": 4873344,
+      "raw_extent_sha256": "529766c714609d0fc1c2204689968c4bcd11f53ed61d4cc896feef1fb765a343",
+      "raw_extent_definition": "concatenated complete 2352-byte sectors for ceil(ISO directory size/2048) sectors; includes headers and padding",
+      "invalid_mode2_sectors": 0,
+      "subheader_copy_mismatches": 0,
+      "submodes": {
+        "0x48": 1812,
+        "0x64": 258,
+        "0x00": 1,
+        "0xe4": 1
+      },
+      "audio_channel_sector_counts": {
+        "file=1,channel=1,coding=0x01": 259
+      },
+      "ffprobe_exit_code": 0,
+      "ffprobe_stderr": "",
+      "ffprobe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "mdec",
+            "codec_type": "video",
+            "width": 320,
+            "height": 160,
+            "r_frame_rate": "15/1",
+            "nb_read_frames": "207",
+            "estimated_video_duration_seconds": 13.8
+          },
+          {
+            "index": 1,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "259"
+          }
+        ],
+        "format": {
+          "format_name": "psxstr"
+        }
+      }
+    },
+    {
+      "disc_path": "/EOL/CHURCH.STR",
+      "lba": 190707,
+      "iso_directory_bytes": 1933312,
+      "sector_count": 944,
+      "raw_extent_bytes": 2220288,
+      "raw_extent_sha256": "fe85169caecec0e5060af44b1bad2978f596793d82b6cee5da6c5ccabcc11798",
+      "raw_extent_definition": "concatenated complete 2352-byte sectors for ceil(ISO directory size/2048) sectors; includes headers and padding",
+      "invalid_mode2_sectors": 0,
+      "subheader_copy_mismatches": 0,
+      "submodes": {
+        "0x48": 823,
+        "0x64": 117,
+        "0x00": 3,
+        "0xe4": 1
+      },
+      "audio_channel_sector_counts": {
+        "file=1,channel=1,coding=0x01": 118
+      },
+      "ffprobe_exit_code": 0,
+      "ffprobe_stderr": "",
+      "ffprobe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "mdec",
+            "codec_type": "video",
+            "width": 320,
+            "height": 160,
+            "r_frame_rate": "15/1",
+            "nb_read_frames": "94",
+            "estimated_video_duration_seconds": 6.267
+          },
+          {
+            "index": 1,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "118"
+          }
+        ],
+        "format": {
+          "format_name": "psxstr"
+        }
+      }
+    },
+    {
+      "disc_path": "/EOL/INWHOUSE.STR",
+      "lba": 191651,
+      "iso_directory_bytes": 2506752,
+      "sector_count": 1224,
+      "raw_extent_bytes": 2878848,
+      "raw_extent_sha256": "1aa7217120c1b0f320536d61c6f6c34ebf41e96d4d685be5221104eab557f4fc",
+      "raw_extent_definition": "concatenated complete 2352-byte sectors for ceil(ISO directory size/2048) sectors; includes headers and padding",
+      "invalid_mode2_sectors": 0,
+      "subheader_copy_mismatches": 0,
+      "submodes": {
+        "0x48": 1068,
+        "0x64": 152,
+        "0x00": 3,
+        "0xe4": 1
+      },
+      "audio_channel_sector_counts": {
+        "file=1,channel=1,coding=0x01": 153
+      },
+      "ffprobe_exit_code": 0,
+      "ffprobe_stderr": "",
+      "ffprobe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "mdec",
+            "codec_type": "video",
+            "width": 320,
+            "height": 160,
+            "r_frame_rate": "15/1",
+            "nb_read_frames": "122",
+            "estimated_video_duration_seconds": 8.133
+          },
+          {
+            "index": 1,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "153"
+          }
+        ],
+        "format": {
+          "format_name": "psxstr"
+        }
+      }
+    },
+    {
+      "disc_path": "/EOL/MUSEUM.STR",
+      "lba": 193396,
+      "iso_directory_bytes": 4734976,
+      "sector_count": 2312,
+      "raw_extent_bytes": 5437824,
+      "raw_extent_sha256": "0cf33dc9b43cbe1cfc137aa91a152b36a4d8c969124e92dc1c2d2e709843f65a",
+      "raw_extent_definition": "concatenated complete 2352-byte sectors for ceil(ISO directory size/2048) sectors; includes headers and padding",
+      "invalid_mode2_sectors": 0,
+      "subheader_copy_mismatches": 0,
+      "submodes": {
+        "0x48": 2022,
+        "0x64": 288,
+        "0x00": 1,
+        "0xe4": 1
+      },
+      "audio_channel_sector_counts": {
+        "file=1,channel=1,coding=0x01": 289
+      },
+      "ffprobe_exit_code": 0,
+      "ffprobe_stderr": "",
+      "ffprobe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "mdec",
+            "codec_type": "video",
+            "width": 320,
+            "height": 160,
+            "r_frame_rate": "15/1",
+            "nb_read_frames": "231",
+            "estimated_video_duration_seconds": 15.4
+          },
+          {
+            "index": 1,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "289"
+          }
+        ],
+        "format": {
+          "format_name": "psxstr"
+        }
+      }
+    },
+    {
+      "disc_path": "/EOL/PARK2.STR",
+      "lba": 195708,
+      "iso_directory_bytes": 3670016,
+      "sector_count": 1792,
+      "raw_extent_bytes": 4214784,
+      "raw_extent_sha256": "5d609a52561b67c0cea868ed350454324ad25f7cfdb2310ea2100a74675e278f",
+      "raw_extent_definition": "concatenated complete 2352-byte sectors for ceil(ISO directory size/2048) sectors; includes headers and padding",
+      "invalid_mode2_sectors": 0,
+      "subheader_copy_mismatches": 0,
+      "submodes": {
+        "0x48": 1567,
+        "0x64": 223,
+        "0x00": 1,
+        "0xe4": 1
+      },
+      "audio_channel_sector_counts": {
+        "file=1,channel=1,coding=0x01": 224
+      },
+      "ffprobe_exit_code": 0,
+      "ffprobe_stderr": "",
+      "ffprobe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "mdec",
+            "codec_type": "video",
+            "width": 320,
+            "height": 160,
+            "r_frame_rate": "15/1",
+            "nb_read_frames": "179",
+            "estimated_video_duration_seconds": 11.933
+          },
+          {
+            "index": 1,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "224"
+          }
+        ],
+        "format": {
+          "format_name": "psxstr"
+        }
+      }
+    },
+    {
+      "disc_path": "/EOL/SILO.STR",
+      "lba": 197500,
+      "iso_directory_bytes": 54902784,
+      "sector_count": 26808,
+      "raw_extent_bytes": 63052416,
+      "raw_extent_sha256": "21089585ef30febdf89f962ffd88e1c5811a132227eb74245c80e26af539bc59",
+      "raw_extent_definition": "concatenated complete 2352-byte sectors for ceil(ISO directory size/2048) sectors; includes headers and padding",
+      "invalid_mode2_sectors": 0,
+      "subheader_copy_mismatches": 0,
+      "submodes": {
+        "0x48": 23450,
+        "0x64": 3350,
+        "0x00": 7,
+        "0xe4": 1
+      },
+      "audio_channel_sector_counts": {
+        "file=1,channel=1,coding=0x01": 3351
+      },
+      "ffprobe_exit_code": 0,
+      "ffprobe_stderr": "",
+      "ffprobe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "mdec",
+            "codec_type": "video",
+            "width": 320,
+            "height": 160,
+            "r_frame_rate": "15/1",
+            "nb_read_frames": "2680",
+            "estimated_video_duration_seconds": 178.667
+          },
+          {
+            "index": 1,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "3351"
+          }
+        ],
+        "format": {
+          "format_name": "psxstr"
+        }
+      }
+    },
+    {
+      "disc_path": "/EOL/SUBWAY.STR",
+      "lba": 224308,
+      "iso_directory_bytes": 5636096,
+      "sector_count": 2752,
+      "raw_extent_bytes": 6472704,
+      "raw_extent_sha256": "21f7a4074bb4e4f3b859c4722288f6de7f26debe5a8f20256b21b44ebb1d9b5d",
+      "raw_extent_definition": "concatenated complete 2352-byte sectors for ceil(ISO directory size/2048) sectors; includes headers and padding",
+      "invalid_mode2_sectors": 0,
+      "subheader_copy_mismatches": 0,
+      "submodes": {
+        "0x48": 2407,
+        "0x64": 343,
+        "0x00": 1,
+        "0xe4": 1
+      },
+      "audio_channel_sector_counts": {
+        "file=1,channel=1,coding=0x01": 344
+      },
+      "ffprobe_exit_code": 0,
+      "ffprobe_stderr": "",
+      "ffprobe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "mdec",
+            "codec_type": "video",
+            "width": 320,
+            "height": 160,
+            "r_frame_rate": "15/1",
+            "nb_read_frames": "275",
+            "estimated_video_duration_seconds": 18.333
+          },
+          {
+            "index": 1,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "344"
+          }
+        ],
+        "format": {
+          "format_name": "psxstr"
+        }
+      }
+    },
+    {
+      "disc_path": "/EOL/SUBWAY2.STR",
+      "lba": 227581,
+      "iso_directory_bytes": 1687552,
+      "sector_count": 824,
+      "raw_extent_bytes": 1938048,
+      "raw_extent_sha256": "e3e10ad9392d4805345bb265e4f425303e9af7c374b50586a50d3aa9b820ba8c",
+      "raw_extent_definition": "concatenated complete 2352-byte sectors for ceil(ISO directory size/2048) sectors; includes headers and padding",
+      "invalid_mode2_sectors": 0,
+      "subheader_copy_mismatches": 0,
+      "submodes": {
+        "0x48": 718,
+        "0x64": 102,
+        "0x00": 3,
+        "0xe4": 1
+      },
+      "audio_channel_sector_counts": {
+        "file=1,channel=1,coding=0x01": 103
+      },
+      "ffprobe_exit_code": 0,
+      "ffprobe_stderr": "",
+      "ffprobe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "mdec",
+            "codec_type": "video",
+            "width": 320,
+            "height": 160,
+            "r_frame_rate": "15/1",
+            "nb_read_frames": "82",
+            "estimated_video_duration_seconds": 5.467
+          },
+          {
+            "index": 1,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "103"
+          }
+        ],
+        "format": {
+          "format_name": "psxstr"
+        }
+      }
+    },
+    {
+      "disc_path": "/EOL/SUBWAY3.STR",
+      "lba": 228405,
+      "iso_directory_bytes": 1753088,
+      "sector_count": 856,
+      "raw_extent_bytes": 2013312,
+      "raw_extent_sha256": "7b7b1aa7348870cf42b1cfa3e0c54ec717e1496f6eb0a91a20a40168af60a893",
+      "raw_extent_definition": "concatenated complete 2352-byte sectors for ceil(ISO directory size/2048) sectors; includes headers and padding",
+      "invalid_mode2_sectors": 0,
+      "subheader_copy_mismatches": 0,
+      "submodes": {
+        "0x48": 735,
+        "0x64": 106,
+        "0x00": 14,
+        "0xe4": 1
+      },
+      "audio_channel_sector_counts": {
+        "file=1,channel=1,coding=0x01": 107
+      },
+      "ffprobe_exit_code": 0,
+      "ffprobe_stderr": "",
+      "ffprobe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "mdec",
+            "codec_type": "video",
+            "width": 320,
+            "height": 160,
+            "r_frame_rate": "15/1",
+            "nb_read_frames": "84",
+            "estimated_video_duration_seconds": 5.6
+          },
+          {
+            "index": 1,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "107"
+          }
+        ],
+        "format": {
+          "format_name": "psxstr"
+        }
+      }
+    },
+    {
+      "disc_path": "/EOL/WHOUSE2.STR",
+      "lba": 229261,
+      "iso_directory_bytes": 1490944,
+      "sector_count": 728,
+      "raw_extent_bytes": 1712256,
+      "raw_extent_sha256": "3f047260f0d57c0bc6cada1565a0b689312c735affc60cdfe6e7954faf337173",
+      "raw_extent_definition": "concatenated complete 2352-byte sectors for ceil(ISO directory size/2048) sectors; includes headers and padding",
+      "invalid_mode2_sectors": 0,
+      "subheader_copy_mismatches": 0,
+      "submodes": {
+        "0x48": 630,
+        "0x64": 90,
+        "0x00": 7,
+        "0xe4": 1
+      },
+      "audio_channel_sector_counts": {
+        "file=1,channel=1,coding=0x01": 91
+      },
+      "ffprobe_exit_code": 0,
+      "ffprobe_stderr": "",
+      "ffprobe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "mdec",
+            "codec_type": "video",
+            "width": 320,
+            "height": 160,
+            "r_frame_rate": "15/1",
+            "nb_read_frames": "72",
+            "estimated_video_duration_seconds": 4.8
+          },
+          {
+            "index": 1,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "91"
+          }
+        ],
+        "format": {
+          "format_name": "psxstr"
+        }
+      }
+    },
+    {
+      "disc_path": "/SOL/989LOGO.STR",
+      "lba": 36127,
+      "iso_directory_bytes": 1638400,
+      "sector_count": 800,
+      "raw_extent_bytes": 1881600,
+      "raw_extent_sha256": "630e9bd2afe0dc54988637de853f2b874b4a1707d13eaf750fdd5ffb78e2d6d8",
+      "raw_extent_definition": "concatenated complete 2352-byte sectors for ceil(ISO directory size/2048) sectors; includes headers and padding",
+      "invalid_mode2_sectors": 0,
+      "subheader_copy_mismatches": 0,
+      "submodes": {
+        "0x48": 700,
+        "0x64": 99,
+        "0xe4": 1
+      },
+      "audio_channel_sector_counts": {
+        "file=1,channel=1,coding=0x01": 100
+      },
+      "ffprobe_exit_code": 0,
+      "ffprobe_stderr": "",
+      "ffprobe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "mdec",
+            "codec_type": "video",
+            "width": 320,
+            "height": 240,
+            "r_frame_rate": "15/1",
+            "nb_read_frames": "80",
+            "estimated_video_duration_seconds": 5.333
+          },
+          {
+            "index": 1,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "100"
+          }
+        ],
+        "format": {
+          "format_name": "psxstr"
+        }
+      }
+    },
+    {
+      "disc_path": "/SOL/BASEEXT.STR",
+      "lba": 37448,
+      "iso_directory_bytes": 38928384,
+      "sector_count": 19008,
+      "raw_extent_bytes": 44706816,
+      "raw_extent_sha256": "73365f6e903b6d9202cfe39e68e1ada17968afc55d3096802ec5718462a7a313",
+      "raw_extent_definition": "concatenated complete 2352-byte sectors for ceil(ISO directory size/2048) sectors; includes headers and padding",
+      "invalid_mode2_sectors": 0,
+      "subheader_copy_mismatches": 0,
+      "submodes": {
+        "0x48": 16625,
+        "0x64": 2375,
+        "0x00": 7,
+        "0xe4": 1
+      },
+      "audio_channel_sector_counts": {
+        "file=1,channel=1,coding=0x01": 2376
+      },
+      "ffprobe_exit_code": 0,
+      "ffprobe_stderr": "",
+      "ffprobe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "mdec",
+            "codec_type": "video",
+            "width": 320,
+            "height": 160,
+            "r_frame_rate": "15/1",
+            "nb_read_frames": "1900",
+            "estimated_video_duration_seconds": 126.667
+          },
+          {
+            "index": 1,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "2376"
+          }
+        ],
+        "format": {
+          "format_name": "psxstr"
+        }
+      }
+    },
+    {
+      "disc_path": "/SOL/CATACOMB.STR",
+      "lba": 56456,
+      "iso_directory_bytes": 2359296,
+      "sector_count": 1152,
+      "raw_extent_bytes": 2709504,
+      "raw_extent_sha256": "788be200191928875abd00337a40ebb9d2c4bca0b43f495ae92f6e303bb62a52",
+      "raw_extent_definition": "concatenated complete 2352-byte sectors for ceil(ISO directory size/2048) sectors; includes headers and padding",
+      "invalid_mode2_sectors": 0,
+      "subheader_copy_mismatches": 0,
+      "submodes": {
+        "0x48": 1007,
+        "0x64": 143,
+        "0x00": 1,
+        "0xe4": 1
+      },
+      "audio_channel_sector_counts": {
+        "file=1,channel=1,coding=0x01": 144
+      },
+      "ffprobe_exit_code": 0,
+      "ffprobe_stderr": "",
+      "ffprobe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "mdec",
+            "codec_type": "video",
+            "width": 320,
+            "height": 160,
+            "r_frame_rate": "15/1",
+            "nb_read_frames": "115",
+            "estimated_video_duration_seconds": 7.667
+          },
+          {
+            "index": 1,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "144"
+          }
+        ],
+        "format": {
+          "format_name": "psxstr"
+        }
+      }
+    },
+    {
+      "disc_path": "/SOL/CHOPPER.STR",
+      "lba": 57608,
+      "iso_directory_bytes": 3309568,
+      "sector_count": 1616,
+      "raw_extent_bytes": 3800832,
+      "raw_extent_sha256": "18ffbd9c6560eae3e154e2e08fca1aa39e66b932dad17247e535f27d24c4d134",
+      "raw_extent_definition": "concatenated complete 2352-byte sectors for ceil(ISO directory size/2048) sectors; includes headers and padding",
+      "invalid_mode2_sectors": 0,
+      "subheader_copy_mismatches": 0,
+      "submodes": {
+        "0x48": 1409,
+        "0x64": 201,
+        "0x00": 5,
+        "0xe4": 1
+      },
+      "audio_channel_sector_counts": {
+        "file=1,channel=1,coding=0x01": 202
+      },
+      "ffprobe_exit_code": 0,
+      "ffprobe_stderr": "",
+      "ffprobe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "mdec",
+            "codec_type": "video",
+            "width": 320,
+            "height": 160,
+            "r_frame_rate": "15/1",
+            "nb_read_frames": "161",
+            "estimated_video_duration_seconds": 10.733
+          },
+          {
+            "index": 1,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "202"
+          }
+        ],
+        "format": {
+          "format_name": "psxstr"
+        }
+      }
+    },
+    {
+      "disc_path": "/SOL/CHURCH.STR",
+      "lba": 59224,
+      "iso_directory_bytes": 30670848,
+      "sector_count": 14976,
+      "raw_extent_bytes": 35223552,
+      "raw_extent_sha256": "4a5dd33bc3f93fbd413c9ddd239e5b4ffd1839a0ec6f11bfe5ead3f087a25d86",
+      "raw_extent_definition": "concatenated complete 2352-byte sectors for ceil(ISO directory size/2048) sectors; includes headers and padding",
+      "invalid_mode2_sectors": 0,
+      "subheader_copy_mismatches": 0,
+      "submodes": {
+        "0x48": 13099,
+        "0x64": 1871,
+        "0x00": 5,
+        "0xe4": 1
+      },
+      "audio_channel_sector_counts": {
+        "file=1,channel=1,coding=0x01": 1872
+      },
+      "ffprobe_exit_code": 0,
+      "ffprobe_stderr": "",
+      "ffprobe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "mdec",
+            "codec_type": "video",
+            "width": 320,
+            "height": 160,
+            "r_frame_rate": "15/1",
+            "nb_read_frames": "1497",
+            "estimated_video_duration_seconds": 99.8
+          },
+          {
+            "index": 1,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "1872"
+          }
+        ],
+        "format": {
+          "format_name": "psxstr"
+        }
+      }
+    },
+    {
+      "disc_path": "/SOL/EIDETIC.STR",
+      "lba": 74200,
+      "iso_directory_bytes": 1032192,
+      "sector_count": 504,
+      "raw_extent_bytes": 1185408,
+      "raw_extent_sha256": "252e5a0b8fb12a0ee9112d78f81ec535a88aa1a73133cb0731a544a473bd0ef4",
+      "raw_extent_definition": "concatenated complete 2352-byte sectors for ceil(ISO directory size/2048) sectors; includes headers and padding",
+      "invalid_mode2_sectors": 0,
+      "subheader_copy_mismatches": 0,
+      "submodes": {
+        "0x48": 438,
+        "0x64": 62,
+        "0x00": 3,
+        "0xe4": 1
+      },
+      "audio_channel_sector_counts": {
+        "file=1,channel=1,coding=0x01": 63
+      },
+      "ffprobe_exit_code": 0,
+      "ffprobe_stderr": "",
+      "ffprobe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "mdec",
+            "codec_type": "video",
+            "width": 320,
+            "height": 240,
+            "r_frame_rate": "15/1",
+            "nb_read_frames": "50",
+            "estimated_video_duration_seconds": 3.333
+          },
+          {
+            "index": 1,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "63"
+          }
+        ],
+        "format": {
+          "format_name": "psxstr"
+        }
+      }
+    },
+    {
+      "disc_path": "/SOL/INTRO.STR",
+      "lba": 74704,
+      "iso_directory_bytes": 32014336,
+      "sector_count": 15632,
+      "raw_extent_bytes": 36766464,
+      "raw_extent_sha256": "4bcf91c88e5e8d05ab9591ec0c7486f3ada5bf9912eb7edafa8e76a8306ba321",
+      "raw_extent_definition": "concatenated complete 2352-byte sectors for ceil(ISO directory size/2048) sectors; includes headers and padding",
+      "invalid_mode2_sectors": 0,
+      "subheader_copy_mismatches": 0,
+      "submodes": {
+        "0x48": 13677,
+        "0x64": 1953,
+        "0x00": 1,
+        "0xe4": 1
+      },
+      "audio_channel_sector_counts": {
+        "file=1,channel=1,coding=0x01": 1954
+      },
+      "ffprobe_exit_code": 0,
+      "ffprobe_stderr": "",
+      "ffprobe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "mdec",
+            "codec_type": "video",
+            "width": 320,
+            "height": 160,
+            "r_frame_rate": "15/1",
+            "nb_read_frames": "1563",
+            "estimated_video_duration_seconds": 104.2
+          },
+          {
+            "index": 1,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "1954"
+          }
+        ],
+        "format": {
+          "format_name": "psxstr"
+        }
+      }
+    },
+    {
+      "disc_path": "/SOL/MUSEUM.STR",
+      "lba": 90857,
+      "iso_directory_bytes": 27328512,
+      "sector_count": 13344,
+      "raw_extent_bytes": 31385088,
+      "raw_extent_sha256": "5f021272f8d9749d97b959dffa070f21aaca31a4b2184df79272c10b8ef0b915",
+      "raw_extent_definition": "concatenated complete 2352-byte sectors for ceil(ISO directory size/2048) sectors; includes headers and padding",
+      "invalid_mode2_sectors": 0,
+      "subheader_copy_mismatches": 0,
+      "submodes": {
+        "0x48": 11673,
+        "0x64": 1667,
+        "0x00": 3,
+        "0xe4": 1
+      },
+      "audio_channel_sector_counts": {
+        "file=1,channel=1,coding=0x01": 1668
+      },
+      "ffprobe_exit_code": 0,
+      "ffprobe_stderr": "",
+      "ffprobe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "mdec",
+            "codec_type": "video",
+            "width": 320,
+            "height": 160,
+            "r_frame_rate": "15/1",
+            "nb_read_frames": "1334",
+            "estimated_video_duration_seconds": 88.933
+          },
+          {
+            "index": 1,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "1668"
+          }
+        ],
+        "format": {
+          "format_name": "psxstr"
+        }
+      }
+    },
+    {
+      "disc_path": "/SOL/PARK.STR",
+      "lba": 104201,
+      "iso_directory_bytes": 15958016,
+      "sector_count": 7792,
+      "raw_extent_bytes": 18326784,
+      "raw_extent_sha256": "34c701a37448370fade8aa8114f56649f9912e3a844a9c6dfc7580efd52f000f",
+      "raw_extent_definition": "concatenated complete 2352-byte sectors for ceil(ISO directory size/2048) sectors; includes headers and padding",
+      "invalid_mode2_sectors": 0,
+      "subheader_copy_mismatches": 0,
+      "submodes": {
+        "0x48": 6817,
+        "0x64": 973,
+        "0x00": 1,
+        "0xe4": 1
+      },
+      "audio_channel_sector_counts": {
+        "file=1,channel=1,coding=0x01": 974
+      },
+      "ffprobe_exit_code": 0,
+      "ffprobe_stderr": "",
+      "ffprobe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "mdec",
+            "codec_type": "video",
+            "width": 320,
+            "height": 160,
+            "r_frame_rate": "15/1",
+            "nb_read_frames": "779",
+            "estimated_video_duration_seconds": 51.933
+          },
+          {
+            "index": 1,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "974"
+          }
+        ],
+        "format": {
+          "format_name": "psxstr"
+        }
+      }
+    },
+    {
+      "disc_path": "/SOL/PARK2.STR",
+      "lba": 111993,
+      "iso_directory_bytes": 7094272,
+      "sector_count": 3464,
+      "raw_extent_bytes": 8147328,
+      "raw_extent_sha256": "27f475eb43e47398e47a28f519cc07a06875e75ab3ae94d144ca1cd70eb5ebcb",
+      "raw_extent_definition": "concatenated complete 2352-byte sectors for ceil(ISO directory size/2048) sectors; includes headers and padding",
+      "invalid_mode2_sectors": 0,
+      "subheader_copy_mismatches": 0,
+      "submodes": {
+        "0x48": 3028,
+        "0x64": 432,
+        "0x00": 3,
+        "0xe4": 1
+      },
+      "audio_channel_sector_counts": {
+        "file=1,channel=1,coding=0x01": 433
+      },
+      "ffprobe_exit_code": 0,
+      "ffprobe_stderr": "",
+      "ffprobe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "mdec",
+            "codec_type": "video",
+            "width": 320,
+            "height": 160,
+            "r_frame_rate": "15/1",
+            "nb_read_frames": "346",
+            "estimated_video_duration_seconds": 23.067
+          },
+          {
+            "index": 1,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "433"
+          }
+        ],
+        "format": {
+          "format_name": "psxstr"
+        }
+      }
+    },
+    {
+      "disc_path": "/SOL/SCEEP.STR",
+      "lba": 115457,
+      "iso_directory_bytes": 921600,
+      "sector_count": 450,
+      "raw_extent_bytes": 1058400,
+      "raw_extent_sha256": "fbb52f04aeaaee329523514e2f32edd6576c6a5050079a87e5efc09bffc64850",
+      "raw_extent_definition": "concatenated complete 2352-byte sectors for ceil(ISO directory size/2048) sectors; includes headers and padding",
+      "invalid_mode2_sectors": 0,
+      "subheader_copy_mismatches": 0,
+      "submodes": {
+        "0x08": 449,
+        "0x89": 1
+      },
+      "audio_channel_sector_counts": {},
+      "ffprobe_exit_code": 0,
+      "ffprobe_stderr": "",
+      "ffprobe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "mdec",
+            "codec_type": "video",
+            "width": 320,
+            "height": 240,
+            "r_frame_rate": "15/1",
+            "nb_read_frames": "45",
+            "estimated_video_duration_seconds": 3.0
+          }
+        ],
+        "format": {
+          "format_name": "psxstr"
+        }
+      }
+    },
+    {
+      "disc_path": "/SOL/SUBWAY.STR",
+      "lba": 116428,
+      "iso_directory_bytes": 14630912,
+      "sector_count": 7144,
+      "raw_extent_bytes": 16802688,
+      "raw_extent_sha256": "aeac69b15783c55f39b16f2872d078eb20c89ca646f6bbe7331fe850c8521444",
+      "raw_extent_definition": "concatenated complete 2352-byte sectors for ceil(ISO directory size/2048) sectors; includes headers and padding",
+      "invalid_mode2_sectors": 0,
+      "subheader_copy_mismatches": 0,
+      "submodes": {
+        "0x48": 6248,
+        "0x64": 892,
+        "0x00": 3,
+        "0xe4": 1
+      },
+      "audio_channel_sector_counts": {
+        "file=1,channel=1,coding=0x01": 893
+      },
+      "ffprobe_exit_code": 0,
+      "ffprobe_stderr": "",
+      "ffprobe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "mdec",
+            "codec_type": "video",
+            "width": 320,
+            "height": 160,
+            "r_frame_rate": "15/1",
+            "nb_read_frames": "714",
+            "estimated_video_duration_seconds": 47.6
+          },
+          {
+            "index": 1,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "893"
+          }
+        ],
+        "format": {
+          "format_name": "psxstr"
+        }
+      }
+    },
+    {
+      "disc_path": "/SOL/TITLE.STR",
+      "lba": 124093,
+      "iso_directory_bytes": 13385728,
+      "sector_count": 6536,
+      "raw_extent_bytes": 15372672,
+      "raw_extent_sha256": "86a06bdd37e64f00d8d7dae7ed5f9febce9188d60d4f8692bca2c5328f3f5aab",
+      "raw_extent_definition": "concatenated complete 2352-byte sectors for ceil(ISO directory size/2048) sectors; includes headers and padding",
+      "invalid_mode2_sectors": 0,
+      "subheader_copy_mismatches": 0,
+      "submodes": {
+        "0x48": 5679,
+        "0x64": 816,
+        "0x00": 40,
+        "0xe4": 1
+      },
+      "audio_channel_sector_counts": {
+        "file=1,channel=1,coding=0x01": 817
+      },
+      "ffprobe_exit_code": 0,
+      "ffprobe_stderr": "",
+      "ffprobe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "mdec",
+            "codec_type": "video",
+            "width": 320,
+            "height": 240,
+            "r_frame_rate": "15/1",
+            "nb_read_frames": "649",
+            "estimated_video_duration_seconds": 43.267
+          },
+          {
+            "index": 1,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "817"
+          }
+        ],
+        "format": {
+          "format_name": "psxstr"
+        }
+      }
+    },
+    {
+      "disc_path": "/SOL/WHOUSE.STR",
+      "lba": 131150,
+      "iso_directory_bytes": 19611648,
+      "sector_count": 9576,
+      "raw_extent_bytes": 22522752,
+      "raw_extent_sha256": "1c61c0f21887f892db94bfe3ebb658b5c93e2a4a50fccae634db2548cfc37693",
+      "raw_extent_definition": "concatenated complete 2352-byte sectors for ceil(ISO directory size/2048) sectors; includes headers and padding",
+      "invalid_mode2_sectors": 0,
+      "subheader_copy_mismatches": 0,
+      "submodes": {
+        "0x48": 8374,
+        "0x64": 1196,
+        "0x00": 5,
+        "0xe4": 1
+      },
+      "audio_channel_sector_counts": {
+        "file=1,channel=1,coding=0x01": 1197
+      },
+      "ffprobe_exit_code": 0,
+      "ffprobe_stderr": "",
+      "ffprobe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "mdec",
+            "codec_type": "video",
+            "width": 320,
+            "height": 160,
+            "r_frame_rate": "15/1",
+            "nb_read_frames": "957",
+            "estimated_video_duration_seconds": 63.8
+          },
+          {
+            "index": 1,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "1197"
+          }
+        ],
+        "format": {
+          "format_name": "psxstr"
+        }
+      }
+    },
+    {
+      "disc_path": "/SOL/WHOUSE2.STR",
+      "lba": 140726,
+      "iso_directory_bytes": 7241728,
+      "sector_count": 3536,
+      "raw_extent_bytes": 8316672,
+      "raw_extent_sha256": "b34e0a7e1e3e1919f9bb188159ac4348ab7eb760d10c00aae5e4f428893c6f69",
+      "raw_extent_definition": "concatenated complete 2352-byte sectors for ceil(ISO directory size/2048) sectors; includes headers and padding",
+      "invalid_mode2_sectors": 0,
+      "subheader_copy_mismatches": 0,
+      "submodes": {
+        "0x48": 3089,
+        "0x64": 441,
+        "0x00": 5,
+        "0xe4": 1
+      },
+      "audio_channel_sector_counts": {
+        "file=1,channel=1,coding=0x01": 442
+      },
+      "ffprobe_exit_code": 0,
+      "ffprobe_stderr": "",
+      "ffprobe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "mdec",
+            "codec_type": "video",
+            "width": 320,
+            "height": 160,
+            "r_frame_rate": "15/1",
+            "nb_read_frames": "353",
+            "estimated_video_duration_seconds": 23.533
+          },
+          {
+            "index": 1,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 2,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "442"
+          }
+        ],
+        "format": {
+          "format_name": "psxstr"
+        }
+      }
+    },
+    {
+      "disc_path": "/XA/INGAMEF.XA",
+      "lba": 230511,
+      "iso_directory_bytes": 107347968,
+      "sector_count": 52416,
+      "raw_extent_bytes": 123282432,
+      "raw_extent_sha256": "84c5c44f036e5c91cf4a56a254108ba1c35e6cddefd899950a23d43e48b26f99",
+      "raw_extent_definition": "concatenated complete 2352-byte sectors for ceil(ISO directory size/2048) sectors; includes headers and padding",
+      "invalid_mode2_sectors": 0,
+      "subheader_copy_mismatches": 0,
+      "submodes": {
+        "0x64": 49590,
+        "0xe4": 1188,
+        "0x42": 34,
+        "0x00": 1603,
+        "0x80": 1
+      },
+      "audio_channel_sector_counts": {
+        "file=1,channel=0,coding=0x00": 3276,
+        "file=1,channel=1,coding=0x00": 3276,
+        "file=1,channel=2,coding=0x00": 3276,
+        "file=1,channel=3,coding=0x00": 3276,
+        "file=1,channel=4,coding=0x00": 3276,
+        "file=1,channel=5,coding=0x00": 3276,
+        "file=1,channel=6,coding=0x00": 3276,
+        "file=1,channel=7,coding=0x00": 3276,
+        "file=1,channel=8,coding=0x00": 3276,
+        "file=1,channel=9,coding=0x00": 3276,
+        "file=1,channel=10,coding=0x00": 3276,
+        "file=1,channel=11,coding=0x00": 3276,
+        "file=1,channel=12,coding=0x00": 3276,
+        "file=1,channel=13,coding=0x00": 3276,
+        "file=1,channel=14,coding=0x00": 3276,
+        "file=1,channel=16,coding=0x00": 1638
+      },
+      "ffprobe_exit_code": 0,
+      "ffprobe_stderr": "[psxstr @ 0x13ee13440] Invalid parameters 416 192 81790336\n[psxstr @ 0x13ee13440] Invalid parameters 1632 672 136315232\n[psxstr @ 0x13ee13440] Invalid parameters 256 768 186647424\n[psxstr @ 0x13ee13440] Invalid parameters 1280 544 60817760\n[psxstr @ 0x13ee13440] Invalid parameters 800 576 37749088\n[psxstr @ 0x13ee13440] Invalid parameters 288 544 23070368\n[psxstr @ 0x13ee13440] Invalid parameters 160 160 48235872\n[psxstr @ 0x13ee13440] Invalid parameters 704 736 249561792\n[psxstr @ 0x13ee13440] Invalid parameters 800 512 69208352\n[psxstr @ 0x13ee13440] Invalid parameters 128 96 16777312\n[psxstr @ 0x13ee13440] Invalid parameters 224 160 6291552\n[psxstr @ 0x13ee13440] Invalid parameters 96 128 6291552\n[psxstr @ 0x13ee13440] Invalid parameters 96 352 16777344\n[psxstr @ 0x13ee13440] Invalid parameters 128 224 16777472\n[psxstr @ 0x13ee13440] Invalid parameters 320 224 37749152\n[psxstr @ 0x13ee13440] Invalid parameters 224 224 14680192\n[psxstr @ 0x13ee13440] Invalid parameters 128 128 18874720\n[psxstr @ 0x13ee13440] Invalid parameters 96 160 10485888\n[psxstr @ 0x13ee13440] Invalid parameters 192 288 12583072\n[psxstr @ 0x13ee13440] Invalid parameters 160 128 8388768\n[psxstr @ 0x13ee13440] Invalid parameters 160 192 12583200\n[psxstr @ 0x13ee13440] Invalid parameters 128 96 8388704\n[psxstr @ 0x13ee13440] Invalid parameters 192 192 8388736\n[psxstr @ 0x13ee13440] Invalid parameters 128 128 12583104\n[psxstr @ 0x13ee13440] Invalid parameters 96 96 6291552\n[psxstr @ 0x13ee13440] Invalid parameters 160 128 12583040\n[psxstr @ 0x13ee13440] Invalid parameters 160 192 4194368\n[psxstr @ 0x13ee13440] Invalid parameters 128 96 8388704\n[psxstr @ 0x13ee13440] Invalid parameters 128 288 8388768\n[psxstr @ 0x13ee13440] Invalid parameters 128 128 8388768\n[psxstr @ 0x13ee13440] Invalid parameters 160 128 12583072\n[psxstr @ 0x13ee13440] Invalid parameters 544 416 31457760\n[psxstr @ 0x13ee13440] Invalid parameters 256 288 10485920\n[psxstr @ 0x13ee13440] Invalid parameters 0 0 0\n",
+      "ffprobe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 1,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "3276"
+          },
+          {
+            "index": 1,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 1,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "3276"
+          },
+          {
+            "index": 2,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 1,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "3276"
+          },
+          {
+            "index": 3,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 1,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "3276"
+          },
+          {
+            "index": 4,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 1,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "3276"
+          },
+          {
+            "index": 5,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 1,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "3276"
+          },
+          {
+            "index": 6,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 1,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "3276"
+          },
+          {
+            "index": 7,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 1,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "3276"
+          },
+          {
+            "index": 8,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 1,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "3276"
+          },
+          {
+            "index": 9,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 1,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "3276"
+          },
+          {
+            "index": 10,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 1,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "3276"
+          },
+          {
+            "index": 11,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 1,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "3276"
+          },
+          {
+            "index": 12,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 1,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "3276"
+          },
+          {
+            "index": 13,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 1,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "3276"
+          },
+          {
+            "index": 14,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 1,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "3276"
+          },
+          {
+            "index": 15,
+            "codec_name": "adpcm_xa",
+            "codec_type": "audio",
+            "sample_rate": "37800",
+            "channels": 1,
+            "r_frame_rate": "0/0",
+            "nb_read_frames": "1638"
+          }
+        ],
+        "format": {
+          "format_name": "psxstr"
+        }
+      }
+    }
+  ],
+  "xh_candidate_sector_offsets": {
+    "interpretation": "Hypothesis only: each observed little-endian word at XH offset >= 0x80 is treated as a sector offset within XA. All inspected words happen to land on XA audio channel 0. Runtime meaning, duplicate zeros and end boundary remain unverified.",
+    "words": [
+      {
+        "xh_offset_hex": "0x80",
+        "value": 0,
+        "candidate_lba": 230511,
+        "xa_file": 1,
+        "xa_channel": 0,
+        "xa_submode_hex": "0x64",
+        "xa_audio_flag": true
+      },
+      {
+        "xh_offset_hex": "0x84",
+        "value": 0,
+        "candidate_lba": 230511,
+        "xa_file": 1,
+        "xa_channel": 0,
+        "xa_submode_hex": "0x64",
+        "xa_audio_flag": true
+      },
+      {
+        "xh_offset_hex": "0x88",
+        "value": 496,
+        "candidate_lba": 231007,
+        "xa_file": 1,
+        "xa_channel": 0,
+        "xa_submode_hex": "0x64",
+        "xa_audio_flag": true
+      },
+      {
+        "xh_offset_hex": "0x8c",
+        "value": 2368,
+        "candidate_lba": 232879,
+        "xa_file": 1,
+        "xa_channel": 0,
+        "xa_submode_hex": "0x64",
+        "xa_audio_flag": true
+      },
+      {
+        "xh_offset_hex": "0x90",
+        "value": 5952,
+        "candidate_lba": 236463,
+        "xa_file": 1,
+        "xa_channel": 0,
+        "xa_submode_hex": "0x64",
+        "xa_audio_flag": true
+      },
+      {
+        "xh_offset_hex": "0x94",
+        "value": 9344,
+        "candidate_lba": 239855,
+        "xa_file": 1,
+        "xa_channel": 0,
+        "xa_submode_hex": "0x64",
+        "xa_audio_flag": true
+      },
+      {
+        "xh_offset_hex": "0x98",
+        "value": 11584,
+        "candidate_lba": 242095,
+        "xa_file": 1,
+        "xa_channel": 0,
+        "xa_submode_hex": "0x64",
+        "xa_audio_flag": true
+      },
+      {
+        "xh_offset_hex": "0x9c",
+        "value": 15104,
+        "candidate_lba": 245615,
+        "xa_file": 1,
+        "xa_channel": 0,
+        "xa_submode_hex": "0x64",
+        "xa_audio_flag": true
+      },
+      {
+        "xh_offset_hex": "0xa0",
+        "value": 19904,
+        "candidate_lba": 250415,
+        "xa_file": 1,
+        "xa_channel": 0,
+        "xa_submode_hex": "0x64",
+        "xa_audio_flag": true
+      },
+      {
+        "xh_offset_hex": "0xa4",
+        "value": 21824,
+        "candidate_lba": 252335,
+        "xa_file": 1,
+        "xa_channel": 0,
+        "xa_submode_hex": "0x64",
+        "xa_audio_flag": true
+      },
+      {
+        "xh_offset_hex": "0xa8",
+        "value": 26144,
+        "candidate_lba": 256655,
+        "xa_file": 1,
+        "xa_channel": 0,
+        "xa_submode_hex": "0x64",
+        "xa_audio_flag": true
+      },
+      {
+        "xh_offset_hex": "0xac",
+        "value": 29184,
+        "candidate_lba": 259695,
+        "xa_file": 1,
+        "xa_channel": 0,
+        "xa_submode_hex": "0x64",
+        "xa_audio_flag": true
+      },
+      {
+        "xh_offset_hex": "0xb0",
+        "value": 31808,
+        "candidate_lba": 262319,
+        "xa_file": 1,
+        "xa_channel": 0,
+        "xa_submode_hex": "0x64",
+        "xa_audio_flag": true
+      },
+      {
+        "xh_offset_hex": "0xb4",
+        "value": 32608,
+        "candidate_lba": 263119,
+        "xa_file": 1,
+        "xa_channel": 0,
+        "xa_submode_hex": "0x64",
+        "xa_audio_flag": true
+      },
+      {
+        "xh_offset_hex": "0xb8",
+        "value": 33408,
+        "candidate_lba": 263919,
+        "xa_file": 1,
+        "xa_channel": 0,
+        "xa_submode_hex": "0x64",
+        "xa_audio_flag": true
+      },
+      {
+        "xh_offset_hex": "0xbc",
+        "value": 34304,
+        "candidate_lba": 264815,
+        "xa_file": 1,
+        "xa_channel": 0,
+        "xa_submode_hex": "0x64",
+        "xa_audio_flag": true
+      },
+      {
+        "xh_offset_hex": "0xc0",
+        "value": 35264,
+        "candidate_lba": 265775,
+        "xa_file": 1,
+        "xa_channel": 0,
+        "xa_submode_hex": "0x64",
+        "xa_audio_flag": true
+      },
+      {
+        "xh_offset_hex": "0xc4",
+        "value": 36352,
+        "candidate_lba": 266863,
+        "xa_file": 1,
+        "xa_channel": 0,
+        "xa_submode_hex": "0x64",
+        "xa_audio_flag": true
+      },
+      {
+        "xh_offset_hex": "0xc8",
+        "value": 37280,
+        "candidate_lba": 267791,
+        "xa_file": 1,
+        "xa_channel": 0,
+        "xa_submode_hex": "0x64",
+        "xa_audio_flag": true
+      },
+      {
+        "xh_offset_hex": "0xcc",
+        "value": 38144,
+        "candidate_lba": 268655,
+        "xa_file": 1,
+        "xa_channel": 0,
+        "xa_submode_hex": "0x64",
+        "xa_audio_flag": true
+      },
+      {
+        "xh_offset_hex": "0xd0",
+        "value": 38912,
+        "candidate_lba": 269423,
+        "xa_file": 1,
+        "xa_channel": 0,
+        "xa_submode_hex": "0x64",
+        "xa_audio_flag": true
+      },
+      {
+        "xh_offset_hex": "0xd4",
+        "value": 39712,
+        "candidate_lba": 270223,
+        "xa_file": 1,
+        "xa_channel": 0,
+        "xa_submode_hex": "0x64",
+        "xa_audio_flag": true
+      },
+      {
+        "xh_offset_hex": "0xd8",
+        "value": 40448,
+        "candidate_lba": 270959,
+        "xa_file": 1,
+        "xa_channel": 0,
+        "xa_submode_hex": "0x64",
+        "xa_audio_flag": true
+      },
+      {
+        "xh_offset_hex": "0xdc",
+        "value": 41536,
+        "candidate_lba": 272047,
+        "xa_file": 1,
+        "xa_channel": 0,
+        "xa_submode_hex": "0x64",
+        "xa_audio_flag": true
+      },
+      {
+        "xh_offset_hex": "0xe0",
+        "value": 42272,
+        "candidate_lba": 272783,
+        "xa_file": 1,
+        "xa_channel": 0,
+        "xa_submode_hex": "0x64",
+        "xa_audio_flag": true
+      },
+      {
+        "xh_offset_hex": "0xe4",
+        "value": 42976,
+        "candidate_lba": 273487,
+        "xa_file": 1,
+        "xa_channel": 0,
+        "xa_submode_hex": "0x64",
+        "xa_audio_flag": true
+      },
+      {
+        "xh_offset_hex": "0xe8",
+        "value": 43680,
+        "candidate_lba": 274191,
+        "xa_file": 1,
+        "xa_channel": 0,
+        "xa_submode_hex": "0x64",
+        "xa_audio_flag": true
+      },
+      {
+        "xh_offset_hex": "0xec",
+        "value": 44352,
+        "candidate_lba": 274863,
+        "xa_file": 1,
+        "xa_channel": 0,
+        "xa_submode_hex": "0x64",
+        "xa_audio_flag": true
+      },
+      {
+        "xh_offset_hex": "0xf0",
+        "value": 45152,
+        "candidate_lba": 275663,
+        "xa_file": 1,
+        "xa_channel": 0,
+        "xa_submode_hex": "0x64",
+        "xa_audio_flag": true
+      },
+      {
+        "xh_offset_hex": "0xf4",
+        "value": 46176,
+        "candidate_lba": 276687,
+        "xa_file": 1,
+        "xa_channel": 0,
+        "xa_submode_hex": "0x64",
+        "xa_audio_flag": true
+      },
+      {
+        "xh_offset_hex": "0xf8",
+        "value": 46976,
+        "candidate_lba": 277487,
+        "xa_file": 1,
+        "xa_channel": 0,
+        "xa_submode_hex": "0x64",
+        "xa_audio_flag": true
+      },
+      {
+        "xh_offset_hex": "0xfc",
+        "value": 47776,
+        "candidate_lba": 278287,
+        "xa_file": 1,
+        "xa_channel": 0,
+        "xa_submode_hex": "0x64",
+        "xa_audio_flag": true
+      },
+      {
+        "xh_offset_hex": "0x100",
+        "value": 48480,
+        "candidate_lba": 278991,
+        "xa_file": 1,
+        "xa_channel": 0,
+        "xa_submode_hex": "0x64",
+        "xa_audio_flag": true
+      },
+      {
+        "xh_offset_hex": "0x104",
+        "value": 49280,
+        "candidate_lba": 279791,
+        "xa_file": 1,
+        "xa_channel": 0,
+        "xa_submode_hex": "0x64",
+        "xa_audio_flag": true
+      },
+      {
+        "xh_offset_hex": "0x108",
+        "value": 50592,
+        "candidate_lba": 281103,
+        "xa_file": 1,
+        "xa_channel": 0,
+        "xa_submode_hex": "0x64",
+        "xa_audio_flag": true
+      },
+      {
+        "xh_offset_hex": "0x10c",
+        "value": 51584,
+        "candidate_lba": 282095,
+        "xa_file": 1,
+        "xa_channel": 0,
+        "xa_submode_hex": "0x64",
+        "xa_audio_flag": true
+      }
+    ]
+  }
+}

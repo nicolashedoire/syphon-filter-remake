@@ -1,0 +1,530 @@
+{
+  "executable_sha256": "059c6cbfabe686555b4bb45c61c3116b42eadbf1ac9c94b10ae4416891c38a95",
+  "record_base_file_offset": "0xfd29c",
+  "record_stride": "0x20",
+  "community_reference_path": "references/sf-pc-port/src/game/combat.cpp",
+  "community_reference_sha256": "d033dd6b159efe2bc14dc2dde75e4cb51a195bc5caaa8455eb3b49eed6c150cd",
+  "limitations": "Candidate labels, index mapping, bit-field semantics and behavior are inferred from the community US port, not confirmed against French execution. Record boundaries inferred by 0x20 stride and sequential matching. Do not treat tick values as seconds.",
+  "rows": [
+    {
+      "index": 0,
+      "community_us_label": "unarmed",
+      "file_offset": "0xfd29c",
+      "runtime_address": "0x8010ca9c",
+      "raw_record_hex": "000000000000ffff00000000cf03000000000000000000002c1e018000000000",
+      "word_offset": "0xfd2a8",
+      "word_le_hex": "0x3cf",
+      "candidate_fields": [
+        15,
+        0,
+        0
+      ],
+      "community_us_fields": [
+        15,
+        0,
+        0
+      ],
+      "fields_match": true
+    },
+    {
+      "index": 1,
+      "community_us_label": "silenced_9mm",
+      "file_offset": "0xfd2bc",
+      "runtime_address": "0x8010cabc",
+      "raw_record_hex": "010f0f050d5800fee0010f008a0c19100500d9f708060400381e018000000000",
+      "word_offset": "0xfd2c8",
+      "word_le_hex": "0x10190c8a",
+      "candidate_fields": [
+        50,
+        25,
+        4
+      ],
+      "community_us_fields": [
+        50,
+        25,
+        4
+      ],
+      "fields_match": true
+    },
+    {
+      "index": 2,
+      "community_us_label": "pistol_9mm",
+      "file_offset": "0xfd2dc",
+      "runtime_address": "0x8010cadc",
+      "raw_record_hex": "000f0f0a0d1801fe60090f008a0c19300600e9f750403000dc67118000000000",
+      "word_offset": "0xfd2e8",
+      "word_le_hex": "0x30190c8a",
+      "candidate_fields": [
+        50,
+        25,
+        12
+      ],
+      "community_us_fields": [
+        50,
+        25,
+        12
+      ],
+      "fields_match": true
+    },
+    {
+      "index": 3,
+      "community_us_label": "unused_357",
+      "file_offset": "0xfd2fc",
+      "runtime_address": "0x8010cafc",
+      "raw_record_hex": "000000000000fffe00000000cf0300000000000050403000441e018000000000",
+      "word_offset": "0xfd308",
+      "word_le_hex": "0x3cf",
+      "candidate_fields": [
+        15,
+        0,
+        0
+      ],
+      "community_us_fields": [
+        15,
+        0,
+        0
+      ],
+      "fields_match": true
+    },
+    {
+      "index": 4,
+      "community_us_label": "pistol_45",
+      "file_offset": "0xfd31c",
+      "runtime_address": "0x8010cb1c",
+      "raw_record_hex": "020a0a0a0d0802fe60090f0085254b200700e8f850403000501e018000000000",
+      "word_offset": "0xfd328",
+      "word_le_hex": "0x204b2585",
+      "candidate_fields": [
+        150,
+        75,
+        8
+      ],
+      "community_us_fields": [
+        150,
+        75,
+        8
+      ],
+      "fields_match": true
+    },
+    {
+      "index": 5,
+      "community_us_label": "g_18",
+      "file_offset": "0xfd33c",
+      "runtime_address": "0x8010cb3c",
+      "raw_record_hex": "032121210d12251f60090f00850c19040d00e9f7504030005c1e018000000000",
+      "word_offset": "0xfd348",
+      "word_le_hex": "0x4190c85",
+      "candidate_fields": [
+        50,
+        25,
+        1
+      ],
+      "community_us_fields": [
+        50,
+        25,
+        1
+      ],
+      "fields_match": true
+    },
+    {
+      "index": 6,
+      "community_us_label": "combat_shotgun",
+      "file_offset": "0xfd35c",
+      "runtime_address": "0x8010cb5c",
+      "raw_record_hex": "041e050510000cfe600911001e4b96480900b2f150403000681e018000000000",
+      "word_offset": "0xfd368",
+      "word_le_hex": "0x48964b1e",
+      "candidate_fields": [
+        300,
+        150,
+        18
+      ],
+      "community_us_fields": [
+        300,
+        150,
+        18
+      ],
+      "fields_match": true
+    },
+    {
+      "index": 7,
+      "community_us_label": "shotgun",
+      "file_offset": "0xfd37c",
+      "runtime_address": "0x8010cb7c",
+      "raw_record_hex": "0519050510020dfe600911001e324b3c0800b2f550403000781e018000000000",
+      "word_offset": "0xfd388",
+      "word_le_hex": "0x3c4b321e",
+      "candidate_fields": [
+        200,
+        75,
+        15
+      ],
+      "community_us_fields": [
+        200,
+        75,
+        15
+      ],
+      "fields_match": true
+    },
+    {
+      "index": 8,
+      "community_us_label": "pk_102",
+      "file_offset": "0xfd39c",
+      "runtime_address": "0x8010cb9c",
+      "raw_record_hex": "061e1e0a15192c2660091000800c19080a00bcf850403000e067118000000000",
+      "word_offset": "0xfd3a8",
+      "word_le_hex": "0x8190c80",
+      "candidate_fields": [
+        50,
+        25,
+        2
+      ],
+      "community_us_fields": [
+        50,
+        25,
+        2
+      ],
+      "fields_match": true
+    },
+    {
+      "index": 9,
+      "community_us_label": "m_16",
+      "file_offset": "0xfd3bc",
+      "runtime_address": "0x8010cbbc",
+      "raw_record_hex": "071e1e0f1519251f60091000800c19080b00adf650403000841e018000000000",
+      "word_offset": "0xfd3c8",
+      "word_le_hex": "0x8190c80",
+      "candidate_fields": [
+        50,
+        25,
+        2
+      ],
+      "community_us_fields": [
+        50,
+        25,
+        2
+      ],
+      "fields_match": true
+    },
+    {
+      "index": 10,
+      "community_us_label": "biz_2",
+      "file_offset": "0xfd3dc",
+      "runtime_address": "0x8010cbdc",
+      "raw_record_hex": "084242420d12251f60091000c01223080e00c5fa50403000e867118000000000",
+      "word_offset": "0xfd3e8",
+      "word_le_hex": "0x82312c0",
+      "candidate_fields": [
+        75,
+        35,
+        2
+      ],
+      "community_us_fields": [
+        75,
+        35,
+        2
+      ],
+      "fields_match": true
+    },
+    {
+      "index": 11,
+      "community_us_label": "hk_5",
+      "file_offset": "0xfd3fc",
+      "runtime_address": "0x8010cbfc",
+      "raw_record_hex": "092020080d1a2c2660091000800c19080c00dcef50403000901e018000000000",
+      "word_offset": "0xfd408",
+      "word_le_hex": "0x8190c80",
+      "candidate_fields": [
+        50,
+        25,
+        2
+      ],
+      "community_us_fields": [
+        50,
+        25,
+        2
+      ],
+      "fields_match": true
+    },
+    {
+      "index": 12,
+      "community_us_label": "nightvision_rifle",
+      "file_offset": "0xfd41c",
+      "runtime_address": "0x8010cc1c",
+      "raw_record_hex": "0b0a0a0a124800fee0010f00bc165a501000a6f71a1510009c1e018000000000",
+      "word_offset": "0xfd428",
+      "word_le_hex": "0x505a16bc",
+      "candidate_fields": [
+        90,
+        90,
+        20
+      ],
+      "community_us_fields": [
+        90,
+        90,
+        20
+      ],
+      "fields_match": true
+    },
+    {
+      "index": 13,
+      "community_us_label": "sniper_rifle",
+      "file_offset": "0xfd43c",
+      "runtime_address": "0x8010cc3c",
+      "raw_record_hex": "0c0a0a0a124800fee0010f008f0c19101100bdf41a151000a81e018000000000",
+      "word_offset": "0xfd448",
+      "word_le_hex": "0x10190c8f",
+      "candidate_fields": [
+        50,
+        25,
+        4
+      ],
+      "community_us_fields": [
+        50,
+        25,
+        4
+      ],
+      "fields_match": true
+    },
+    {
+      "index": 14,
+      "community_us_label": "taser",
+      "file_offset": "0xfd45c",
+      "runtime_address": "0x8010cc5c",
+      "raw_record_hex": "0d010000084011fee0011000231900001500e7f950403000b41e018000000000",
+      "word_offset": "0xfd468",
+      "word_le_hex": "0x1923",
+      "candidate_fields": [
+        100,
+        0,
+        0
+      ],
+      "community_us_fields": [
+        100,
+        0,
+        0
+      ],
+      "fields_match": true
+    },
+    {
+      "index": 15,
+      "community_us_label": "flamethrower",
+      "file_offset": "0xfd47c",
+      "runtime_address": "0x8010cc7c",
+      "raw_record_hex": "005a5a5a151212fe60091000800c32081500a1ef50403000c41e018000000000",
+      "word_offset": "0xfd488",
+      "word_le_hex": "0x8320c80",
+      "candidate_fields": [
+        50,
+        50,
+        2
+      ],
+      "community_us_fields": [
+        50,
+        50,
+        2
+      ],
+      "fields_match": true
+    },
+    {
+      "index": 16,
+      "community_us_label": "m_79",
+      "file_offset": "0xfd49c",
+      "runtime_address": "0x8010cc9c",
+      "raw_record_hex": "100f050108001cfee0011100009658521400000050403000f067118000000000",
+      "word_offset": "0xfd4a8",
+      "word_le_hex": "0x52589600",
+      "candidate_fields": [
+        600,
+        600,
+        20
+      ],
+      "community_us_fields": [
+        600,
+        600,
+        20
+      ],
+      "fields_match": true
+    },
+    {
+      "index": 17,
+      "community_us_label": "k3g4",
+      "file_offset": "0xfd4bc",
+      "runtime_address": "0x8010ccbc",
+      "raw_record_hex": "0a1414140d19332d60091000800c19080f00adf650403000d41e018000000000",
+      "word_offset": "0xfd4c8",
+      "word_le_hex": "0x8190c80",
+      "candidate_fields": [
+        50,
+        25,
+        2
+      ],
+      "community_us_fields": [
+        50,
+        25,
+        2
+      ],
+      "fields_match": true
+    },
+    {
+      "index": 18,
+      "community_us_label": "virus_scanner",
+      "file_offset": "0xfd4dc",
+      "runtime_address": "0x8010ccdc",
+      "raw_record_hex": "130000000800ffff00000000280000001700de0000000000e01e018000000000",
+      "word_offset": "0xfd4e8",
+      "word_le_hex": "0x28",
+      "candidate_fields": [
+        0,
+        0,
+        0
+      ],
+      "community_us_fields": [
+        0,
+        0,
+        0
+      ],
+      "fields_match": true
+    },
+    {
+      "index": 19,
+      "community_us_label": "fragmentation_grenade",
+      "file_offset": "0xfd4fc",
+      "runtime_address": "0x8010ccfc",
+      "raw_record_hex": "0e0a050120000afee00111000096003c1200000050403000e01e018000000000",
+      "word_offset": "0xfd508",
+      "word_le_hex": "0x3c009600",
+      "candidate_fields": [
+        600,
+        0,
+        15
+      ],
+      "community_us_fields": [
+        600,
+        0,
+        15
+      ],
+      "fields_match": true
+    },
+    {
+      "index": 20,
+      "community_us_label": "gas_grenade",
+      "file_offset": "0xfd51c",
+      "runtime_address": "0x8010cd1c",
+      "raw_record_hex": "0f0a050120400afee00112000096003c1300000050403000d41e018000000000",
+      "word_offset": "0xfd528",
+      "word_le_hex": "0x3c009600",
+      "candidate_fields": [
+        600,
+        0,
+        15
+      ],
+      "community_us_fields": [
+        600,
+        0,
+        15
+      ],
+      "fields_match": true
+    },
+    {
+      "index": 21,
+      "community_us_label": "flashlight",
+      "file_offset": "0xfd53c",
+      "runtime_address": "0x8010cd3c",
+      "raw_record_hex": "120000000800ffff00000000280000001600220000000000ec1e018000000000",
+      "word_offset": "0xfd548",
+      "word_le_hex": "0x28",
+      "candidate_fields": [
+        0,
+        0,
+        0
+      ],
+      "community_us_fields": [
+        0,
+        0,
+        0
+      ],
+      "fields_match": true
+    },
+    {
+      "index": 22,
+      "community_us_label": "chopper_gun",
+      "file_offset": "0xfd55c",
+      "runtime_address": "0x8010cd5c",
+      "raw_record_hex": "005a5a5a1501ff0960091000c0124b081500a1efa0806000f81e018000000000",
+      "word_offset": "0xfd568",
+      "word_le_hex": "0x84b12c0",
+      "candidate_fields": [
+        75,
+        75,
+        2
+      ],
+      "community_us_fields": [
+        75,
+        75,
+        2
+      ],
+      "fields_match": true
+    },
+    {
+      "index": 23,
+      "community_us_label": "key_card",
+      "file_offset": "0xfd57c",
+      "runtime_address": "0x8010cd7c",
+      "raw_record_hex": "140000002000ffff00000000280000001900220000000000f867118000000000",
+      "word_offset": "0xfd588",
+      "word_le_hex": "0x28",
+      "candidate_fields": [
+        0,
+        0,
+        0
+      ],
+      "community_us_fields": [
+        0,
+        0,
+        0
+      ],
+      "fields_match": true
+    },
+    {
+      "index": 24,
+      "community_us_label": "c4_explosives",
+      "file_offset": "0xfd59c",
+      "runtime_address": "0x8010cd9c",
+      "raw_record_hex": "150000002000ffff00000000280000001a00220000000000041f018000000000",
+      "word_offset": "0xfd5a8",
+      "word_le_hex": "0x28",
+      "candidate_fields": [
+        0,
+        0,
+        0
+      ],
+      "community_us_fields": [
+        0,
+        0,
+        0
+      ],
+      "fields_match": true
+    },
+    {
+      "index": 25,
+      "community_us_label": "viral_antigen",
+      "file_offset": "0xfd5bc",
+      "runtime_address": "0x8010cdbc",
+      "raw_record_hex": "160000002000ffff00000000280000001b0022000000000001040000090a0506",
+      "word_offset": "0xfd5c8",
+      "word_le_hex": "0x28",
+      "candidate_fields": [
+        0,
+        0,
+        0
+      ],
+      "community_us_fields": [
+        0,
+        0,
+        0
+      ],
+      "fields_match": true
+    }
+  ]
+}
