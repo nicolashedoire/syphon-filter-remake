@@ -63,6 +63,12 @@ A manual RetroArch / PCSX ReARMed HLE run reached a controllable French Georgia 
 - The [roll investigation](ps1-roll-investigation.md) measures five bounded candidate clips and documents REA/Ghidra code observations without claiming runtime timing or activation.
 - The [actor investigation](ps1-actor-investigation.md) inventories records for all 20 levels and links a candidate object routine to the candidate weapon table; the counts are not proof of enemy identity or spawn behavior.
 
+## Latest REA, Ghidra and runtime work
+
+- [Animation selection](ps1-animation-selector-investigation.md) traces a generic indexed selector, without mapping a roll clip to a runtime index. A [new isolated Georgia run](ps1-roll-runtime-observation.md) observed a roll and captured intermediate poses; timing and other mission scenarios remain unverified.
+- [Actor decision candidate](ps1-actor-decision-investigation.md) documents an object-related counter and conditional BIOS call, without identifying it as a verified enemy behavior.
+- [Objective descriptor investigation](ps1-objective-descriptor-investigation.md) links two French overlay descriptors to code and surveys 13 overlays; it does not establish runtime triggers or completion rules. The [runtime coverage table](ps1-runtime-mission-coverage.csv) distinguishes the single mission with an observed initial objective menu from the other 19.
+
 ## Additional investigation
 
 - The [cinematic and audio inventory](ps1-cinematics-inventory.md) records all 39 STR files, audio metadata and gaps in the web version. Playback triggers and spoken language have not been established.

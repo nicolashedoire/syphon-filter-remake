@@ -1,0 +1,295 @@
+{
+  "disc_sha256": "c0f54d8110eb87b802cb6cadb304251fa5910eafa193a5de16cd2c2651911e72",
+  "limitations": "Heuristic candidates only; overlapping arrays, data mistaken for code, runtime loading and behavior remain unverified.",
+  "overlays": [
+    {
+      "overlay": "BASEEXT.OVL",
+      "overlay_sha256": "b5aa8e59cd79863884f7d879561299781b5588f1253917900cc17ea7ec443b73",
+      "candidate_base": "0x80146d10",
+      "distinct_string_starts": 30,
+      "candidate_descriptors": [
+        {
+          "offset": "0x4a30",
+          "count_a": 5,
+          "count_b": 3
+        },
+        {
+          "offset": "0x4a38",
+          "count_a": 3,
+          "count_b": 0
+        },
+        {
+          "offset": "0x4a58",
+          "count_a": 2,
+          "count_b": 1
+        },
+        {
+          "offset": "0x4a60",
+          "count_a": 1,
+          "count_b": 0
+        }
+      ],
+      "jal_word_offsets": [
+        "0x1dcc",
+        "0x24c8",
+        "0x2f70"
+      ]
+    },
+    {
+      "overlay": "CATACOMB.OVL",
+      "overlay_sha256": "3aa0125d9050783b3f0129de6ac49ae345aac1b491d5a6b7d8e713d50b712fed",
+      "candidate_base": "0x80146d10",
+      "distinct_string_starts": 10,
+      "candidate_descriptors": [
+        {
+          "offset": "0x14f0",
+          "count_a": 3,
+          "count_b": 3
+        },
+        {
+          "offset": "0x14f8",
+          "count_a": 3,
+          "count_b": 0
+        }
+      ],
+      "jal_word_offsets": [
+        "0xfe4"
+      ]
+    },
+    {
+      "overlay": "CAVE.OVL",
+      "overlay_sha256": "a7c8648afbd15e1b3ce67f256a2967ba517c229e0fd90abe1114de5d566a425c",
+      "candidate_base": "0x80146d10",
+      "distinct_string_starts": 32,
+      "candidate_descriptors": [
+        {
+          "offset": "0x375c",
+          "count_a": 3,
+          "count_b": 0
+        },
+        {
+          "offset": "0x3784",
+          "count_a": 3,
+          "count_b": 3
+        },
+        {
+          "offset": "0x378c",
+          "count_a": 3,
+          "count_b": 0
+        }
+      ],
+      "jal_word_offsets": [
+        "0x128c",
+        "0x15f4",
+        "0x2ad8"
+      ]
+    },
+    {
+      "overlay": "CHOPPER.OVL",
+      "overlay_sha256": "6000bb28e4a803945ae3b044274edb82aef7f3c74b71fa268d858735b2e324f5",
+      "candidate_base": "0x80146d10",
+      "distinct_string_starts": 12,
+      "candidate_descriptors": [
+        {
+          "offset": "0x4998",
+          "count_a": 2,
+          "count_b": 0
+        }
+      ],
+      "jal_word_offsets": [
+        "0x3f48"
+      ]
+    },
+    {
+      "overlay": "LEVSPEC.OVL",
+      "overlay_sha256": "67105ed1c6e7e51a3ff42e9e6e11ee7f8d7b32a364e232f1da1f77fe6c1e87ec",
+      "candidate_base": "0x80146d10",
+      "distinct_string_starts": 17,
+      "candidate_descriptors": [
+        {
+          "offset": "0x1114",
+          "count_a": 4,
+          "count_b": 1
+        },
+        {
+          "offset": "0x111c",
+          "count_a": 1,
+          "count_b": 0
+        }
+      ],
+      "jal_word_offsets": [
+        "0xda0"
+      ]
+    },
+    {
+      "overlay": "MUSEUM.OVL",
+      "overlay_sha256": "9fc1e9ad2effa0d8f5e7813838c30dfe3881043f782938067cd708dbdb0cb679",
+      "candidate_base": "0x80146d10",
+      "distinct_string_starts": 9,
+      "candidate_descriptors": [
+        {
+          "offset": "0x1618",
+          "count_a": 3,
+          "count_b": 1
+        },
+        {
+          "offset": "0x1620",
+          "count_a": 1,
+          "count_b": 0
+        }
+      ],
+      "jal_word_offsets": [
+        "0xdc8"
+      ]
+    },
+    {
+      "overlay": "MUSEUM2.OVL",
+      "overlay_sha256": "1321d56048246cf6078c102c428431ae3d10bfd02f6d5dd07a90261d72d9952f",
+      "candidate_base": "0x80146d10",
+      "distinct_string_starts": 9,
+      "candidate_descriptors": [
+        {
+          "offset": "0x15dc",
+          "count_a": 2,
+          "count_b": 2
+        },
+        {
+          "offset": "0x15e4",
+          "count_a": 2,
+          "count_b": 0
+        }
+      ],
+      "jal_word_offsets": [
+        "0xee0"
+      ]
+    },
+    {
+      "overlay": "PARK.OVL",
+      "overlay_sha256": "da039b109075494fc621996c4aa202cf4a706628dbd1abf984f304e5163bf2f2",
+      "candidate_base": "0x80146d10",
+      "distinct_string_starts": 17,
+      "candidate_descriptors": [
+        {
+          "offset": "0x2638",
+          "count_a": 4,
+          "count_b": 0
+        }
+      ],
+      "jal_word_offsets": [
+        "0x11a8"
+      ]
+    },
+    {
+      "overlay": "PARK2.OVL",
+      "overlay_sha256": "3dc63de29b20f34752dd63778d6c6d9a6a7300703b5effed5581981e94ec8616",
+      "candidate_base": "0x80146d10",
+      "distinct_string_starts": 7,
+      "candidate_descriptors": [
+        {
+          "offset": "0x2770",
+          "count_a": 1,
+          "count_b": 1
+        },
+        {
+          "offset": "0x2778",
+          "count_a": 1,
+          "count_b": 0
+        }
+      ],
+      "jal_word_offsets": [
+        "0x6b0"
+      ]
+    },
+    {
+      "overlay": "SUBWAY.OVL",
+      "overlay_sha256": "a1edd4a03015d46860c7d37cc8da85003e4331739401b24c17e133446eb716d4",
+      "candidate_base": "0x80146d10",
+      "distinct_string_starts": 45,
+      "candidate_descriptors": [
+        {
+          "offset": "0x3264",
+          "count_a": 5,
+          "count_b": 2
+        },
+        {
+          "offset": "0x326c",
+          "count_a": 2,
+          "count_b": 0
+        }
+      ],
+      "jal_word_offsets": [
+        "0x29f8"
+      ]
+    },
+    {
+      "overlay": "SUBWAY2.OVL",
+      "overlay_sha256": "cd98a4e074dbc0eb05bad51d8822e56a0cb95e25e41119cd3c49673de1f1b02b",
+      "candidate_base": "0x80146d10",
+      "distinct_string_starts": 14,
+      "candidate_descriptors": [
+        {
+          "offset": "0x127c",
+          "count_a": 3,
+          "count_b": 2
+        },
+        {
+          "offset": "0x1284",
+          "count_a": 2,
+          "count_b": 0
+        }
+      ],
+      "jal_word_offsets": [
+        "0xdb4"
+      ]
+    },
+    {
+      "overlay": "SUBWAY3.OVL",
+      "overlay_sha256": "1ab95bfe27a49cc6960270f4d94dc5e7d09d4c40735f9d8316108977ea217746",
+      "candidate_base": "0x80146d10",
+      "distinct_string_starts": 6,
+      "candidate_descriptors": [
+        {
+          "offset": "0x2470",
+          "count_a": 1,
+          "count_b": 1
+        },
+        {
+          "offset": "0x2478",
+          "count_a": 1,
+          "count_b": 0
+        }
+      ],
+      "jal_word_offsets": [
+        "0x2218"
+      ]
+    },
+    {
+      "overlay": "WHOUSE.OVL",
+      "overlay_sha256": "060b626e40f3bb5f03005fac3ff4b99fe6f82875bb5d3d661649d27482ebed0a",
+      "candidate_base": "0x80146d10",
+      "distinct_string_starts": 23,
+      "candidate_descriptors": [
+        {
+          "offset": "0x1fe4",
+          "count_a": 1,
+          "count_b": 1
+        },
+        {
+          "offset": "0x1fec",
+          "count_a": 1,
+          "count_b": 0
+        },
+        {
+          "offset": "0x2014",
+          "count_a": 1,
+          "count_b": 0
+        }
+      ],
+      "jal_word_offsets": [
+        "0xa94",
+        "0x1378",
+        "0x17a4"
+      ]
+    }
+  ]
+}
