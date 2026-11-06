@@ -22,6 +22,8 @@ Les tests se lancent avec :
 python3 -m unittest discover -s tests -v
 ```
 
+Le détail de ces premiers résultats et de l’analyse avec REA se trouve dans [docs/recherche-ps1-fr.md](docs/recherche-ps1-fr.md).
+
 ## Sources PS1 et port PC récupérés
 
 Les deux projets sont référencés sous forme de sous-modules Git, à une version précise, avec leur historique et leurs notices conservés dans leurs dépôts respectifs :
