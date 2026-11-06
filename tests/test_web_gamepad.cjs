@@ -1,12 +1,13 @@
 // Exercise standard PlayStation-style gamepads with no browser or GPU dependency.
 const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
-const elements={},docHandlers={},windowHandlers={};let tick,now=0,state,pad=null,locks=0;
+const elements={},docHandlers={},windowHandlers={};let tick,now=0,state,pad=null,locks=0,lastView;
 const doc={documentElement:{dataset:{}},pointerLockElement:null,addEventListener(n,f){(docHandlers[n]??=[]).push(f)},exitPointerLock(){this.pointerLockElement=null}};
 function el(id){return elements[id]??={textContent:'',innerHTML:'',style:{},hidden:false,events:{},classList:{add(){},remove(){}},querySelector(){return {textContent:''}},addEventListener(n,f){this.events[n]=f},click(){this.events.click?.({isTrusted:false})},focus(){},pause(){},load(){},removeAttribute(){},requestPointerLock(){locks++;}}}
 doc.getElementById=el;
 const scene={positions:new Float32Array([10,21.32,-5,75,21.32,-5,75,21.32,60,10,21.32,-5,75,21.32,60,10,21.32,60])};
-const c={document:doc,console,Float32Array,Map,Set,Math,Number,Array,SF_SCENE:scene,navigator:{getGamepads(){return pad?[pad]:[null]}},addEventListener(n,f){(windowHandlers[n]??=[]).push(f)},requestAnimationFrame(f){tick=f},SFRenderer:class{render(s){state=JSON.parse(JSON.stringify(s));const y=s.cameraYaw,p=s.cameraPitch,eye=[s.player.x+Math.sin(y)*3.8,s.player.y+1.4,s.player.z+Math.cos(y)*3.8];return {eye,target:[eye[0]-Math.sin(y)*Math.cos(p),eye[1]-Math.sin(p),eye[2]-Math.cos(y)*Math.cos(p)]}}}};c.window=c;vm.createContext(c);
+const c={document:doc,console,Float32Array,Map,Set,Math,Number,Array,SF_SCENE:scene,navigator:{getGamepads(){return pad?[pad]:[null]}},addEventListener(n,f){(windowHandlers[n]??=[]).push(f)},requestAnimationFrame(f){tick=f},SFRenderer:class{render(s){state=JSON.parse(JSON.stringify(s));const y=s.cameraYaw,p=s.cameraPitch,eye=[s.player.x+Math.sin(y)*3.8,s.player.y+1.4,s.player.z+Math.cos(y)*3.8];return lastView={eye,target:[eye[0]-Math.sin(y)*Math.cos(p),eye[1]-Math.sin(p),eye[2]-Math.cos(y)*Math.cos(p)]}}}};c.window=c;vm.createContext(c);
 for(const p of ['web/ps1-rules.js','web/mission.js','web/game.js'])vm.runInContext(fs.readFileSync(p,'utf8'),c);
+el('game').clientWidth=1280;el('game').clientHeight=720;
 const step=(n=1)=>{for(let i=0;i<n;i++)tick(now+=16)},button=(i,pressed)=>{pad.buttons[i]={pressed,value:pressed?1:0}},release=i=>{button(i,false);step()},press=i=>{button(i,true);step()};
 el('help-open').events.click=()=>{doc.documentElement.dataset.tutorialOpen='true'};
 el('help-close').events.click=()=>{doc.documentElement.dataset.tutorialOpen='false'};
@@ -17,8 +18,27 @@ step(20);assert.doesNotMatch(el('message').textContent,/AUCUNE INTERACTION/,'Hol
 const initial={...state.player};pad.axes[1]=-.1;step(40);assert.ok(Math.abs(state.player.x-initial.x)<.001,'The stick dead zone ignores drift');
 pad.axes[1]=-1;step(30);assert.ok(initial.x-state.player.x>2,'The left stick moves forward');pad.axes[1]=0;
 const yaw=state.cameraYaw;pad.axes[0]=1;step(15);assert.ok(state.cameraYaw<yaw-.3,'The left stick turns the player and camera');pad.axes[0]=0;
-const look=state.cameraYaw;pad.axes[2]=1;step(15);assert.ok(state.cameraYaw<look-.3,'The right stick aims the camera');pad.axes[2]=0;
-const ammo=state.player.ammo;press(7);assert.equal(state.player.ammo,ammo-1,'R2 fires');assert.equal(state.player.aiming,true,'The renderer receives the shooting pose');step(60);assert.equal(state.player.aiming,false,'The shooting pose ends');assert.equal(state.player.ammo,ammo-1,'Holding R2 does not fire repeatedly');release(7);press(7);assert.equal(state.player.ammo,ammo-2,'A fresh R2 press fires again');release(7);
+const look=state.cameraYaw;pad.axes[2]=1;pad.axes[3]=-1;step(15);
+assert.equal(state.cameraYaw,look,'Moving the aim cursor does not turn the camera');
+assert.ok(parseFloat(el('reticle').style.left)>50&&parseFloat(el('reticle').style.top)<50,'Right stick moves the cursor right and up');
+pad.axes[2]=0;pad.axes[3]=0;
+const shotView=lastView,ammo=state.player.ammo;press(7);assert.equal(state.player.ammo,ammo-1,'R2 fires');assert.equal(state.player.aiming,true,'The renderer receives the shooting pose');
+const impact=state.impact,delta=[impact.x-shotView.eye[0],impact.y-shotView.eye[1],impact.z-shotView.eye[2]],f=shotView.target.map((v,i)=>v-shotView.eye[i]);
+const h=Math.hypot(f[0],f[2]),right=[-f[2]/h,0,f[0]/h],up=[-right[2]*f[1],right[2]*f[0]-right[0]*f[2],right[0]*f[1]],dot=(a,b)=>a.reduce((sum,v,i)=>sum+v*b[i],0);
+const aimX=(parseFloat(el('reticle').style.left)-50)/50,aimY=(parseFloat(el('reticle').style.top)-50)/50;
+assert.ok(Math.abs(dot(delta,right)/dot(delta,f)-aimX*Math.tan(Math.PI/6)*1280/720)<1e-5,'The shot follows the visible horizontal cursor with widescreen aspect');
+assert.ok(Math.abs(dot(delta,up)/dot(delta,f)+aimY*Math.tan(Math.PI/6))<1e-5,'The shot follows the visible vertical cursor');
+step(60);assert.equal(state.player.aiming,false,'The shooting pose ends');assert.equal(state.player.ammo,ammo-1,'Holding R2 does not fire repeatedly');release(7);press(7);assert.equal(state.player.ammo,ammo-2,'A fresh R2 press fires again');release(7);
+pad.axes[2]=1;pad.axes[3]=-1;step(150);assert.equal(el('reticle').style.left,'95%','The cursor stops at the right edge');assert.equal(el('reticle').style.top,'5%','The cursor stops at the top edge');
+pad.axes[2]=-1;pad.axes[3]=1;step(250);assert.equal(el('reticle').style.left,'5%','The cursor stops at the left edge');assert.equal(el('reticle').style.top,'95%','The cursor stops at the bottom edge');pad.axes[2]=0;pad.axes[3]=0;
+press(11);assert.equal(el('reticle').style.left,'50%','R3 recenters horizontally');assert.equal(el('reticle').style.top,'50%','R3 recenters vertically');release(11);
+// Keep normalized cursor coordinates across resize and use the new aspect.
+el('game').clientWidth=720;el('game').clientHeight=1280;pad.axes[2]=-1;pad.axes[3]=-1;step(30);pad.axes[2]=0;pad.axes[3]=0;
+const portraitView=lastView,portraitX=(parseFloat(el('reticle').style.left)-50)/50,portraitY=(parseFloat(el('reticle').style.top)-50)/50;press(7);
+const pd=[state.impact.x-portraitView.eye[0],state.impact.y-portraitView.eye[1],state.impact.z-portraitView.eye[2]],pf=portraitView.target.map((v,i)=>v-portraitView.eye[i]),ph=Math.hypot(pf[0],pf[2]),pr=[-pf[2]/ph,0,pf[0]/ph],pu=[-pr[2]*pf[1],pr[2]*pf[0]-pr[0]*pf[2],pr[0]*pf[1]];
+assert.ok(Math.abs(dot(pd,pr)/dot(pd,pf)-portraitX*Math.tan(Math.PI/6)*720/1280)<1e-5,'The leftward shot uses the resized portrait aspect');
+assert.ok(Math.abs(dot(pd,pu)/dot(pd,pf)+portraitY*Math.tan(Math.PI/6))<1e-5,'The resized shot keeps its vertical alignment');release(7);el('game').clientWidth=1280;el('game').clientHeight=720;
+pad.axes[2]=1;step(10);pad.axes[2]=0;doc.pointerLockElement=el('game');for(const handler of docHandlers.mousemove||[])handler({movementX:1,movementY:0});assert.equal(el('reticle').style.left,'50%','Returning to mouse look centers the cursor');doc.pointerLockElement=null;
 press(2);assert.equal(state.player.reloading,true,'The renderer receives the reload pose');assert.ok(state.player.reloadTime>=0&&state.player.reloadTime<.1,'Reload animation begins at the start of the clip');release(2);step(30);assert.ok(state.player.reloadTime>.4,'Reload animation advances with gameplay time');step(45);assert.equal(state.player.reloading,false,'The reload pose ends');assert.equal(state.player.ammo,15,'Square reloads');
 press(0);assert.match(el('message').textContent,/AUCUNE INTERACTION/,'Cross interacts in the mission');release(0);
 press(9);assert.equal(doc.documentElement.dataset.tutorialOpen,'true','Options opens the guide');const paused={...state.player};pad.axes[1]=-1;step(80);assert.equal(state.player.x,paused.x,'The guide pauses movement');assert.equal(doc.documentElement.dataset.tutorialOpen,'true','Holding Options does not immediately close it');release(9);press(9);assert.equal(doc.documentElement.dataset.tutorialOpen,'false','A fresh Options press closes the guide');release(9);pad.axes[1]=0;
