@@ -12,6 +12,8 @@
   let nextSaveAt=0;
   let enemyShots=[];
   let gamepadAxes={turn:0,forward:0,lookX:0,lookY:0};
+  const ROLL_DURATION=.65,ROLL_COOLDOWN=1.2,ROLL_SPEED=4.6;
+  let rollStart=0,rollUntil=0,rollReadyAt=0,rollX=0,rollZ=0;
   // Screen-space coordinates use -1..1 for the full viewport, with Y down.
   let aimX=0,aimY=0,lockHeld=false,lockedEnemy=null,nextLockCheck=0;
   function displayReticle(x,y){if(reticle&&reticle.style){reticle.style.left=(50+x*50)+'%';reticle.style.top=(50+y*50)+'%';}}
@@ -75,8 +77,9 @@
     return window.SFSave.save(snapshot);
   }
   function restoreGame(saved){
-    Object.assign(player,saved.player,{moving:false,running:false,reverse:false,animation:'idle',animationTime:0});
+    Object.assign(player,saved.player,{moving:false,running:false,reverse:false,animation:'idle',animationTime:0,rolling:false,rollTime:0});
     yaw=saved.camera.yaw;pitch=saved.camera.pitch;clock=saved.clock;combatActive=saved.combatActive;combatStartsAt=saved.combatStartsAt;reloadUntil=saved.reloadUntil;lastShot=saved.lastShot;exitPoint={...saved.exitPoint};
+    rollStart=rollUntil=rollReadyAt=clock;
     const actor=(window.SF_OPENING_ACTORS||[]).find(a=>a.source===184);
     enemies=saved.enemies.map(e=>({...e,moving:false,running:false,...(!e.alive?{deathAt:clock-2}:{}),...(e.source===184&&actor?{route:actor.route.map(p=>p.map(n=>n/100))}:{})}));
     camera=null;cameraImmediate=true;nextMarkerUpdate=0;sync();
@@ -105,7 +108,7 @@
     clearLock();
     enemyShots=[];
     moveReticle(0,0);
-    player.x=47.8;player.y=heightAt(47.8,28.25,21.32,3,3)??21.32;player.z=28.25;player.angle=Math.PI/2;player.moving=false;player.running=false;player.reverse=false;player.animation='idle';player.animationTime=0;player.health=rules.initialHealth;player.armor=rules.initialArmor;player.ammo=rules.magazineCapacity;player.reserve=rules.initialReserve;yaw=Math.PI/2;pitch=.05;clock=0;lastShot=-10;reloadUntil=0;impact=null;camera=null;cameraImmediate=true;finished=false;combatActive=false;combatStartsAt=0;nextMarkerUpdate=0;fallbackPositionKnown=false;keys.clear();
+    player.x=47.8;player.y=heightAt(47.8,28.25,21.32,3,3)??21.32;player.z=28.25;player.angle=Math.PI/2;player.moving=false;player.running=false;player.reverse=false;player.animation='idle';player.animationTime=0;player.rolling=false;player.rollTime=0;player.health=rules.initialHealth;player.armor=rules.initialArmor;player.ammo=rules.magazineCapacity;player.reserve=rules.initialReserve;yaw=Math.PI/2;pitch=.05;clock=0;lastShot=-10;reloadUntil=0;rollStart=rollUntil=rollReadyAt=0;impact=null;camera=null;cameraImmediate=true;finished=false;combatActive=false;combatStartsAt=0;nextMarkerUpdate=0;fallbackPositionKnown=false;keys.clear();
     const exitX=player.x-6, exitY=heightAt(exitX,player.z,player.y,1.5,2);exitPoint=exitY!==null&&!wallAt(exitX,exitY,player.z)?{x:exitX,y:exitY,z:player.z}:{x:player.x,y:player.y,z:player.z};enemies=placeEnemies();ui.threats.classList.remove('done');ui.exit.classList.remove('done');ui.threats.querySelector('b').textContent='01';ui.exit.querySelector('b').textContent='02';setMessage('HOSTILES : REPÈRES ROUGES · CLIC GAUCHE OU ESPACE POUR TIRER',6);sync();
   }
   function placeEnemies(){
@@ -190,7 +193,7 @@
     else {lockedEnemy=null;displayReticle(aimX,aimY);setLockStatus('AUCUNE CIBLE VISIBLE');}
   }
   function fire(){
-    if(!running||tutorialOpen()||clock<reloadUntil||clock-lastShot<.28)return;
+    if(!running||tutorialOpen()||player.rolling||clock<reloadUntil||clock-lastShot<.28)return;
     if(player.ammo<=0){setMessage('CHARGEUR VIDE · APPUYEZ SUR R');return;}
     if(!camera||!camera.eye||!camera.target){setMessage('VISÉE EN PRÉPARATION');return;}
     if(lockHeld){updateLock(true);if(!lockedEnemy){setMessage('AUCUNE CIBLE VISIBLE',2);return;}}
@@ -214,7 +217,13 @@
     else setMessage(blocked?'IMPACT SUR LE DÉCOR':'TIR EFFECTUÉ');
     sync();
   }
-  function reload(){if(!running||tutorialOpen()||player.ammo===rules.magazineCapacity||clock<reloadUntil)return;if(!player.reserve){setMessage('PLUS DE MUNITIONS EN RÉSERVE',2);return;}reloadUntil=clock+1.1;if(window.SFAudio)window.SFAudio.sound('reload');setMessage('RECHARGEMENT…',1.1);}
+  function reload(){if(!running||tutorialOpen()||player.rolling||player.ammo===rules.magazineCapacity||clock<reloadUntil)return;if(!player.reserve){setMessage('PLUS DE MUNITIONS EN RÉSERVE',2);return;}reloadUntil=clock+1.1;if(window.SFAudio)window.SFAudio.sound('reload');setMessage('RECHARGEMENT…',1.1);}
+  function roll(){
+    if(!running||tutorialOpen()||clock<rollReadyAt||clock<reloadUntil)return;
+    rollStart=clock;rollUntil=clock+ROLL_DURATION;rollReadyAt=clock+ROLL_COOLDOWN;
+    rollX=-Math.sin(player.angle);rollZ=-Math.cos(player.angle);
+    player.rolling=true;player.rollTime=0;
+  }
   function advance(dt){
     clock+=dt;if(reloadUntil&&clock>=reloadUntil){reloadUntil=0;rules.reload(player);setMessage('CHARGEUR RECHARGÉ');}
     const clampAxis=value=>Math.max(-1,Math.min(1,value));
@@ -223,8 +232,10 @@
     if(!lockHeld&&(gamepadAxes.lookX||gamepadAxes.lookY))moveReticle(aimX+gamepadAxes.lookX*1.15*dt,aimY+gamepadAxes.lookY*1.15*dt);
     const speed=(keys.has('shift')||forward<0)?rules.walkSpeed:rules.runSpeed;
     // PS1-style tank controls: turn in place, then travel along the agent's heading.
-    if(turn){player.angle=normAngle(player.angle-turn*2.1*dt);yaw=player.angle;cameraImmediate=false;}
-    const dx=-Math.sin(player.angle)*forward*speed*dt,dz=-Math.cos(player.angle)*forward*speed*dt;
+    const rollStep=Math.max(0,Math.min(dt,rollUntil-(clock-dt)));
+    player.rolling=clock<rollUntil;player.rollTime=Math.max(0,Math.min(ROLL_DURATION,clock-rollStart));
+    if(turn&&!rollStep){player.angle=normAngle(player.angle-turn*2.1*dt);yaw=player.angle;cameraImmediate=false;}
+    const dx=rollStep?rollX*ROLL_SPEED*rollStep:-Math.sin(player.angle)*forward*speed*dt,dz=rollStep?rollZ*ROLL_SPEED*rollStep:-Math.cos(player.angle)*forward*speed*dt;
     const previousX=player.x,previousZ=player.z;
     if(dx||dz){if(!moveAxis(player,dx,dz)){moveAxis(player,dx,0);moveAxis(player,0,dz);}}
     player.moving=Math.hypot(player.x-previousX,player.z-previousZ)>.0001;player.reverse=player.moving&&forward<0;player.running=player.moving&&!keys.has('shift')&&!player.reverse;
@@ -284,7 +295,7 @@
     if(buttons.some(Boolean))usingGamepad=true;
     // Edges are recorded before actions: one held button cannot activate the
     // title, close the guide, and interact again after a phase change.
-    const cross=pressed(0),square=pressed(2),trigger=pressed(7),options=pressed(9),recenter=pressed(11);
+    const cross=pressed(0),circle=pressed(1),square=pressed(2),trigger=pressed(7),options=pressed(9),recenter=pressed(11);
     const confirm=cross||(!pad.mapping&&[1,2,3].some(pressed));
     const up=pressed(12),down=pressed(13);
     gamepadButtons=buttons;
@@ -313,6 +324,7 @@
     else if(lockHeld)clearLock();
     if(recenter)moveReticle(0,0);
     if(cross)interact();
+    if(circle)roll();
     if(square)reload();
     if(trigger)fire();
     const deadzone=value=>{value=Number.isFinite(value)?Math.max(-1,Math.min(1,value)):0;const magnitude=Math.abs(value);return magnitude<=.18?0:Math.sign(value)*(magnitude-.18)/.82;};
@@ -323,7 +335,7 @@
     if(!camera||!camera.eye)return;
     for(const e of enemies)e.marked=!!(e.alive&&segmentVisible(camera.eye,[e.x,e.y+1.3,e.z]));
   }
-  function frame(time){const dt=Math.min((time-last)/1000||0,.05);last=time;pollGamepad();if(running&&!tutorialOpen())advance(dt);else if(tutorialOpen())keys.clear();if(running&&clock>=nextSaveAt){saveGame();nextSaveAt=clock+2;}if(running&&clock>=nextMarkerUpdate){updateEnemyMarkers();nextMarkerUpdate=clock+.2;}enemyShots=enemyShots.filter(shot=>clock<shot.until);for(const e of enemies)if(!e.alive)e.deathTime=Number.isFinite(e.deathAt)?Math.max(0,clock-e.deathAt):2;player.reloading=!!reloadUntil&&clock<reloadUntil;player.reloadTime=player.reloading?Math.max(0,1.1-(reloadUntil-clock)):0;player.aiming=lockHeld||(clock>=lastShot&&clock-lastShot<.5);if(renderer)camera=renderer.render({player,cameraYaw:yaw,cameraPitch:pitch,cameraImmediate,time:clock,enemies,enemyShots:running?enemyShots:[],objective:running&&!remaining()&&enemies.length?exitPoint:null,impact:running&&clock<impactUntil?impact:null});if(lockHeld)updateLock();cameraImmediate=false;requestAnimationFrame(frame);}
+  function frame(time){const dt=Math.min((time-last)/1000||0,.05);last=time;pollGamepad();if(running&&!tutorialOpen())advance(dt);else if(tutorialOpen())keys.clear();if(running&&clock>=nextSaveAt){saveGame();nextSaveAt=clock+2;}if(running&&clock>=nextMarkerUpdate){updateEnemyMarkers();nextMarkerUpdate=clock+.2;}enemyShots=enemyShots.filter(shot=>clock<shot.until);for(const e of enemies)if(!e.alive)e.deathTime=Number.isFinite(e.deathAt)?Math.max(0,clock-e.deathAt):2;player.reloading=!!reloadUntil&&clock<reloadUntil;player.reloadTime=player.reloading?Math.max(0,1.1-(reloadUntil-clock)):0;player.shotAge=Math.max(0,clock-lastShot);player.aiming=lockHeld||(clock>=lastShot&&clock-lastShot<.5);if(renderer)camera=renderer.render({player,cameraYaw:yaw,cameraPitch:pitch,cameraImmediate,time:clock,enemies,enemyShots:running?enemyShots:[],objective:running&&!remaining()&&enemies.length?exitPoint:null,impact:running&&clock<impactUntil?impact:null});if(lockHeld)updateLock();cameraImmediate=false;requestAnimationFrame(frame);}
   function look(dx,dy){moveReticle(0,0);const current=cameraImmediate?yaw:(camera?.yaw??yaw);yaw=normAngle(current-dx*.003);player.angle=yaw;cameraImmediate=true;pitch=Math.max(-.55,Math.min(.65,pitch+dy*.002));}
   function showBriefing(){
     phase='briefing';cinematics.hidden=true;introVideo.pause();introVideo.removeAttribute('src');introVideo.load();
@@ -367,7 +379,7 @@
     overlay.classList.remove('briefing');overlay.hidden=false;if(window.SFAudio)window.SFAudio.pauseMusic();ui.title.innerHTML='GEORGIA<br><em>STREET.</em>';ui.text.textContent='Les terroristes sont dans le secteur. Neutralisez les menaces et rejoignez la zone d’extraction. Restez vigilant, agent.';
     start.innerHTML='<span class="title-start-label">NOUVELLE PARTIE</span><img class="title-start-sprite" src="web/assets/title-new.png" alt="" aria-hidden="true">';refreshContinue();selectGamepadMenu(0);sync();
   });
-  document.addEventListener('keydown',e=>{if(window.SFAudio)window.SFAudio.unlock();usingGamepad=false;const k=e.key.toLowerCase();if(k==='escape'&&running){e.preventDefault();if(tutorialOpen())$('help-close').click();else $('help-open').click();return;}if(tutorialOpen())return;if(['arrowup','arrowdown','arrowleft','arrowright',' '].includes(k)&&running)e.preventDefault();if(!keys.has(k)){if(k==='r')reload();else if(k==='e')interact();else if(k===' ')fire();}keys.add(k);});document.addEventListener('keyup',e=>keys.delete(e.key.toLowerCase()));window.addEventListener('blur',()=>{keys.clear();drag=false;inputFocused=false;gamepadNeedsRelease=true;gamepadAxes={turn:0,forward:0,lookX:0,lookY:0};});window.addEventListener('focus',()=>{inputFocused=true;});window.addEventListener('pagehide',()=>saveGame());document.addEventListener('visibilitychange',()=>{if(document.hidden)saveGame();});document.addEventListener('pointerdown',()=>{if(window.SFAudio)window.SFAudio.unlock();});
+  document.addEventListener('keydown',e=>{if(window.SFAudio)window.SFAudio.unlock();usingGamepad=false;const k=e.key.toLowerCase();if(k==='escape'&&running){e.preventDefault();if(tutorialOpen())$('help-close').click();else $('help-open').click();return;}if(tutorialOpen())return;if(['arrowup','arrowdown','arrowleft','arrowright',' '].includes(k)&&running)e.preventDefault();if(!keys.has(k)){if(k==='r')reload();else if(k==='e')interact();else if(k==='c')roll();else if(k===' ')fire();}keys.add(k);});document.addEventListener('keyup',e=>keys.delete(e.key.toLowerCase()));window.addEventListener('blur',()=>{keys.clear();drag=false;inputFocused=false;gamepadNeedsRelease=true;gamepadAxes={turn:0,forward:0,lookX:0,lookY:0};});window.addEventListener('focus',()=>{inputFocused=true;});window.addEventListener('pagehide',()=>saveGame());document.addEventListener('visibilitychange',()=>{if(document.hidden)saveGame();});document.addEventListener('pointerdown',()=>{if(window.SFAudio)window.SFAudio.unlock();});
   document.addEventListener('pointerlockchange',()=>{if(running&&!usingGamepad){if(document.pointerLockElement===canvas)setMessage('SOURIS ACTIVÉE · CLIQUEZ POUR TIRER',2);else setMessage('SOURIS LIBÉRÉE · CLIQUEZ POUR REPRENDRE LA VISÉE',4);}});
   document.addEventListener('mousemove',e=>{if(!running||tutorialOpen())return;if(document.pointerLockElement===canvas){pointerError=false;look(e.movementX,e.movementY);}else if(pointerError&&(e.target===canvas||drag)){if(fallbackPositionKnown)look(e.clientX-lastX,e.clientY-lastY);lastX=e.clientX;lastY=e.clientY;fallbackPositionKnown=true;}});
   canvas.addEventListener('mousedown',e=>{if(!running||tutorialOpen()||e.button!==0)return;usingGamepad=false;if(document.pointerLockElement!==canvas){drag=true;lastX=e.clientX;lastY=e.clientY;if(!pointerError&&canvas.requestPointerLock){const p=canvas.requestPointerLock();if(p&&p.catch)p.catch(()=>{pointerError=true;fallbackPositionKnown=false;setMessage('DÉPLACEZ LA SOURIS SUR LE JEU POUR VISER',5);});return;}}fire();});window.addEventListener('mouseup',()=>drag=false);canvas.addEventListener('contextmenu',e=>e.preventDefault());

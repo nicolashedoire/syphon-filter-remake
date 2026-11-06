@@ -1,10 +1,10 @@
 // Exercise input axes, animation direction, safe start, and tutorial pause.
 const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
-function setup(){
+function setup(extraGeometry=[]){
   const els={},handlers={},doc={documentElement:{dataset:{}},pointerLockElement:null,addEventListener(k,fn){(handlers[k]??=[]).push(fn)},exitPointerLock(){}};
   function element(id){return els[id]??={textContent:'',innerHTML:'',style:{},hidden:false,events:{},classList:{add(){},remove(){}},querySelector(){return {textContent:''}},addEventListener(k,fn){this.events[k]=fn},focus(){},pause(){},load(){},removeAttribute(){}}}
   doc.getElementById=element;let state,tick,now=0;
-  const scene={positions:new Float32Array([10,21.32,-5,75,21.32,-5,75,21.32,60, 10,21.32,-5,75,21.32,60,10,21.32,60])};
+  const scene={positions:new Float32Array([10,21.32,-5,75,21.32,-5,75,21.32,60, 10,21.32,-5,75,21.32,60,10,21.32,60,...extraGeometry])};
   const c={window:null,document:doc,console,Float32Array,Map,Set,Math,Number,Array,SF_SCENE:scene,addEventListener(){},requestAnimationFrame(fn){tick=fn},SFRenderer:class{render(s){state=JSON.parse(JSON.stringify(s));let y=s.cameraYaw,p=s.cameraPitch,eye=[s.player.x+Math.sin(y)*3.8,s.player.y+1.4,s.player.z+Math.cos(y)*3.8];return {eye,target:[eye[0]-Math.sin(y)*Math.cos(p),eye[1]-Math.sin(p),eye[2]-Math.cos(y)*Math.cos(p)]}}}};c.window=c;vm.createContext(c);
   vm.runInContext(fs.readFileSync('web/ps1-rules.js','utf8'),c);vm.runInContext(fs.readFileSync('web/game.js','utf8'),c);
   const step=n=>{for(let i=0;i<n;i++)tick(now+=16)},key=(name,k)=>{for(const fn of handlers[name]||[])fn({key:k,preventDefault(){}})};
@@ -68,6 +68,31 @@ for(const [key,sign] of [['q',1],['d',-1],['ArrowLeft',1],['ArrowRight',-1]]){
  g.element('game').events.mousedown({button:0,clientX:0,clientY:0});g.step(4200);
  assert.equal(g.state.player.health,before.health,'A missed shot and 67 seconds idle do not trigger retaliation');
  assert.equal(g.state.player.armor,before.armor,'A missed shot does not trigger surprise armor loss');
+}
+{
+ const g=setup(),start={...g.state.player};
+ g.key('keydown','c');g.step(10);
+ assert.equal(g.state.player.rolling,true,'C starts a forward roll');
+ assert.ok(g.state.player.rollTime>.1&&g.state.player.rollTime<.2,'The renderer receives elapsed roll time');
+ assert.ok(start.x-g.state.player.x>.6,'The roll travels along the facing direction');
+ g.doc.documentElement.dataset.tutorialOpen='true';const paused={...g.state.player};g.step(40);
+ assert.equal(g.state.player.x,paused.x,'The roll pauses in the guide');
+ assert.equal(g.state.player.rollTime,paused.rollTime,'The roll animation pauses in the guide');
+ g.doc.documentElement.dataset.tutorialOpen='false';g.step(100);
+ assert.equal(g.state.player.rolling,false,'The roll ends');
+ assert.ok(start.x-g.state.player.x>2.9&&start.x-g.state.player.x<3.1,'The roll has bounded travel');
+ const after=g.state.player.x;g.step(100);assert.equal(g.state.player.x,after,'Holding the key does not repeat the roll');
+ g.key('keyup','c');g.key('keydown','c');g.step(1);assert.equal(g.state.player.rolling,true,'A new press can roll again after the cooldown');
+}
+{
+ const wall=[46.5,21.32,26, 46.5,24,26, 46.5,24,31, 46.5,21.32,26, 46.5,24,31, 46.5,21.32,31];
+ const g=setup(wall);g.key('keydown','c');g.step(50);
+ assert.ok(g.state.player.x>=46.8,'A roll cannot pass through a wall');
+}
+{
+ const g=setup();g.key('keydown','c');g.step(45);g.key('keyup','c');g.key('keydown','c');g.step(1);
+ assert.equal(g.state.player.rolling,false,'A new roll cannot start before the cooldown');
+ g.step(40);g.key('keyup','c');g.key('keydown','c');g.step(1);assert.equal(g.state.player.rolling,true,'The roll is available after the cooldown');
 }
 {
  const g=setup();const move=(x,y)=>{for(const f of g.handlers.mousemove||[])f({target:g.element('game'),clientX:x,clientY:y})};
