@@ -193,6 +193,27 @@ void main(){
       }
       // Visual-only accents follow the original Georgia Street police prop.
       this.sceneDetails=global.SFSceneDetails&&!global.SF_METRO_ACTIVE?global.SFSceneDetails.make(global.SF_PROPS):null;
+      this.policeMeshy=null;
+      // Only replace the original visible car after both the mesh and texture load.
+      // The PS1 triangles remain untouched in the gameplay and camera collision grids.
+      if(!global.SF_METRO_ACTIVE&&global.SFMeshyStatic&&typeof fetch==='function'){
+        fetch('web/assets/police-meshy.glb?v=15').then(response=>{
+          if(!response.ok)throw new Error('Police asset HTTP '+response.status);
+          return response.arrayBuffer();
+        }).then(buffer=>{
+          const model=global.SFMeshyStatic.decode(buffer),placement=global.SFMeshyStatic.policePlacement(model,global.SF_PROPS);
+          const mesh=makeBuffer(gl,model.vertices);
+          mesh.uv=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,mesh.uv);gl.bufferData(gl.ARRAY_BUFFER,model.uv,gl.STATIC_DRAW);
+          mesh.texture=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,mesh.texture);
+          gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+          gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+          const url=URL.createObjectURL(new Blob([model.texture.bytes],{type:model.texture.mimeType})),image=new Image();
+          image.onload=()=>{gl.bindTexture(gl.TEXTURE_2D,mesh.texture);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,false);
+            gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,image);mesh.textureReady=true;URL.revokeObjectURL(url);
+            this.policeMeshy={mesh,placement};};
+          image.onerror=()=>{URL.revokeObjectURL(url);console.warn('Police texture could not load; using PS1 car');};image.src=url;
+        }).catch(error=>console.warn('Police asset could not load; using PS1 car:',error));
+      }
       this.metroFireMesh=global.SF_METRO_ACTIVE&&global.SFMetroFireEffects?global.SFMetroFireEffects.create(gl,makeBuffer,sceneVertices):null;
       this.meshy=null;
       // Keep the original PS1 character until both the optional GLB and its texture are ready.
@@ -367,8 +388,12 @@ void main(){
       gl.uniformMatrix4fv(loc.viewProjection,false,vp);gl.uniform3fv(loc.camera,eye);
       this.updateRooms(p);
       this.draw(this.scene,M.identity(),[.45,.49,.46],true);
-      if(this.props){const visible=this.propObjects.filter(o=>!this.visibleRooms||o.rooms.some(r=>this.visibleRooms.has(r)));this.draw(this.props,M.identity(),[1,1,1],false,visible);}
-      if(this.sceneDetails)global.SFSceneDetails.draw(this,this.sceneDetails,state.time);
+      if(this.props){const visible=this.propObjects.filter(o=>(!this.visibleRooms||o.rooms.some(r=>this.visibleRooms.has(r)))&&
+        !(this.policeMeshy&&((o.name==='CP'&&o.id===57)||(o.name==='CPTOP'&&o.id===61)||(o.name==='LIGHT'&&o.id===139))));
+        this.draw(this.props,M.identity(),[1,1,1],false,visible);}
+      if(this.policeMeshy&&(!this.visibleRooms||this.visibleRooms.has(74))){const {mesh,placement:p}=this.policeMeshy;
+        this.draw(mesh,M.model(p.x,p.y,p.z,p.angle,p.scale,p.scale,p.scale),[1,1,1],false);}
+      if(this.sceneDetails)global.SFSceneDetails.draw(this,this.sceneDetails,state.time,this.policeMeshy?-.18:0);
       if(this.metroFireMesh)global.SFMetroFireEffects.draw(this,this.metroFireMesh,global.SF_METRO_FIRES,p,state.time);
       if(state.objective){const o=state.objective;this.box(o.x,o.y+.1,o.z,0,.55,.2,.55,[.80,.82,.24]);this.box(o.x,o.y+.7,o.z,0,.12,1.2,.12,[.92,.82,.21]);}
       if(Array.isArray(state.bombs))for(const bomb of state.bombs){this.box(bomb.x,bomb.y+.22,bomb.z,0,.9,.44,.65,[.40,.29,.18]);this.box(bomb.x,bomb.y+.48,bomb.z,0,.20,.08,.20,[1,.1,.05]);this.draw(this.enemyMarker,M.model(bomb.x,bomb.y+1,bomb.z,0,.12,.18,.12),[1,.25,.06],false);}

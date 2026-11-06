@@ -1,0 +1,11 @@
+const assert=require('node:assert/strict'),fs=require('node:fs');
+global.window=global;require('../web/meshy-character.js');require('../web/meshy-static.js');require('../web/assets/props.js');
+const file=fs.readFileSync('web/assets/police-meshy.glb');const buffer=file.buffer.slice(file.byteOffset,file.byteOffset+file.byteLength);
+const mesh=SFMeshyStatic.decode(buffer),p=SFMeshyStatic.policePlacement(mesh,SF_PROPS);
+assert.equal(mesh.vertices.length,38724*6);assert.equal(mesh.uv.length,38724*2);
+assert.equal(mesh.texture.mimeType,'image/png');assert.ok(mesh.texture.bytes.length>100000);
+assert.ok(p.x>35&&p.x<36&&p.z>27&&p.z<29);assert.ok(p.scale>6&&p.scale<7);
+assert.ok(Math.abs(p.y+mesh.min[1]*p.scale-21.49)<.01,'Car rests on original car baseline');
+assert.throws(()=>SFMeshyStatic.decode(new ArrayBuffer(12)));
+assert.throws(()=>SFMeshyStatic.policePlacement(mesh,{objects:[]}));
+console.log('Static Meshy police: real GLB, texture, original car placement and safe error paths passed.');
