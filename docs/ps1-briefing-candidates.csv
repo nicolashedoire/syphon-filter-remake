@@ -1,0 +1,21 @@
+resource,briefing_overlay,community_record_index,date_offset,date_text,next_string_candidate,evidence
+SUBWAY,SUBWAY.OVL,0,0x298,08/23 22h45,Georgia Street,US port index + French adjacent strings; not runtime verified
+SUBWAY2,SUBWAY2.OVL,0,0x1dc,08/23 23h45,Métro détruit,US port index + French adjacent strings; not runtime verified
+SUBWAY3,SUBWAY3.OVL,0,0x208,08/24 00h30,Ligne principale du métro,US port index + French adjacent strings; not runtime verified
+PARK,PARK.OVL,0,0x1e8,08/24 00h45,Parc de Washington,US port index + French adjacent strings; not runtime verified
+PARK2,PARK2.OVL,0,0x180,08/24 01h15,Mémorial de la Liberté,US port index + French adjacent strings; not runtime verified
+MUSEUM,MUSEUM.OVL,0,0x228,08/25 19h00,Réception de l'Exposition,US port index + French adjacent strings; not runtime verified
+MUSEUM2,MUSEUM2.OVL,0,0x124,08/25 19h15,Exposition Dinorama,US port index + French adjacent strings; not runtime verified
+BASEEXT,BASEEXT.OVL,0,0x200,09/01 21h00,Base de Rhoemer,US port index + French adjacent strings; not runtime verified
+BUNKER,BASEEXT.OVL,1,0x45c,09/01 21h30,Bunker de la base,US port index + French adjacent strings; not runtime verified
+CHOPPER,CHOPPER.OVL,0,0x14c,09/01 21h40,Tour de la base,US port index + French adjacent strings; not runtime verified
+BASEEXT2,BASEEXT.OVL,2,0x60c,09/01 21h45,Fuite de la base,US port index + French adjacent strings; not runtime verified
+CHURCH,LEVSPEC.OVL,0,0x1dc,09/07 06h30,Forteresse de Rhoemer,US port index + French adjacent strings; not runtime verified
+CHURCH2,LEVSPEC.OVL,1,0x420,09/07 07h15,Niveau le plus bas de la forteresse,US port index + French adjacent strings; not runtime verified
+CATACOMB,CATACOMB.OVL,0,0x218,09/07 08h00,Catacombes de la forteresse,US port index + French adjacent strings; not runtime verified
+WHOUSE,WHOUSE.OVL,0,0x264,09/08 03h00,Entrepôts PHARCOM,US port index + French adjacent strings; not runtime verified
+WHOUSE2,WHOUSE.OVL,1,0x4e8,09/08 03h25,Gardes d'élite de PHARCOM,US port index + French adjacent strings; not runtime verified
+INWHOUSE,WHOUSE.OVL,2,0x728,09/08 04h00,Entrepôt 76,US port index + French adjacent strings; not runtime verified
+CAVE,CAVE.OVL,0,0x170,09/08 04h15,Tunnels d'accès au silo,US port index + French adjacent strings; not runtime verified
+CAVE2,CAVE.OVL,1,0x384,09/08 04h45,Tunnel blackout,US port index + French adjacent strings; not runtime verified
+SILO,CAVE.OVL,2,0x528,09/08 05h00,Silo à missiles,US port index + French adjacent strings; not runtime verified

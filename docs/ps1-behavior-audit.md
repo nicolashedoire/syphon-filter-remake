@@ -1,6 +1,6 @@
 # French PS1 behavior audit
 
-This report records evidence and gaps as of November 6, 2026. It is an investigation, not a claim of complete decompilation or behavioral parity. The user's custom L2 lock and R2 fire bindings remain an explicit preference, even though the original controls differ.
+This report records evidence and gaps as of November 6, 2026. It is an investigation, not a claim of complete decompilation or behavioral parity. The user explicitly wants the current camera-follow behavior, targeting system and L2 lock / R2 fire bindings preserved. All other behavior is intended to match the original, but reconstruction must wait until its rules, missions and cinematics have been investigated.
 
 ## Evidence and confidence
 
@@ -47,9 +47,17 @@ A read-only scan of 13 French `/BIN/*.OVL` files found 622 printable-byte sequen
 | `LEVSPEC.OVL`, `CATACOMB.OVL` | catacombs, researchers, antigen and hostages `0x454–0x564`; Lian/Phagan constraints `0x25c–0x2f4` | Text is not a runtime trace. |
 | `WHOUSE.OVL`, `CAVE.OVL` | warehouses, gates, elevator and timer `0x744–0x804`; silo, power and missile constraints `0x774–0x8c4` | These overlays cover multiple resources; attribution remains to be verified. |
 
+A second pass indexed all 22 date anchors and matched the 20 community catalog record indices to adjacent French title candidates. See [the 20 candidate briefing records](ps1-briefing-candidates.csv). All 20 candidate records have a date and adjacent French label, but the catalog indices are still US-port mappings and two extra date anchors demonstrate that date anchors are not necessarily one-to-one with missions. This is a data cross-check, not proof of runtime selection or trigger order.
+
 The community briefing parser expects a `HH:MM` time, while the 22 date strings found in the French overlays use `h`, for example `23h45` (`SUBWAY2.OVL:0x1dc`). Applying that parser unchanged is therefore not sufficient for French records. A standalone `/BIN/SUBWAY3.OVL` exists even though a similarly named FOG archive contains another overlay copy.
 
 The manual also describes mission objectives and parameters, mission updates, maps, radio communications and checkpoints. The web save system is a browser-specific reconstruction, not an emulation of the PS1 save system.
+
+## Additional investigation
+
+- The [cinematic and audio inventory](ps1-cinematics-inventory.md) records all 39 STR files, audio metadata and gaps in the web version. Playback triggers and spoken language have not been established.
+- The [combat-table investigation](ps1-combat-static-investigation.md) documents REA observations, 26 candidate records and the unverified enemy-AI questions.
+- The [runtime investigation](ps1-runtime-investigation.md) records emulator and CPU-probe results; a bootable, instrumented French runtime remains necessary to establish gameplay behavior.
 
 ## Verification plan before gameplay changes
 
