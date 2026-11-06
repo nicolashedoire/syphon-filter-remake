@@ -7,7 +7,7 @@
   let phase='introduction',introIndex=0;
   const ui = {title:$('overlay-title'), text:$('overlay-text'), message:$('message'), health:$('health-hud'), healthSide:$('health-side'), healthBar:$('health-bar'), ammo:$('ammo-hud'), ammoSide:$('ammo-side'), status:$('status-side'), frame:$('frame-state'), objective:$('objective-hud'), remaining:$('remaining-hud'), threats:$('objective-threats'), exit:$('objective-exit')};
   const keys = new Set(), TAU=Math.PI*2, CELL=6, player={x:47.8,y:21.32,z:28.25,angle:Math.PI/2,health:150,armor:600,ammo:15,reserve:45};
-  let renderer, groundGrid, wallGrid, collisionPositions, enemies=[], exitPoint=null, running=false, finished=false, last=0, clock=0, reloadUntil=0, lastShot=-10, messageUntil=0, yaw=Math.PI/2, pitch=.05, drag=false, lastX=0, lastY=0, pointerError=false, fallbackPositionKnown=false, camera=null, impact=null, impactUntil=0, combatActive=false, combatStartsAt=0;
+  let renderer, groundGrid, wallGrid, collisionPositions, enemies=[], exitPoint=null, running=false, finished=false, last=0, clock=0, reloadUntil=0, lastShot=-10, messageUntil=0, yaw=Math.PI/2, pitch=.05, drag=false, lastX=0, lastY=0, pointerError=false, fallbackPositionKnown=false, camera=null, cameraImmediate=false, impact=null, impactUntil=0, combatActive=false, combatStartsAt=0;
   const normAngle = a => Math.atan2(Math.sin(a),Math.cos(a));
   const tutorialOpen = () => document.documentElement?.dataset?.tutorialOpen === 'true';
   const key=(x,z)=>`${x},${z}`;
@@ -45,7 +45,7 @@
   function moveAxis(p,dx,dz){const x=p.x+dx,z=p.z+dz,y=heightAt(x,z,p.y);if(y!==null&&!wallAt(x,y,z)){p.x=x;p.z=z;p.y=y;return true;}return false;}
   function setMessage(text,seconds=2){ui.message.textContent=text;messageUntil=clock+seconds;}
   function reset(){
-    player.x=47.8;player.y=heightAt(47.8,28.25,21.32,3,3)??21.32;player.z=28.25;player.angle=Math.PI/2;player.moving=false;player.running=false;player.animation='idle';player.animationTime=0;player.health=rules.initialHealth;player.armor=rules.initialArmor;player.ammo=rules.magazineCapacity;player.reserve=rules.initialReserve;yaw=Math.PI/2;pitch=.05;clock=0;lastShot=-10;reloadUntil=0;impact=null;camera=null;finished=false;combatActive=false;combatStartsAt=0;fallbackPositionKnown=false;keys.clear();
+    player.x=47.8;player.y=heightAt(47.8,28.25,21.32,3,3)??21.32;player.z=28.25;player.angle=Math.PI/2;player.moving=false;player.running=false;player.reverse=false;player.animation='idle';player.animationTime=0;player.health=rules.initialHealth;player.armor=rules.initialArmor;player.ammo=rules.magazineCapacity;player.reserve=rules.initialReserve;yaw=Math.PI/2;pitch=.05;clock=0;lastShot=-10;reloadUntil=0;impact=null;camera=null;cameraImmediate=true;finished=false;combatActive=false;combatStartsAt=0;fallbackPositionKnown=false;keys.clear();
     const exitX=player.x-6, exitY=heightAt(exitX,player.z,player.y,1.5,2);exitPoint=exitY!==null&&!wallAt(exitX,exitY,player.z)?{x:exitX,y:exitY,z:player.z}:{x:player.x,y:player.y,z:player.z};enemies=placeEnemies();ui.threats.classList.remove('done');ui.exit.classList.remove('done');ui.threats.querySelector('b').textContent='01';ui.exit.querySelector('b').textContent='02';setMessage('SÉCURISEZ LA ZONE',4);sync();
   }
   function placeEnemies(){
@@ -96,8 +96,7 @@
     if(!running||tutorialOpen()||clock<reloadUntil||clock-lastShot<.28)return;
     if(player.ammo<=0){setMessage('CHARGEUR VIDE · APPUYEZ SUR R');return;}
     if(!camera||!camera.eye||!camera.target){setMessage('VISÉE EN PRÉPARATION');return;}
-    if(!combatActive){combatActive=true;combatStartsAt=clock+2.5;}
-    lastShot=clock;player.ammo--;player.angle=yaw;
+    lastShot=clock;player.ammo--;player.angle=camera?.yaw??yaw;
     const origin=camera.eye,delta=camera.target.map((v,i)=>v-origin[i]),len=Math.hypot(...delta);
     if(len<1e-6){sync();return;}
     const direction=delta.map(v=>v/len),range=70,wallDistance=traceScene(origin,direction,range);
@@ -113,22 +112,24 @@
       if(block!==null)for(let i=0;i<3;i++)hitPoint[i]=muzzle[i]+muzzleRay[i]*block;
     }
     impact={x:hitPoint[0],y:hitPoint[1],z:hitPoint[2],hit:!!target};impactUntil=clock+.2;
-    if(target){target.health--;if(target.health<=0){target.alive=false;setMessage(remaining()?'MENACE NEUTRALISÉE':'ZONE SÉCURISÉE · REJOIGNEZ L’EXTRACTION',4);}else setMessage('CIBLE TOUCHÉE');}
+    if(target){const firstHit=!combatActive;if(firstHit){combatActive=true;combatStartsAt=clock+3.5;}target.health--;if(target.health<=0){target.alive=false;setMessage(remaining()?'MENACE NEUTRALISÉE':'ZONE SÉCURISÉE · REJOIGNEZ L’EXTRACTION',4);}else setMessage(firstHit?'CIBLE TOUCHÉE · ENNEMIS ALERTÉS':'CIBLE TOUCHÉE',firstHit?3.5:2);}
     else setMessage(blocked?'IMPACT SUR LE DÉCOR':'TIR EFFECTUÉ');
     sync();
   }
   function reload(){if(!running||tutorialOpen()||player.ammo===rules.magazineCapacity||clock<reloadUntil)return;if(!player.reserve){setMessage('PLUS DE MUNITIONS EN RÉSERVE',2);return;}reloadUntil=clock+1.1;setMessage('RECHARGEMENT…',1.1);}
   function advance(dt){
     clock+=dt;if(reloadUntil&&clock>=reloadUntil){reloadUntil=0;rules.reload(player);setMessage('CHARGEUR RECHARGÉ');}
-    const strafe=(keys.has('d')||keys.has('arrowright')?1:0)-(keys.has('q')||keys.has('a')||keys.has('arrowleft')?1:0),forward=(keys.has('z')||keys.has('w')||keys.has('arrowup')?1:0)-(keys.has('s')||keys.has('arrowdown')?1:0),m=Math.hypot(strafe,forward)||1,speed=keys.has('shift')?rules.walkSpeed:rules.runSpeed;
-    const dx=(Math.cos(yaw)*strafe-Math.sin(yaw)*forward)/m*speed*dt,dz=(-Math.sin(yaw)*strafe-Math.cos(yaw)*forward)/m*speed*dt;
+    const turn=(keys.has('d')||keys.has('arrowright')?1:0)-(keys.has('q')||keys.has('a')||keys.has('arrowleft')?1:0);
+    const forward=(keys.has('z')||keys.has('w')||keys.has('arrowup')?1:0)-(keys.has('s')||keys.has('arrowdown')?1:0);
+    const speed=(keys.has('shift')||forward<0)?rules.walkSpeed:rules.runSpeed;
+    // PS1-style tank controls: turn in place, then travel along the agent's heading.
+    if(turn){player.angle=normAngle(player.angle-turn*2.1*dt);yaw=player.angle;cameraImmediate=false;}
+    const dx=-Math.sin(player.angle)*forward*speed*dt,dz=-Math.cos(player.angle)*forward*speed*dt;
     const previousX=player.x,previousZ=player.z;
     if(dx||dz){if(!moveAxis(player,dx,dz)){moveAxis(player,dx,0);moveAxis(player,0,dz);}}
-    player.moving=Math.hypot(player.x-previousX,player.z-previousZ)>.0001;player.running=player.moving&&!keys.has('shift');
-    if(player.moving){const heading=Math.atan2(-dx,-dz);player.angle=normAngle(player.angle+normAngle(heading-player.angle)*Math.min(1,dt*14));}
+    player.moving=Math.hypot(player.x-previousX,player.z-previousZ)>.0001;player.reverse=player.moving&&forward<0;player.running=player.moving&&!keys.has('shift')&&!player.reverse;
     const animation=player.moving?(player.running?'run':'walk'):'idle';
     if(player.animation!==animation){player.animation=animation;player.animationTime=0;}else player.animationTime+=dt;
-    if(!combatActive&&Math.hypot(player.x-47.8,player.z-28.25)>4){combatActive=true;combatStartsAt=clock+3;setMessage('ZONE HOSTILE · RESTEZ VIGILANT',3);}
     for(const e of enemies){if(!e.alive)continue;const dx=player.x-e.x,dz=player.z-e.z,d=Math.hypot(dx,dz);e.angle=Math.atan2(-dx,-dz);
       const facing=Math.abs(normAngle(Math.atan2(dx,dz)-yaw))<.85;
       if(combatActive&&clock>=combatStartsAt&&d<20&&facing&&segmentVisible([e.x,e.y+1.25,e.z],[player.x,player.y+1.25,player.z])){
@@ -138,8 +139,8 @@
     if(enemies.length&&remaining()===0&&Math.hypot(player.x-exitPoint.x,player.z-exitPoint.z)<1.7){finish(true);return;}
     if(clock>messageUntil)ui.message.textContent=remaining()?'NEUTRALISEZ LES MENACES':'REJOIGNEZ LE POINT D’EXTRACTION';sync();
   }
-  function frame(time){const dt=Math.min((time-last)/1000||0,.05);last=time;if(running&&!tutorialOpen())advance(dt);else if(tutorialOpen())keys.clear();if(renderer)camera=renderer.render({player,cameraYaw:yaw,cameraPitch:pitch,time:clock,enemies,objective:running&&!remaining()&&enemies.length?exitPoint:null,impact:running&&clock<impactUntil?impact:null});requestAnimationFrame(frame);}
-  function look(dx,dy){yaw=normAngle(yaw-dx*.003);pitch=Math.max(-.55,Math.min(.65,pitch+dy*.002));}
+  function frame(time){const dt=Math.min((time-last)/1000||0,.05);last=time;if(running&&!tutorialOpen())advance(dt);else if(tutorialOpen())keys.clear();if(renderer)camera=renderer.render({player,cameraYaw:yaw,cameraPitch:pitch,cameraImmediate,time:clock,enemies,objective:running&&!remaining()&&enemies.length?exitPoint:null,impact:running&&clock<impactUntil?impact:null});cameraImmediate=false;requestAnimationFrame(frame);}
+  function look(dx,dy){const current=cameraImmediate?yaw:(camera?.yaw??yaw);yaw=normAngle(current-dx*.003);player.angle=yaw;cameraImmediate=true;pitch=Math.max(-.55,Math.min(.65,pitch+dy*.002));}
   function showBriefing(){
     phase='briefing';cinematics.hidden=true;introVideo.pause();introVideo.removeAttribute('src');introVideo.load();
     overlay.hidden=false;overlay.classList.add('briefing');

@@ -11,37 +11,68 @@ function setup(){
   element('start').events.click();step(1);
   return {element,doc,handlers,step,key,get state(){return state}};
 }
-const expected=[['z',-1,0,Math.PI/2],['s',1,0,-Math.PI/2],['q',0,1,Math.PI],['d',0,-1,0]];
-for(const [key,ex,ez,heading] of expected){
+// Forward and backward follow the character heading; backward retains its facing.
+for(const [key,direction,minDistance,maxDistance] of [['z',-1,5.8,6.5],['s',1,1.7,2]]){
   const g=setup(),start={...g.state.player};g.key('keydown',key);g.step(60);g.key('keyup',key);
   const dx=g.state.player.x-start.x,dz=g.state.player.z-start.z;
-  assert.ok(dx*ex+dz*ez>5.8,`${key}: moves in the expected camera-relative direction`);
-  assert.ok(Math.abs(dx*ez-dz*ex)<.05,`${key}: no movement on the other axis`);
-  assert.ok(Math.abs(Math.atan2(Math.sin(g.state.player.angle-heading),Math.cos(g.state.player.angle-heading)))<.05,`${key}: body faces the movement direction`);
-  assert.equal(g.state.player.animation,'run');
+  assert.ok(dx*direction>minDistance&&dx*direction<maxDistance,`${key}: moves along heading at the appropriate speed`);
+  assert.ok(Math.abs(dz)<.05,`${key}: no sideways drift`);
+  assert.ok(Math.abs(g.state.player.angle-start.angle)<.001,`${key}: keeps the body heading`);
+  assert.equal(g.state.player.reverse,key==='s',`${key}: correct walking direction`);
+  assert.equal(g.state.player.animation,key==='s'?'walk':'run');
+}
+// Left/right rotate in place, updating the camera target without a movement feedback loop.
+for(const [key,sign] of [['q',1],['d',-1],['ArrowLeft',1],['ArrowRight',-1]]){
+  const g=setup(),start={...g.state.player};g.key('keydown',key);g.step(30);g.key('keyup',key);
+  assert.ok(Math.abs(g.state.player.x-start.x)<.001&&Math.abs(g.state.player.z-start.z)<.001,`${key}: rotates without strafing`);
+  const rotation=Math.atan2(Math.sin(g.state.player.angle-start.angle),Math.cos(g.state.player.angle-start.angle));
+  assert.ok(rotation*sign>.9,`${key}: turns in the correct direction`);
+  assert.ok(Math.abs(g.state.cameraYaw-g.state.player.angle)<.001,`${key}: camera follows the character`);
+  assert.equal(g.state.cameraImmediate,false,`${key}: keyboard follow remains smoothed`);
 }
 {
  const g=setup(),start={...g.state.player};g.key('keydown','Shift');g.key('keydown','z');g.step(60);g.key('keyup','z');g.key('keyup','Shift');
  assert.ok(start.x-g.state.player.x>1.7&&start.x-g.state.player.x<2,'Walking uses the measured PS1 movement rate');assert.equal(g.state.player.animation,'walk');
 }
 {
- const g=setup(),before={...g.state.player};g.step(1400);
- assert.equal(g.state.player.health,before.health,'The player does not lose health while idle at spawn');
- assert.equal(g.state.player.armor,before.armor,'The player does not lose armor while idle at spawn');
- g.doc.documentElement.dataset.tutorialOpen='true';g.key('keydown','z');g.step(180);
- assert.equal(g.state.player.x,before.x,'The tutorial pauses player movement');assert.equal(g.state.player.armor,before.armor,'The tutorial pauses enemy damage');
- g.doc.documentElement.dataset.tutorialOpen='false';g.key('keydown','z');g.step(30);g.key('keyup','z');assert.ok(g.state.player.x<before.x-1,'Movement resumes after the tutorial');
+ const g=setup(),before={...g.state.player};
+ // Move beyond the former 4m trigger, turn, then remain inactive for over one minute.
+ g.key('keydown','z');g.step(60);g.key('keyup','z');g.key('keydown','q');g.step(20);g.key('keyup','q');
+ g.step(4200);
+ assert.equal(g.state.player.health,before.health,'No health is lost after walking, turning and 67 seconds of inactivity');
+ assert.equal(g.state.player.armor,before.armor,'No armor is lost before an enemy is hit');
+ const rested={...g.state.player};g.doc.documentElement.dataset.tutorialOpen='true';g.key('keydown','z');g.step(180);
+ assert.equal(g.state.player.x,rested.x,'The tutorial pauses player movement');assert.equal(g.state.player.armor,before.armor,'The tutorial pauses enemy damage');
+ g.doc.documentElement.dataset.tutorialOpen='false';g.key('keydown','z');g.step(30);g.key('keyup','z');assert.ok(Math.hypot(g.state.player.x-rested.x,g.state.player.z-rested.z)>1,'Movement resumes after the tutorial');
 }
 {
- const g=setup();g.doc.pointerLockElement=g.element('game');g.element('game').events.mousedown({button:0,clientX:0,clientY:0});g.step(1);
+ const g=setup();g.doc.pointerLockElement=g.element('game');
+ // Aim directly at the first target and deliberately hit it.
+ const e=g.state.enemies[0];
+ for(let i=0;i<8;i++){
+  const p=g.state.player,y=g.state.cameraYaw,eye=[p.x+Math.sin(y)*3.8,p.y+1.4,p.z+Math.cos(y)*3.8];
+  const desired=Math.atan2(-(e.x-eye[0]),-(e.z-eye[2]));
+  for(const f of g.handlers.mousemove||[])f({movementX:(y-desired)/.003,movementY:0});g.step(1);
+ }
+ g.element('game').events.mousedown({button:0,clientX:0,clientY:0});g.step(1);
+ assert.equal(g.state.enemies[0].health,1,'A deliberate hit engages combat');
  const armor=g.state.player.armor;g.doc.documentElement.dataset.tutorialOpen='true';g.step(500);
  assert.equal(g.state.player.armor,armor,'Combat is paused while reading the tutorial');
- g.doc.documentElement.dataset.tutorialOpen='false';g.step(400);
+ g.doc.documentElement.dataset.tutorialOpen='false';g.step(650);
  assert.ok(g.state.player.armor<armor,'A visible enemy can attack after the engagement grace period');
  assert.equal(g.state.player.health,150,'Incoming damage first affects armor');
 }
 {
+ const g=setup(),before={...g.state.player};g.doc.pointerLockElement=g.element('game');
+ for(const f of g.handlers.mousemove||[])f({movementX:20,movementY:-400});g.step(1);
+ g.element('game').events.mousedown({button:0,clientX:0,clientY:0});g.step(4200);
+ assert.equal(g.state.player.health,before.health,'A missed shot and 67 seconds idle do not trigger retaliation');
+ assert.equal(g.state.player.armor,before.armor,'A missed shot does not trigger surprise armor loss');
+}
+{
  const g=setup();const move=(x,y)=>{for(const f of g.handlers.mousemove||[])f({target:g.element('game'),clientX:x,clientY:y})};
  const yaw=g.state.cameraYaw;move(200,100);move(230,100);g.step(1);assert.ok(g.state.cameraYaw<yaw,'Mouse look works over the canvas when pointer lock is unavailable');
+ assert.ok(Math.abs(g.state.player.angle-g.state.cameraYaw)<.001,'The character follows mouse look');
+ const before=g.state.cameraYaw;g.key('keydown','q');g.step(1);g.key('keyup','q');assert.ok(Math.abs(g.state.cameraYaw-before)<.1,'Keyboard turning after mouse look does not jump the camera');
 }
-console.log('Movement tests passed: all directions, animation headings, safe spawn, tutorial pause and pointer fallback.');
+console.log('Movement tests passed: PS1 controls, 67 seconds idle, deliberate engagement, tutorial pause and pointer fallback.');

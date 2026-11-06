@@ -35,3 +35,36 @@ renderer.render({player:{x:47.8,y:21.32,z:28.25,angle:Math.PI/2,moving:true,runn
 assert.equal(renderer.characters.gabe.clip,'run','The original running animation is used');
 assert.ok(bufferUpdates>=2,'Animation frames update the character mesh');
 console.log('Renderer tests passed: PS1 textures, original models, room visibility and aim camera.');
+// The camera follows the desired player heading smoothly, without feeding its
+// interpolated yaw back into the input target; mouse look stays immediate.
+const player={x:47.8,y:21.32,z:28.25,angle:Math.PI};
+const beforeYaw=renderer.viewYaw;
+let pose=renderer.render({player,cameraYaw:Math.PI,cameraPitch:.05,time:1.016});
+const wrappedDelta=(a,b)=>Math.atan2(Math.sin(a-b),Math.cos(a-b));
+assert.ok(wrappedDelta(pose.yaw,beforeYaw)>0 && wrappedDelta(pose.yaw,beforeYaw)<Math.PI/2,'Keyboard turning should move the camera gradually');
+for(let i=2;i<=75;i++)pose=renderer.render({player,cameraYaw:Math.PI,cameraPitch:.05,time:1+i*.016});
+assert.ok(Math.abs(wrappedDelta(pose.yaw,Math.PI))<.01,'The camera settles behind the desired heading');
+pose=renderer.render({player,cameraYaw:-1,cameraPitch:.05,cameraImmediate:true,time:2.22});
+assert.ok(Math.abs(wrappedDelta(pose.yaw,-1))<1e-6,'Pointer input responds without damping');
+assert.ok(Math.abs(wrappedDelta(Math.atan2(-(pose.target[0]-pose.eye[0]),-(pose.target[2]-pose.eye[2])),pose.yaw))<1e-6,'The returned sight ray matches the displayed camera yaw');
+renderer.render({player,cameraYaw:3.1,cameraImmediate:true,time:3});
+pose=renderer.render({player,cameraYaw:-3.1,time:3.016});
+assert.ok(wrappedDelta(pose.yaw,3.1)>0 && wrappedDelta(pose.yaw,3.1)<.1,'Follow takes the short route across the angle wrap');
+pose=renderer.render({player,cameraYaw:.25,time:0});
+assert.ok(Math.abs(wrappedDelta(pose.yaw,.25))<1e-6,'Restart resets the camera heading');
+const wall=new Float32Array([-10,-1,1.5,10,-1,1.5,10,6,1.5,-10,-1,1.5,10,6,1.5,-10,6,1.5]);
+const blockedRenderer=new context.SFRenderer(canvas,{positions:wall});
+pose=blockedRenderer.render({player:{x:0,y:0,z:0,angle:0},cameraYaw:0,cameraPitch:0,time:0});
+assert.ok(pose.eye[2]<1.5,'The following camera stays in front of a wall');
+const drawCount=draws.length;
+renderer.person({x:0,y:0,z:0,angle:0},false,false);
+assert.equal(draws.length-drawCount,1,'No temporary black weapon box follows the character');
+console.log('Camera tests passed: smooth follow, instant mouse look, wall clipping and no placeholder box.');
+const reversePlayer={x:47.8,y:21.32,z:28.25,angle:0,moving:true,running:false,reverse:true,animationTime:0};
+renderer.render({player:reversePlayer,cameraYaw:0,time:4});
+assert.equal(renderer.characters.gabe.clip,'walk');
+assert.equal(renderer.characters.gabe.frame,context.SF_ANIMATIONS.gabe.walk.frames.length-1,'Walking backwards reverses the animation instead of moonwalking');
+reversePlayer.reverse=false;
+renderer.render({player:reversePlayer,cameraYaw:0,time:4.016});
+assert.equal(renderer.characters.gabe.frame,0,'Walking forwards plays the animation in normal order');
+console.log('Backward walk animation test passed.');

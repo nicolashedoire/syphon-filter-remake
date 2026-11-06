@@ -18,6 +18,10 @@ The browser implementation in `web/ps1-rules.js` ports a small, testable subset 
 
 In the French executable, a matching structured weapon table was located at file offset `0xfd29c` (PS-X address `0x8010ca9c`): its silenced 9 mm fields match the US-port values of 50 close damage, 25 distant damage, and cadence 4. REA also found a probable French damage routine entry at `0x80069070`, with a structure strongly resembling the US draft, but no complete instruction-by-instruction or runtime validation has been performed; the US routine address does not apply unchanged.
 
+## Georgia Street mission-state port
+
+`web/mission.js` adapts a subset of the community US PC port's Georgia Street state machine: CBDC protection, Kravitch, communications, doors, checkpoints, bomb hazards, radio triggers and reinforcement timing. The JavaScript behavior is covered by `tests/test_mission.cjs` against scenarios in the community port. This state machine is not connected to the prototype's provisional actors and is not a complete implementation of the mission; full equivalence with the French PS1 runtime remains unverified.
+
 ## Browser assets
 
 The browser prototype includes the original French disc's terrain textures, Gabe and terrorist HMD models, Gabe idle/walk/run animation poses, and 16 static objects from the initial visibility set. `web/assets/intro-general.mp4` and `intro-georgia.mp4` are converted from `/SOL/INTRO.STR` and `/SOL/SUBWAY.STR`; the original French briefing is stored in `web/assets/intro-briefing.js`. The videos retain the audio decoded from the French disc, although its spoken language has not been independently verified.
