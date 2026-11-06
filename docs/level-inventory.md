@@ -9,7 +9,7 @@ Campaign order, the English level names below, resource identifiers and overlay 
 | # | Community campaign name | French disc resource | Overlay listed in US port | EMD models | Remake state |
 |---:|---|---|---|---:|---|
 | 1 | Georgia Street | `SUBWAY.FOG` | `SUBWAY.OVL` | 91 | Partial 3D training prototype |
-| 2 | Destroyed subway | `SUBWAY2.FOG` | `SUBWAY2.OVL` | 23 | Geometry export validated; not playable |
+| 2 | Destroyed subway | `SUBWAY2.FOG` | `SUBWAY2.OVL` | 23 | Textured terrain asset extracted; not playable |
 | 3 | Main subway line | `SUBWAY3.FOG` | `SUBWAY3.OVL` | 23 | Geometry export validated; not playable |
 | 4 | Washington Park | `PARK.FOG` | `PARK.OVL` | 75 | Geometry export validated; not playable |
 | 5 | Freedom Memorial | `PARK2.FOG` | `PARK2.OVL` | 4 | Geometry export validated; not playable |
@@ -44,6 +44,17 @@ As a cross-check, the first French `DLF.RFF` entries include `Métro détruit` i
 | Save and controls | Original contains PlayStation menu, controller support and save behavior | Browser keyboard/controller handling and a local save system are separate adaptations; their behavior is not yet claimed as PS1 parity. |
 
 These gaps concern an unofficial reconstruction. The game's original source code has not been found, and neither an extracted archive nor a decompiled/disassembled function is by itself proof of a complete mission implementation.
+
+## Destroyed subway terrain asset
+
+`web/assets/subway2-textured.js` is an independently loadable terrain dataset exported from the French `SUBWAY2.FOG`; it exposes `window.SF_SUBWAY2_TERRAIN` without replacing the Georgia Street scene. It contains 12,349 textured triangles, 23 room ranges, 20 material combinations, an embedded PNG atlas, the room-visibility table and initial visibility room 19. The corresponding exporter is reproducible with:
+
+```sh
+python3 tools/export_subway2_web.py 'game-disc/Syphon Filter (France).cue' web/assets/subway2-textured.js
+node tests/test_subway2_terrain.cjs
+```
+
+The output must not already exist; Pillow, a C++20 compiler and the initialized `sf-pc-port` submodule are required to regenerate it. The terrain has not been integrated into the game and its in-engine appearance has not been verified. It does not contain the mission's actors, interactive objects, level-specific collision rules, dialogue, briefing state, objectives, or campaign transition. Those components must be recovered, implemented and tested before Destroyed Subway can be considered playable.
 
 ## Reproducible geometry export
 
