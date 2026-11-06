@@ -1,0 +1,28 @@
+'use strict';
+const assert=require('node:assert/strict');global.window=global;
+require('../web/math.js');require('../web/renderer.js');
+const renderer=Object.create(SFRenderer.prototype),draws=[],poses=[];
+renderer.gl={ARRAY_BUFFER:0,bindBuffer(){},bufferSubData(){}};
+renderer.draw=(mesh,transform)=>draws.push({mesh,transform});
+const hand=SFMath.model(.2,1,.3,0,1,1,1);
+const character={animations:{Walking:{duration:1},Running:{duration:.6},Run_and_Shoot:{duration:.6},Roll_Dodge:{duration:1.8}},
+  pose(name,time,options){poses.push({name,time,options});return {vertices:new Float32Array(6),rightHand:hand};}};
+renderer.meshy={character,mesh:{buffer:{}},key:null};renderer.weapon={};renderer.enemyMarker={};
+const player={x:4,y:0,z:5,angle:0,moving:true,running:true,aiming:true,animationTime:.4,shotAge:.04};
+renderer.person(player,false,true);
+assert.equal(poses[0].name,'Running');
+assert.equal(poses[0].options.inPlace,true);
+assert.equal(poses[0].options.upperBody.name,'Run_and_Shoot');
+assert.ok(poses[0].options.upperBody.time>0,'Actual shot controls the recoil phase');
+assert.equal(draws.length,3,'Character, pistol and muzzle flash are rendered for a shot');
+assert.notDeepEqual(Array.from(draws[1].transform),Array.from(draws[0].transform),'The gun has a hand-relative transform');
+draws.length=0;renderer.meshy.key=null;
+renderer.person({...player,shotAge:1},false,false);
+assert.equal(draws.length,2,'Muzzle flash is absent outside the firing window');
+assert.equal(poses.at(-1).options.upperBody.time,0,'The weapon holds a stable aiming pose');
+draws.length=0;renderer.meshy.key=null;
+renderer.person({...player,rolling:true,rollTime:.325},false,false);
+assert.equal(poses.at(-1).name,'Roll_Dodge');
+assert.ok(Math.abs(poses.at(-1).time-.9)<.05,'Roll clip follows the 0.65 second gameplay roll');
+assert.equal(poses.at(-1).options.upperBody,undefined,'Aiming does not override the roll');
+console.log('Meshy integration: running aim, shot flash and roll animation tests passed');

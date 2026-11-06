@@ -191,6 +191,28 @@ void main(){
         const image=new Image();image.onload=()=>{gl.bindTexture(gl.TEXTURE_2D,mesh.texture);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,false);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,image);mesh.textureReady=true;};image.src=weapon.atlas;
         this.weapon=mesh;
       }
+      this.meshy=null;
+      // Keep the original PS1 character until both the optional GLB and its texture are ready.
+      if(global.SFMeshyCharacter && typeof fetch==='function'){
+        fetch('web/assets/gabe-meshy.glb?v=13').then(response=>{
+          if(!response.ok)throw new Error('Character asset HTTP '+response.status);
+          return response.arrayBuffer();
+        }).then(buffer=>{
+          const character=new global.SFMeshyCharacter.Character(buffer);
+          if(!character.texture)throw new Error('Character texture missing');
+          const first=character.pose('Walking',0,{inPlace:true});
+          const mesh=makeBuffer(gl,first.vertices);
+          mesh.uv=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,mesh.uv);gl.bufferData(gl.ARRAY_BUFFER,first.uv,gl.STATIC_DRAW);
+          mesh.texture=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,mesh.texture);
+          gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+          gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+          const url=URL.createObjectURL(new Blob([character.texture.bytes],{type:character.texture.mimeType}));
+          const image=new Image();image.onload=()=>{gl.bindTexture(gl.TEXTURE_2D,mesh.texture);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,false);
+            gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,image);mesh.textureReady=true;URL.revokeObjectURL(url);
+            this.meshy={character,mesh,key:null,pose:first};};
+          image.onerror=()=>{URL.revokeObjectURL(url);console.warn('Character texture could not load; using PS1 model');};image.src=url;
+        }).catch(error=>console.warn('Character could not load; using PS1 model:',error));
+      }
       const extra=global.SF_PROPS&&global.SF_PROPS.positions;
       const collisionData=new Float32Array(scene.positions.length+(extra?extra.length:0));collisionData.set(scene.positions);if(extra)collisionData.set(extra,scene.positions.length);
       this.cameraWalls=cameraCollisionGrid(collisionData);
@@ -228,8 +250,43 @@ void main(){
       this.sceneRanges=[...this.visibleRooms].map(i=>this.rooms[i]).filter(r=>r&&r.count>0);
     }
     box(x,y,z,angle,sx,sy,sz,color) {this.draw(this.cube,M.model(x,y,z,angle,sx,sy,sz),color,false);}
+    meshyPerson(person) {
+      const asset=this.meshy,character=asset.character;
+      const rolling=person.rolling && character.animations.Roll_Dodge;
+      const base=rolling?'Roll_Dodge':person.moving?(person.running?'Running':'Walking'):'Walking';
+      let seconds=rolling?Math.max(0,person.rollTime||0)/.65*character.animations.Roll_Dodge.duration:person.moving?Math.max(0,person.animationTime||0):0;
+      const armed=!rolling&&!!person.aiming&&!!character.animations.Run_and_Shoot;
+      const shotAge=Number.isFinite(person.shotAge)?person.shotAge:Infinity;
+      const firing=shotAge>=0&&shotAge<.16;
+      // A stable firing stance is layered over the moving legs; a short portion
+      // of the upper-body firing clip provides the recoil for each actual shot.
+      const upperTime=firing?Math.min(.18,shotAge*1.125):0;
+      if(person.reverse&&person.moving&&!rolling)seconds=Math.max(0,character.animations[base].duration-seconds%character.animations[base].duration);
+      const options={inPlace:true,loop:!rolling};
+      if(armed)options.upperBody={name:'Run_and_Shoot',time:upperTime,loop:false};
+      // CPU skinning uses unique indexed vertices first. Limit buffer uploads to
+      // 24 per second, while transforms and the muzzle flash remain per-frame.
+      const key=[base,Math.floor(seconds*24),armed?Math.floor(upperTime*24):-1].join(':');
+      if(asset.key!==key){asset.pose=character.pose(base,Math.floor(seconds*24)/24,options);
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER,asset.mesh.buffer);this.gl.bufferSubData(this.gl.ARRAY_BUFFER,0,asset.pose.vertices);asset.key=key;
+        asset.groundOffset=0;
+        if(rolling){let minY=Infinity;for(let i=1;i<asset.pose.vertices.length;i+=6)minY=Math.min(minY,asset.pose.vertices[i]);
+          if(Number.isFinite(minY))asset.groundOffset=minY;}
+      }
+      const model=M.model(person.x||0,(person.y||0)-(rolling?asset.groundOffset:0),person.z||0,(person.angle||0)+Math.PI,1,1,1);
+      this.draw(asset.mesh,model,[1,1,1],false);
+      if(this.weapon){
+        // In this Mixamo rig +Y follows the fingers. Rotate the original weapon
+        // so its -Z barrel follows that axis, then place its grip in the palm.
+        const grip=new Float32Array([.65,0,0,0, 0,0,.65,0, 0,-.65,0,0, 0,.065,0,1]);
+        const gun=M.multiply(M.multiply(model,asset.pose.rightHand),grip);
+        this.draw(this.weapon,gun,[.3,.3,.3],false);
+        if(firing){const flash=M.multiply(gun,M.model(0,.1,-.34,0,.09,.09,.09));this.draw(this.enemyMarker,flash,[1,.78,.32],false);}
+      }
+    }
     person(person,enemy,firing) {
       const x=person.x||0,y=person.y||0,z=person.z||0,a=person.angle||0,c=Math.cos(a),s=Math.sin(a);
+      if(!enemy&&this.meshy){this.meshyPerson(person);return;}
       const dead=enemy&&person.alive===false;
       const original=this.characters[enemy?'terro':'gabe'];
       if(original){

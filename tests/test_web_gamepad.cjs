@@ -18,11 +18,17 @@ step(20);assert.doesNotMatch(el('message').textContent,/AUCUNE INTERACTION/,'Hol
 const initial={...state.player};pad.axes[1]=-.1;step(40);assert.ok(Math.abs(state.player.x-initial.x)<.001,'The stick dead zone ignores drift');
 pad.axes[1]=-1;step(30);assert.ok(initial.x-state.player.x>2,'The left stick moves forward');pad.axes[1]=0;
 const yaw=state.cameraYaw;pad.axes[0]=1;step(15);assert.ok(state.cameraYaw<yaw-.3,'The left stick turns the player and camera');pad.axes[0]=0;
+const rollStart={...state.player};press(1);assert.equal(state.player.rolling,true,'Circle starts a roll');assert.ok(state.player.rollTime>=0&&state.player.rollTime<.1,'The renderer receives the start of the roll');
+step(60);assert.equal(state.player.rolling,false,'The roll ends while Circle remains held');const rollEnd={...state.player};assert.ok(Math.hypot(rollEnd.x-rollStart.x,rollEnd.z-rollStart.z)>2.9,'The roll moves the player');
+step(60);assert.equal(state.player.x,rollEnd.x,'Holding Circle does not repeat the roll');release(1);
+pad.axes[1]=-1;step(10);const movingAmmo=state.player.ammo,movingPosition={...state.player};press(7);
+assert.equal(state.player.ammo,movingAmmo-1,'R2 fires while running');assert.ok(Math.hypot(state.player.x-movingPosition.x,state.player.z-movingPosition.z)>.01,'The player keeps moving while firing');assert.equal(state.player.running,true,'The running state is retained while firing');release(7);pad.axes[1]=0;step(20);
 const look=state.cameraYaw;pad.axes[2]=1;pad.axes[3]=-1;step(15);
 assert.equal(state.cameraYaw,look,'Moving the aim cursor does not turn the camera');
 assert.ok(parseFloat(el('reticle').style.left)>50&&parseFloat(el('reticle').style.top)<50,'Right stick moves the cursor right and up');
 pad.axes[2]=0;pad.axes[3]=0;
 const shotView=lastView,ammo=state.player.ammo;press(7);assert.equal(state.player.ammo,ammo-1,'R2 fires');assert.equal(state.player.aiming,true,'The renderer receives the shooting pose');
+assert.ok(state.player.shotAge>=0&&state.player.shotAge<.1,'The renderer receives the time since the actual shot');
 const impact=state.impact,delta=[impact.x-shotView.eye[0],impact.y-shotView.eye[1],impact.z-shotView.eye[2]],f=shotView.target.map((v,i)=>v-shotView.eye[i]);
 const h=Math.hypot(f[0],f[2]),right=[-f[2]/h,0,f[0]/h],up=[-right[2]*f[1],right[2]*f[0]-right[0]*f[2],right[0]*f[1]],dot=(a,b)=>a.reduce((sum,v,i)=>sum+v*b[i],0);
 const aimX=(parseFloat(el('reticle').style.left)-50)/50,aimY=(parseFloat(el('reticle').style.top)-50)/50;
