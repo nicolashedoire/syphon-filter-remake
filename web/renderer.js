@@ -151,7 +151,7 @@ void main(){
       // Two dynamic vertices are enough for a thin, depth-tested enemy tracer.
       this.enemyShotTrace=makeBuffer(gl,new Float32Array(12));this.enemyShotTrace.mode=gl.LINES;
       this.rooms=Array.isArray(data.rooms)?data.rooms:null;this.visibility=Array.isArray(data.visibility)?data.visibility:null;
-      this.currentRoom=73;this.sceneRanges=null;
+      this.currentRoom=Number.isInteger(data.initialRoom)?data.initialRoom:73;this.sceneRanges=null;
       this.texturedReady=false;this.atlasTexture=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,this.atlasTexture);
       gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.NEAREST);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.NEAREST);
       gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
@@ -166,11 +166,11 @@ void main(){
           uv[i*2]=(slot[0]+Math.min(source.uvs[i*2],127)+.5)/1024;uv[i*2+1]=(slot[1]+source.uvs[i*2+1]+.5)/2048;}
         if(valid){this.props=makeBuffer(gl,sceneVertices(source.positions));this.props.uv=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,this.props.uv);gl.bufferData(gl.ARRAY_BUFFER,uv,gl.STATIC_DRAW);this.propObjects=source.objects||[];}}
       this.characters={};
-      if(global.SF_CHARACTERS){for(const name of ['gabe','terro']){
+      if(global.SF_CHARACTERS){for(const name of ['gabe','terro','cbdc']){
         const source=global.SF_CHARACTERS[name];if(!source||!source.positions||!source.parts||source.parts.length!==source.positions.length/3)continue;
         const mesh=makeBuffer(gl,sceneVertices(source.positions));const colors=new Float32Array(source.parts.length*3);
         for(let i=0;i<source.parts.length;i++){const part=source.parts[i],skin=part===0||part===2||part===8,feet=part===1||part===7;
-          const color=skin?(name==='gabe'?[.68,.49,.35]:[.62,.43,.31]):feet?[.09,.09,.085]:name==='gabe'?[.16,.20,.23]:[.34,.27,.20];colors.set(color,i*3);}
+          const color=name==='cbdc'?(feet?[.10,.11,.10]:[.82,.69,.12]):skin?(name==='gabe'?[.68,.49,.35]:[.62,.43,.31]):feet?[.09,.09,.085]:name==='gabe'?[.16,.20,.23]:[.34,.27,.20];colors.set(color,i*3);}
         mesh.colors=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,mesh.colors);gl.bufferData(gl.ARRAY_BUFFER,colors,gl.STATIC_DRAW);
         if(data.materials && source.uvs && source.cluts && source.tpages){
           const uv=new Float32Array(source.parts.length*2);let valid=true;
@@ -191,6 +191,9 @@ void main(){
         const image=new Image();image.onload=()=>{gl.bindTexture(gl.TEXTURE_2D,mesh.texture);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,false);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,image);mesh.textureReady=true;};image.src=weapon.atlas;
         this.weapon=mesh;
       }
+      // Visual-only accents follow the original Georgia Street police prop.
+      this.sceneDetails=global.SFSceneDetails&&!global.SF_METRO_ACTIVE?global.SFSceneDetails.make(global.SF_PROPS):null;
+      this.metroFireMesh=global.SF_METRO_ACTIVE&&global.SFMetroFireEffects?global.SFMetroFireEffects.create(gl,makeBuffer,sceneVertices):null;
       this.meshy=null;
       // Keep the original PS1 character until both the optional GLB and its texture are ready.
       if(global.SFMeshyCharacter && typeof fetch==='function'){
@@ -288,11 +291,12 @@ void main(){
       const x=person.x||0,y=person.y||0,z=person.z||0,a=person.angle||0,c=Math.cos(a),s=Math.sin(a);
       if(!enemy&&this.meshy){this.meshyPerson(person);return;}
       const dead=enemy&&person.alive===false;
-      const original=this.characters[enemy?'terro':'gabe'];
+      const kind=person.ally?'cbdc':enemy?'terro':'gabe';
+      const original=this.characters[kind];
       if(original){
-        let pose=global.SF_CHARACTERS[enemy?'terro':'gabe'].positions;
+        let pose=global.SF_CHARACTERS[kind].positions;
         const extra=global.SF_EXTRA_ANIMATIONS;
-        const clips=enemy?(extra&&extra.terro):(global.SF_ANIMATIONS&&global.SF_ANIMATIONS.gabe);
+        const clips=person.ally?null:enemy?(extra&&extra.terro):(global.SF_ANIMATIONS&&global.SF_ANIMATIONS.gabe);
         const death=dead&&global.SF_ENEMY_DEATH?.frames?.length?global.SF_ENEMY_DEATH:null;
         if(clips||death){
           const name=death?'death':!enemy&&person.reloading&&extra?.gabe?.reload?'reload':!enemy&&person.aiming&&extra?.gabe?.aim?'aim':person.moving?(person.running?'run':'walk'):'idle';
@@ -364,12 +368,19 @@ void main(){
       this.updateRooms(p);
       this.draw(this.scene,M.identity(),[.45,.49,.46],true);
       if(this.props){const visible=this.propObjects.filter(o=>!this.visibleRooms||o.rooms.some(r=>this.visibleRooms.has(r)));this.draw(this.props,M.identity(),[1,1,1],false,visible);}
+      if(this.sceneDetails)global.SFSceneDetails.draw(this,this.sceneDetails,state.time);
+      if(this.metroFireMesh)global.SFMetroFireEffects.draw(this,this.metroFireMesh,global.SF_METRO_FIRES,p,state.time);
       if(state.objective){const o=state.objective;this.box(o.x,o.y+.1,o.z,0,.55,.2,.55,[.80,.82,.24]);this.box(o.x,o.y+.7,o.z,0,.12,1.2,.12,[.92,.82,.21]);}
+      if(Array.isArray(state.bombs))for(const bomb of state.bombs){this.box(bomb.x,bomb.y+.22,bomb.z,0,.9,.44,.65,[.40,.29,.18]);this.box(bomb.x,bomb.y+.48,bomb.z,0,.20,.08,.20,[1,.1,.05]);this.draw(this.enemyMarker,M.model(bomb.x,bomb.y+1,bomb.z,0,.12,.18,.12),[1,.25,.06],false);}
       if(state.impact){const i=state.impact;this.box(i.x,i.y,i.z,0,.17,.17,.17,i.hit?[1,.72,.18]:[.9,.85,.55]);}
       this.person(p,false,!!state.impact);
       if(Array.isArray(state.enemies)) for(const enemy of state.enemies) {
         this.person(enemy,true);
         if(enemy.alive!==false&&enemy.marked) this.draw(this.enemyMarker,M.model(enemy.x,enemy.y+2.12,enemy.z,0,.13,.19,.13),[1,.13,.08],false);
+      }
+      if(Array.isArray(state.allies))for(const ally of state.allies){
+        this.person(ally,true);
+        if(ally.alive!==false)this.draw(this.enemyMarker,M.model(ally.x,ally.y+2.12,ally.z,0,.23,.30,.23),[.2,.75,1],false);
       }
       if(Array.isArray(state.enemyShots))for(const shot of state.enemyShots){
         if(!shot||!Array.isArray(shot.from)||!Array.isArray(shot.to)||shot.from.length!==3||shot.to.length!==3||![...shot.from,...shot.to].every(Number.isFinite))continue;

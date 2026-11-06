@@ -2,7 +2,8 @@
   'use strict';
   const $ = id => document.getElementById(id);
   const canvas = $('game'), overlay = $('overlay'), start = $('start'), reticle=$('reticle'), continueGame=$('continue-game');
-  const rules=window.SFPS1Rules;
+  const rules=window.SFPS1Rules, metro=!!window.SF_METRO_ACTIVE, metroData=window.SF_METRO_DATA;
+  let hasC4=false, allyContact=false, crossedTrain=false, ally=null, allyThreatAt=0, nextAllyDamageAt=0, allyThreatWarned=false;
   const cinematics=$('cinematics'), introVideo=$('intro-video'), skipIntro=$('skip-intro');
   let phase='introduction',introIndex=0;
   const ui = {title:$('overlay-title'), text:$('overlay-text'), message:$('message'), health:$('health-hud'), healthSide:$('health-side'), healthBar:$('health-bar'), ammo:$('ammo-hud'), ammoSide:$('ammo-side'), status:$('status-side'), frame:$('frame-state'), objective:$('objective-hud'), remaining:$('remaining-hud'), threats:$('objective-threats'), exit:$('objective-exit')};
@@ -72,16 +73,17 @@
   function refreshContinue(){if(continueGame)continueGame.hidden=!(window.SFSave&&window.SFSave.load());}
   function saveGame(){
     if(!running||!window.SFSave||!exitPoint)return false;
-    const snapshot={player:{x:player.x,y:player.y,z:player.z,angle:player.angle,health:player.health,armor:player.armor,ammo:player.ammo,reserve:player.reserve},camera:{yaw,pitch},
+    const snapshot={...(metro?{hasC4,allyContact,crossedTrain,allyHealth:ally?.health??3}:{}),player:{x:player.x,y:player.y,z:player.z,angle:player.angle,health:player.health,armor:player.armor,ammo:player.ammo,reserve:player.reserve},camera:{yaw,pitch},
       enemies:enemies.map(e=>({x:e.x,y:e.y,z:e.z,angle:e.angle,alive:e.alive,health:e.health,fire:e.fire,source:e.source??null,routeIndex:e.routeIndex??0})),exitPoint,clock,combatActive,combatStartsAt,reloadUntil,lastShot};
     return window.SFSave.save(snapshot);
   }
   function restoreGame(saved){
     Object.assign(player,saved.player,{moving:false,running:false,reverse:false,animation:'idle',animationTime:0,rolling:false,rollTime:0});
+    if(metro){hasC4=saved.hasC4;allyContact=saved.allyContact;crossedTrain=saved.crossedTrain;ally.health=saved.allyHealth;allyThreatAt=saved.clock+7;nextAllyDamageAt=allyThreatAt;allyThreatWarned=false;}
     yaw=saved.camera.yaw;pitch=saved.camera.pitch;clock=saved.clock;combatActive=saved.combatActive;combatStartsAt=saved.combatStartsAt;reloadUntil=saved.reloadUntil;lastShot=saved.lastShot;exitPoint={...saved.exitPoint};
     rollStart=rollUntil=rollReadyAt=clock;
     const actor=(window.SF_OPENING_ACTORS||[]).find(a=>a.source===184);
-    enemies=saved.enemies.map(e=>({...e,moving:false,running:false,...(!e.alive?{deathAt:clock-2}:{}),...(e.source===184&&actor?{route:actor.route.map(p=>p.map(n=>n/100))}:{})}));
+    enemies=saved.enemies.map(e=>({...e,moving:false,running:false,...(!e.alive?{deathAt:clock-2}:{}),...(e.source===184&&actor?{route:actor.route.map(p=>p.map(n=>n/100))}:{}),...(metro?{route:(metroData.enemies.find(a=>a.source===e.source)?.route||[])}:{})}));
     camera=null;cameraImmediate=true;nextMarkerUpdate=0;sync();
   }
   // The original mission scripts use centimetre-like native coordinates and an
@@ -93,6 +95,20 @@
   }
   function interact(){
     if(!running||tutorialOpen())return;
+    if(metro){
+      const near=p=>Math.hypot(player.x-p[0],player.y-p[1],player.z-p[2])<2.6;
+      if(!crossedTrain&&near([-13.5,-11.2,-27.5])){const to=[7,-11.2,-27.5],floor=heightAt(to[0],to[2],to[1],3,3);if(floor!==null&&!wallAt(to[0],floor,to[2])){player.x=to[0];player.y=floor;player.z=to[2];crossedTrain=true;cameraImmediate=true;setMessage('PASSAGE PROVISOIRE À TRAVERS LE TRAIN',3);return;}}
+      if(!hasC4&&near(metroData.cache)){hasC4=true;setMessage('C4 PRIS · REJOIGNEZ L’AGENT DU CBDC',5);sync();return;}
+      if(hasC4&&!allyContact&&near(metroData.ally)){allyContact=true;allyThreatAt=clock+7;nextAllyDamageAt=allyThreatAt;allyThreatWarned=false;setMessage('AGENT DU CBDC REPÉRÉ · PROTÉGEZ-LE',5);sync();return;}
+      if(near(metroData.bomb)){if(!hasC4)setMessage('BESOIN D’EXPLOSIFS',3);else if(!allyContact)setMessage('RETROUVEZ D’ABORD L’AGENT DU CBDC',3);else finish(true);return;}
+      // A provisional access point bridges an unimplemented original stair/door.
+      const lower=[7,-11.14,-14],upper=[10,0,-14];
+      if(near(player.y < -3?lower:upper)){
+        const to=player.y < -3?upper:lower, floor=heightAt(to[0],to[2],to[1],3,3);
+        if(floor!==null&&!wallAt(to[0],floor,to[2])){player.x=to[0];player.y=floor;player.z=to[2];cameraImmediate=true;setMessage('PASSAGE PROVISOIRE ENTRE LES ÉTAGES',3);return;}
+      }
+      setMessage(hasC4?'REJOIGNEZ LE REPÈRE DE MISSION':'LOCALISEZ LA CACHETTE DES EXPLOSIFS',3);return;
+    }
     const commands=missionCommandsAtPlayer();
     if(commands.some(c=>c.type==='destroy_object_source'&&c.object===317)){
       setMessage('COMMANDE DE SÉCURITÉ REPÉRÉE · OUVERTURE À INTÉGRER',4);return;
@@ -109,10 +125,13 @@
     enemyShots=[];
     moveReticle(0,0);
     player.x=47.8;player.y=heightAt(47.8,28.25,21.32,3,3)??21.32;player.z=28.25;player.angle=Math.PI/2;player.moving=false;player.running=false;player.reverse=false;player.animation='idle';player.animationTime=0;player.rolling=false;player.rollTime=0;player.health=rules.initialHealth;player.armor=rules.initialArmor;player.ammo=rules.magazineCapacity;player.reserve=rules.initialReserve;yaw=Math.PI/2;pitch=.05;clock=0;lastShot=-10;reloadUntil=0;rollStart=rollUntil=rollReadyAt=0;impact=null;camera=null;cameraImmediate=true;finished=false;combatActive=false;combatStartsAt=0;nextMarkerUpdate=0;fallbackPositionKnown=false;keys.clear();
+    if(metro){const [x,y,z]=metroData.start;player.x=x;player.y=heightAt(x,z,y,3,3)??y;player.z=z;player.angle=Math.PI/2;yaw=player.angle;hasC4=false;allyContact=false;crossedTrain=false;allyThreatAt=nextAllyDamageAt=0;allyThreatWarned=false;ally={x:metroData.ally[0],y:metroData.ally[1],z:metroData.ally[2],angle:0,alive:true,health:3,ally:true};
+      exitPoint={x:metroData.bomb[0],y:metroData.bomb[1],z:metroData.bomb[2]};enemies=placeEnemies();ui.threats.classList.remove('done');ui.exit.classList.remove('done');ui.threats.querySelector('b').textContent='01';ui.exit.querySelector('b').textContent='02';setMessage('MÉTRO DÉTRUIT · LOCALISEZ LA CACHETTE DES EXPLOSIFS',6);sync();return;}
     const exitX=player.x-6, exitY=heightAt(exitX,player.z,player.y,1.5,2);exitPoint=exitY!==null&&!wallAt(exitX,exitY,player.z)?{x:exitX,y:exitY,z:player.z}:{x:player.x,y:player.y,z:player.z};enemies=placeEnemies();ui.threats.classList.remove('done');ui.exit.classList.remove('done');ui.threats.querySelector('b').textContent='01';ui.exit.querySelector('b').textContent='02';setMessage('HOSTILES : REPÈRES ROUGES · CLIC GAUCHE OU ESPACE POUR TIRER',6);sync();
   }
   function placeEnemies(){
     const result=[];
+    if(metro){for(const actor of metroData.enemies){const [x,y,z]=actor.position,ground=heightAt(x,z,y,3,3);if(ground!==null&&!wallAt(x,ground,z))result.push({source:actor.source,x,y:ground,z,angle:0,alive:true,health:2,fire:3,moving:false,running:false,route:actor.route,routeIndex:0});}return result;}
     const authored=(window.SF_OPENING_ACTORS||[]).find(a=>a.source===184&&a.model==='TERRO.HMD'&&Array.isArray(a.route)&&a.route.length);
     // Keep two local training targets; the third follows an authored French-disc route.
     for(const [d,offset] of (authored?[[8,-2],[13,2]]:[[8,-2],[13,2],[18,-1]])){
@@ -130,8 +149,8 @@
     return result;
   }
   function remaining(){return enemies.filter(e=>e.alive).length;}
-  function sync(){const left=remaining(),integrity=Math.ceil(100*(player.health+player.armor)/(rules.initialHealth+rules.initialArmor));ui.health.textContent=integrity;ui.healthSide.textContent=integrity+' %';ui.healthBar.style.width=integrity+'%';ui.ammo.textContent=player.ammo+' / '+player.reserve;ui.ammoSide.textContent=player.ammo+' / '+player.reserve;ui.remaining.textContent='MENACES · '+String(left).padStart(2,'0');const remainingMenu=$('pause-remaining');if(remainingMenu)remainingMenu.textContent=left;ui.status.textContent=running?'EN MISSION':finished?'ENTRAÎNEMENT TERMINÉ':'EN ATTENTE';ui.frame.textContent=running?'EN MISSION':finished?'FIN DE TRANSMISSION':'EN ATTENTE';ui.objective.textContent=left?'SÉCURISEZ LA ZONE':'REJOIGNEZ L’EXTRACTION';if(!left&&enemies.length){ui.threats.classList.add('done');ui.threats.querySelector('b').textContent='✓';}}
-  function finish(won){running=false;finished=true;phase='briefing';overlay.classList.add('briefing');if(won&&window.SFSave)window.SFSave.clear();if(window.SFAudio)window.SFAudio.pauseMusic();if(document.pointerLockElement===canvas)document.exitPointerLock();ui.title.innerHTML=won?'ENTRAÎNEMENT<br><em>TERMINÉ.</em>':'MISSION<br><em>INTERROMPUE.</em>';ui.text.textContent=won?'Zone d’entraînement sécurisée. Les objectifs de la mission originale restent à intégrer.':'Votre intégrité est épuisée. Reprenez la mission depuis le début.';start.innerHTML='RECOMMENCER LA MISSION <span>↗</span>';overlay.hidden=false;if(won){ui.exit.classList.add('done');ui.exit.querySelector('b').textContent='✓';}sync();}
+  function sync(){const left=remaining(),integrity=Math.ceil(100*(player.health+player.armor)/(rules.initialHealth+rules.initialArmor));ui.health.textContent=integrity;ui.healthSide.textContent=integrity+' %';ui.healthBar.style.width=integrity+'%';ui.ammo.textContent=player.ammo+' / '+player.reserve;ui.ammoSide.textContent=player.ammo+' / '+player.reserve;ui.remaining.textContent='MENACES · '+String(left).padStart(2,'0');const remainingMenu=$('pause-remaining');if(remainingMenu)remainingMenu.textContent=left;ui.status.textContent=running?'EN MISSION':finished?'ENTRAÎNEMENT TERMINÉ':'EN ATTENTE';ui.frame.textContent=running?'EN MISSION':finished?'FIN DE TRANSMISSION':'EN ATTENTE';ui.objective.textContent=metro?(!hasC4?'LOCALISEZ LA CACHETTE DES EXPLOSIFS':!allyContact?'PROTÉGEZ L’AGENT DU CBDC':'FAITES SAUTER LE PASSAGE'):left?'SÉCURISEZ LA ZONE':'REJOIGNEZ L’EXTRACTION';if((metro?hasC4:!left&&enemies.length)){ui.threats.classList.add('done');ui.threats.querySelector('b').textContent='✓';}}
+  function finish(won,reason){running=false;finished=true;phase='briefing';overlay.classList.add('briefing');if(won&&window.SFSave)window.SFSave.clear();if(window.SFAudio)window.SFAudio.pauseMusic();if(document.pointerLockElement===canvas)document.exitPointerLock();ui.title.innerHTML=won?(metro?'MISSION<br><em>ACCOMPLIE.</em>':'ENTRAÎNEMENT<br><em>TERMINÉ.</em>'):'MISSION<br><em>INTERROMPUE.</em>';ui.text.textContent=metro?(won?'Le passage est ouvert et l’agent du CBDC est en sécurité. La suite de la campagne reste à intégrer.':reason||'Votre intégrité est épuisée. Reprenez la mission depuis le début.'):(won?'Zone d’entraînement sécurisée. Les objectifs de la mission originale restent à intégrer.':'Votre intégrité est épuisée. Reprenez la mission depuis le début.');start.innerHTML='RECOMMENCER LA MISSION <span>↗</span>';overlay.hidden=false;if(won){ui.exit.classList.add('done');ui.exit.querySelector('b').textContent='✓';}sync();}
   // Intersect a normalized ray with the actual level triangles using the
   // double-sided Möller–Trumbore test. Return the nearest positive distance.
   function traceScene(origin, direction, maxDistance) {
@@ -206,13 +225,17 @@
       const d=rayBox(origin,direction,[e.x-.48,e.y+.02,e.z-.48],[e.x+.48,e.y+1.85,e.z+.48],distance);
       if(d!==null&&d<distance){distance=d;target=e;}
     }
+    let bombHit=false;if(metro){const b=metroData.bomb,d=rayBox(origin,direction,[b[0]-.45,b[1],b[2]-.45],[b[0]+.45,b[1]+1,b[2]+.45],distance);if(d!==null&&d<distance){distance=d;target=null;bombHit=true;}}
+    if(metro&&ally?.alive){const d=rayBox(origin,direction,[ally.x-.45,ally.y,ally.z-.45],[ally.x+.45,ally.y+1.8,ally.z+.45],distance);if(d!==null&&d<distance){distance=d;target=ally;bombHit=false;}}
     const hitPoint=origin.map((v,i)=>v+direction[i]*distance),muzzle=[player.x,player.y+1.2,player.z];let blocked=wallDistance!==null;
     if(!segmentVisible(muzzle,hitPoint)){
       blocked=true;
-      target=null;const muzzleDelta=hitPoint.map((v,i)=>v-muzzle[i]),muzzleLen=Math.hypot(...muzzleDelta),muzzleRay=muzzleDelta.map(v=>v/muzzleLen),block=traceScene(muzzle,muzzleRay,muzzleLen);
+      target=null;bombHit=false;const muzzleDelta=hitPoint.map((v,i)=>v-muzzle[i]),muzzleLen=Math.hypot(...muzzleDelta),muzzleRay=muzzleDelta.map(v=>v/muzzleLen),block=traceScene(muzzle,muzzleRay,muzzleLen);
       if(block!==null)for(let i=0;i<3;i++)hitPoint[i]=muzzle[i]+muzzleRay[i]*block;
     }
     impact={x:hitPoint[0],y:hitPoint[1],z:hitPoint[2],hit:!!target};impactUntil=clock+.2;if(window.SFAudio)window.SFAudio.sound('impact');
+    if(bombHit){finish(false,'La bombe a explosé. N’endommagez pas les bombes.');return;}
+    if(metro&&target===ally){ally.health--;if(ally.health<=0){ally.alive=false;finish(false,'L’agent du CBDC a été touché. Ne tirez pas sur les alliés.');return;}setMessage('ATTENTION · AGENT DU CBDC',3);sync();return;}
     if(target){const firstHit=!combatActive;if(firstHit){combatActive=true;combatStartsAt=clock+3.5;}target.health--;if(target.health<=0){target.alive=false;target.deathAt=clock;target.deathTime=0;setMessage(remaining()?'MENACE NEUTRALISÉE':'ZONE SÉCURISÉE · REJOIGNEZ L’EXTRACTION',4);}else setMessage(firstHit?'CIBLE TOUCHÉE · ENNEMIS ALERTÉS':'CIBLE TOUCHÉE',firstHit?3.5:2);}
     else setMessage(blocked?'IMPACT SUR LE DÉCOR':'TIR EFFECTUÉ');
     sync();
@@ -223,6 +246,25 @@
     rollStart=clock;rollUntil=clock+ROLL_DURATION;rollReadyAt=clock+ROLL_COOLDOWN;
     rollX=-Math.sin(player.angle);rollZ=-Math.cos(player.angle);
     player.rolling=true;player.rollTime=0;
+  }
+  // Reconstructed guard behavior: a visible nearby guard may threaten the
+  // contacted ally after a grace period. This is not recovered PS1 AI.
+  function threatenAlly(e,dt){
+    if(!metro||!allyContact||!ally?.alive||Math.hypot(player.x-ally.x,player.z-ally.z)>24)return false;
+    const distance=Math.hypot(e.x-ally.x,e.y-ally.y,e.z-ally.z);
+    if(distance>20||!segmentVisible([e.x,e.y+1.3,e.z],[ally.x,ally.y+1.2,ally.z]))return false;
+    e.angle=Math.atan2(-(ally.x-e.x),-(ally.z-e.z));
+    if(!allyThreatWarned){allyThreatWarned=true;setMessage('ENNEMI PRÈS DU CBDC · PROTÉGEZ L’AGENT',5);}
+    if(clock<allyThreatAt)return true;
+    e.allyFire=(Number.isFinite(e.allyFire)?e.allyFire:1.5)-dt;
+    if(e.allyFire<=0&&clock>=nextAllyDamageAt){
+      e.allyFire=3.2;nextAllyDamageAt=clock+2.5;e.lastShotAt=clock;
+      enemyShots.push({from:[e.x,e.y+1.3,e.z],to:[ally.x,ally.y+1.2,ally.z],until:clock+.18});
+      if(window.SFAudio)window.SFAudio.sound('enemy');ally.health--;
+      if(ally.health<=0){ally.alive=false;finish(false,'L’agent du CBDC a été neutralisé. Protégez-le.');}
+      else setMessage('LE CBDC EST ATTAQUÉ · RIPOSTEZ',2.5);
+    }
+    return true;
   }
   function advance(dt){
     clock+=dt;if(reloadUntil&&clock>=reloadUntil){reloadUntil=0;rules.reload(player);setMessage('CHARGEUR RECHARGÉ');}
@@ -250,24 +292,25 @@
         if(dist<.12){e.routeIndex++;target=e.route[e.routeIndex];if(target){rx=target[0]-e.x;rz=target[2]-e.z;dist=Math.hypot(rx,rz);}}
         if(target&&dist>0){const step=Math.min(dist,1.4*dt);e.angle=Math.atan2(-rx,-rz);e.moving=moveAxis(e,rx/dist*step,rz/dist*step);}
       }
+      if(threatenAlly(e,dt)){if(!running)return;continue;}
       const dx=player.x-e.x,dz=player.z-e.z,d=Math.hypot(dx,dz);if(combatActive||!e.route)e.angle=Math.atan2(-dx,-dz);
       const facing=Math.abs(normAngle(Math.atan2(dx,dz)-yaw))<.85;
       if(combatActive&&clock>=combatStartsAt&&d<20&&facing&&segmentVisible([e.x,e.y+1.25,e.z],[player.x,player.y+1.25,player.z])){
-        e.fire-=dt;if(e.fire<=0){e.fire=2.5;enemyShots.push({from:[e.x,e.y+1.3,e.z],to:[player.x,player.y+1.2,player.z],until:clock+.14});if(window.SFAudio){window.SFAudio.sound('enemy');window.SFAudio.sound('hurt');}rules.applyPlayerDamage(player,7);setMessage('CONTACT ENNEMI · RIPOSTEZ',1.8);}
+        e.fire-=dt;if(e.fire<=0){e.fire=2.5;e.lastShotAt=clock;enemyShots.push({from:[e.x,e.y+1.3,e.z],to:[player.x,player.y+1.2,player.z],until:clock+.14});if(window.SFAudio){window.SFAudio.sound('enemy');window.SFAudio.sound('hurt');}rules.applyPlayerDamage(player,7);setMessage('CONTACT ENNEMI · RIPOSTEZ',1.8);}
       }}
     if(player.health<=0){finish(false);return;}
-    if(enemies.length&&remaining()===0&&Math.hypot(player.x-exitPoint.x,player.z-exitPoint.z)<1.7){finish(true);return;}
-    if(clock>messageUntil)ui.message.textContent=remaining()?'NEUTRALISEZ LES MENACES':'REJOIGNEZ LE POINT D’EXTRACTION';sync();
+    if(!metro&&enemies.length&&remaining()===0&&Math.hypot(player.x-exitPoint.x,player.z-exitPoint.z)<1.7){finish(true);return;}
+    if(clock>messageUntil)ui.message.textContent=metro?metroGuidance():remaining()?'NEUTRALISEZ LES MENACES':'REJOIGNEZ LE POINT D’EXTRACTION';sync();
   }
   // Browsers may expose a standard gamepad only after its first button press.
   // Polling also makes disconnection safe even when the event is missed.
   function gamepadStatus(text){const status=$('gamepad-status');if(status&&status.textContent!==text)status.textContent=text;}
   // Continue only belongs to the title screen; briefing styles hide it even
   // when a valid save exists, so never let the gamepad select it there.
-  function titleMenuItems(){return [start,...(phase==='introduction'&&continueGame&&!continueGame.hidden?[continueGame]:[]),$('help-brief')].filter(Boolean);}
+  function titleMenuItems(){return [start,...(phase==='introduction'&&continueGame&&!continueGame.hidden?[continueGame]:[]),$('help-brief'),...(phase==='introduction'?[$('metro-select')]:[])].filter(Boolean);}
   function selectGamepadMenu(selection){
     const items=titleMenuItems();gamepadMenuSelection=Math.max(0,Math.min(items.length-1,selection));
-    for(const node of [start,continueGame,$('help-brief')])if(node&&node.dataset)node.dataset.gamepadSelected=node===items[gamepadMenuSelection]?'true':'false';
+    for(const node of [start,continueGame,$('help-brief'),$('metro-select')])if(node&&node.dataset)node.dataset.gamepadSelected=node===items[gamepadMenuSelection]?'true':'false';
     const target=items[gamepadMenuSelection];if(target&&typeof target.focus==='function')target.focus();
   }
   function pollGamepad(){
@@ -335,12 +378,24 @@
     if(!camera||!camera.eye)return;
     for(const e of enemies)e.marked=!!(e.alive&&segmentVisible(camera.eye,[e.x,e.y+1.3,e.z]));
   }
-  function frame(time){const dt=Math.min((time-last)/1000||0,.05);last=time;pollGamepad();if(running&&!tutorialOpen())advance(dt);else if(tutorialOpen())keys.clear();if(running&&clock>=nextSaveAt){saveGame();nextSaveAt=clock+2;}if(running&&clock>=nextMarkerUpdate){updateEnemyMarkers();nextMarkerUpdate=clock+.2;}enemyShots=enemyShots.filter(shot=>clock<shot.until);for(const e of enemies)if(!e.alive)e.deathTime=Number.isFinite(e.deathAt)?Math.max(0,clock-e.deathAt):2;player.reloading=!!reloadUntil&&clock<reloadUntil;player.reloadTime=player.reloading?Math.max(0,1.1-(reloadUntil-clock)):0;player.shotAge=Math.max(0,clock-lastShot);player.aiming=lockHeld||(clock>=lastShot&&clock-lastShot<.5);if(renderer)camera=renderer.render({player,cameraYaw:yaw,cameraPitch:pitch,cameraImmediate,time:clock,enemies,enemyShots:running?enemyShots:[],objective:running&&!remaining()&&enemies.length?exitPoint:null,impact:running&&clock<impactUntil?impact:null});if(lockHeld)updateLock();cameraImmediate=false;requestAnimationFrame(frame);}
+  function frame(time){const dt=Math.min((time-last)/1000||0,.05);last=time;pollGamepad();if(running&&!tutorialOpen())advance(dt);else if(tutorialOpen())keys.clear();if(running&&clock>=nextSaveAt){saveGame();nextSaveAt=clock+2;}if(running&&clock>=nextMarkerUpdate){updateEnemyMarkers();nextMarkerUpdate=clock+.2;}enemyShots=enemyShots.filter(shot=>clock<shot.until);for(const e of enemies){e.shotAge=Number.isFinite(e.lastShotAt)?clock-e.lastShotAt:Infinity;if(!e.alive)e.deathTime=Number.isFinite(e.deathAt)?Math.max(0,clock-e.deathAt):2;}player.reloading=!!reloadUntil&&clock<reloadUntil;player.reloadTime=player.reloading?Math.max(0,1.1-(reloadUntil-clock)):0;player.shotAge=Math.max(0,clock-lastShot);player.aiming=lockHeld||(clock>=lastShot&&clock-lastShot<.5);if(renderer)camera=renderer.render({player,cameraYaw:yaw,cameraPitch:pitch,cameraImmediate,time:clock,enemies,enemyShots:running?enemyShots:[],objective:running?(metro?metroObjective():!remaining()&&enemies.length?exitPoint:null):null,allies:metro&&ally?[ally]:[],bombs:metro?[{x:metroData.bomb[0],y:metroData.bomb[1],z:metroData.bomb[2]}]:[],impact:running&&clock<impactUntil?impact:null});if(lockHeld)updateLock();cameraImmediate=false;requestAnimationFrame(frame);}
+  function metroGuidance(){
+    const p=metroObjective(),distance=Math.round(Math.hypot(player.x-p.x,player.z-p.z));
+    const angle=normAngle(Math.atan2(-(p.x-player.x),-(p.z-player.z))-player.angle);
+    const direction=Math.abs(angle)<.4?'↑':angle>0?'←':'→';
+    const label=!crossedTrain?'PASSAGE PRÈS DU TRAIN':!hasC4?'CACHETTE DES EXPLOSIFS':player.y < -3?'PASSAGE ENTRE LES ÉTAGES':!allyContact?'AGENT DU CBDC':'PASSAGE À OUVRIR';
+    return label+' · '+distance+' M '+direction+(distance<4?' · E / CROIX':'');
+  }
+  function metroObjective(){
+    const p=!crossedTrain?[-13.5,-11.2,-27.5]:!hasC4?metroData.cache:player.y < -3?[7,-11.14,-14]:!allyContact?metroData.ally:metroData.bomb;
+    return {x:p[0],y:p[1],z:p[2]};
+  }
   function look(dx,dy){moveReticle(0,0);const current=cameraImmediate?yaw:(camera?.yaw??yaw);yaw=normAngle(current-dx*.003);player.angle=yaw;cameraImmediate=true;pitch=Math.max(-.55,Math.min(.65,pitch+dy*.002));}
   function showBriefing(){
     phase='briefing';cinematics.hidden=true;introVideo.pause();introVideo.removeAttribute('src');introVideo.load();
     overlay.hidden=false;overlay.classList.add('briefing');
     ui.title.innerHTML='BRIEFING DE<br><em>MISSION.</em>';
+    if(metro){ui.text.classList.add('briefing-text');ui.text.textContent='MÉTRO DÉTRUIT — PROTOTYPE\n\nLocalisez la cachette des explosifs, retrouvez et protégez l’agent du CBDC, puis faites sauter le passage.\n\nN’endommagez pas les bombes et ne tirez pas sur l’agent. Deux passages provisoires permettent de contourner le train et de relier les étages : approchez-vous du repère et appuyez sur E ou Croix.';start.innerHTML='COMMENCER LA MISSION <span>→</span>';gamepadMenuSelection=0;return;}
     const briefing=window.SF_BRIEFING;
     ui.text.classList.add('briefing-text');
     ui.text.textContent=briefing.directives.join('\n\n')+'\n\nOBJECTIFS DU DOSSIER :\n• '+briefing.objectives.join('\n• ')+'\n\nPARAMÈTRES :\n• '+briefing.parameters.join('\n• ');
@@ -363,12 +418,14 @@
     if(usingGamepad){setMessage('L2 CIBLER · R2 TIRER · OPTIONS MENU',5);return;}
     if(canvas.requestPointerLock){const p=canvas.requestPointerLock();if(p&&p.catch)p.catch(()=>{pointerError=true;fallbackPositionKnown=false;setMessage('DÉPLACEZ LA SOURIS SUR LE JEU POUR VISER',5);});}else{pointerError=true;fallbackPositionKnown=false;setMessage('DÉPLACEZ LA SOURIS SUR LE JEU POUR VISER',5);}
   }
+  const levelButton=$('metro-select');if(levelButton&&levelButton.addEventListener){if(metro)levelButton.textContent='REVENIR À GEORGIA STREET';levelButton.addEventListener('click',()=>{window.location.href=metro?'?v=14':'?mission=metro&v=14';});}
   introVideo.addEventListener('ended',playNextIntro);
   introVideo.addEventListener('error',()=>{if(phase==='cinematics')playNextIntro();});
   skipIntro.addEventListener('click',()=>{if(phase==='cinematics')showBriefing();});
   start.addEventListener('click',event=>{
     if(event?.isTrusted)usingGamepad=false;
     if(!renderer)return;
+    if(phase==='introduction'&&metro){showBriefing();return;}
     if(phase==='introduction'&&window.SF_BRIEFING){phase='cinematics';introIndex=0;overlay.hidden=true;cinematics.hidden=false;playNextIntro();return;}
     startMission();
   });
@@ -376,7 +433,7 @@
   const saveQuit=$('help-save-quit');if(saveQuit&&saveQuit.addEventListener)saveQuit.addEventListener('click',()=>{
     if(!saveGame()){const feedback=$('pause-feedback');if(feedback)feedback.textContent='SAUVEGARDE IMPOSSIBLE DANS CE NAVIGATEUR';return;}
     running=false;phase='introduction';clearLock();keys.clear();if(window.SFAudio)window.SFAudio.pauseMusic();$('help-close').click();
-    overlay.classList.remove('briefing');overlay.hidden=false;if(window.SFAudio)window.SFAudio.pauseMusic();ui.title.innerHTML='GEORGIA<br><em>STREET.</em>';ui.text.textContent='Les terroristes sont dans le secteur. Neutralisez les menaces et rejoignez la zone d’extraction. Restez vigilant, agent.';
+    overlay.classList.remove('briefing');overlay.hidden=false;if(window.SFAudio)window.SFAudio.pauseMusic();ui.title.innerHTML=metro?'MÉTRO<br><em>DÉTRUIT.</em>':'GEORGIA<br><em>STREET.</em>';ui.text.textContent=metro?'Localisez la cachette des explosifs et protégez l’agent du CBDC. Prototype de mission.':'Les terroristes sont dans le secteur. Neutralisez les menaces et rejoignez la zone d’extraction. Restez vigilant, agent.';
     start.innerHTML='<span class="title-start-label">NOUVELLE PARTIE</span><img class="title-start-sprite" src="web/assets/title-new.png" alt="" aria-hidden="true">';refreshContinue();selectGamepadMenu(0);sync();
   });
   document.addEventListener('keydown',e=>{if(window.SFAudio)window.SFAudio.unlock();usingGamepad=false;const k=e.key.toLowerCase();if(k==='escape'&&running){e.preventDefault();if(tutorialOpen())$('help-close').click();else $('help-open').click();return;}if(tutorialOpen())return;if(['arrowup','arrowdown','arrowleft','arrowright',' '].includes(k)&&running)e.preventDefault();if(!keys.has(k)){if(k==='r')reload();else if(k==='e')interact();else if(k==='c')roll();else if(k===' ')fire();}keys.add(k);});document.addEventListener('keyup',e=>keys.delete(e.key.toLowerCase()));window.addEventListener('blur',()=>{keys.clear();drag=false;inputFocused=false;gamepadNeedsRelease=true;gamepadAxes={turn:0,forward:0,lookX:0,lookY:0};});window.addEventListener('focus',()=>{inputFocused=true;});window.addEventListener('pagehide',()=>saveGame());document.addEventListener('visibilitychange',()=>{if(document.hidden)saveGame();});document.addEventListener('pointerdown',()=>{if(window.SFAudio)window.SFAudio.unlock();});
@@ -385,5 +442,5 @@
   canvas.addEventListener('mousedown',e=>{if(!running||tutorialOpen()||e.button!==0)return;usingGamepad=false;if(document.pointerLockElement!==canvas){drag=true;lastX=e.clientX;lastY=e.clientY;if(!pointerError&&canvas.requestPointerLock){const p=canvas.requestPointerLock();if(p&&p.catch)p.catch(()=>{pointerError=true;fallbackPositionKnown=false;setMessage('DÉPLACEZ LA SOURIS SUR LE JEU POUR VISER',5);});return;}}fire();});window.addEventListener('mouseup',()=>drag=false);canvas.addEventListener('contextmenu',e=>e.preventDefault());
   try{if(!window.SF_SCENE||!window.SFRenderer||!rules)throw new Error('Les ressources du jeu sont absentes.');const terrain=SF_SCENE.positions,props=window.SF_PROPS&&window.SF_PROPS.positions;
     collisionPositions=new Float32Array(terrain.length+(props?props.length:0));collisionPositions.set(terrain);if(props)collisionPositions.set(props,terrain.length);
-    [groundGrid,wallGrid]=prepareCollision(collisionPositions);renderer=new SFRenderer(canvas,SF_SCENE);reset();refreshContinue();requestAnimationFrame(frame);}catch(error){ui.title.innerHTML='CHARGEMENT<br><em>IMPOSSIBLE.</em>';ui.text.textContent='Le navigateur ne peut pas lancer la scène 3D. Vérifiez que WebGL est disponible et que tous les fichiers du projet sont présents.';start.disabled=true;console.error(error);}
+    [groundGrid,wallGrid]=prepareCollision(collisionPositions);renderer=new SFRenderer(canvas,SF_SCENE);if(metro){document.title='Syphon Filter — Métro détruit';const label=document.querySelector?.('.briefing-label');if(label)label.textContent='WASHINGTON D.C. / MÉTRO DÉTRUIT';const missionName=document.querySelector?.('.mission-id strong');if(missionName)missionName.textContent='MÉTRO DÉTRUIT';ui.title.innerHTML='MÉTRO<br><em>DÉTRUIT.</em>';ui.text.textContent='Localisez la cachette des explosifs et protégez l’agent du CBDC. Prototype de mission.';const t=ui.threats.querySelector('span'),e=ui.exit.querySelector('span');if(t)t.textContent='Localiser les explosifs';if(e)e.textContent='Protéger l’agent et ouvrir le passage';}reset();refreshContinue();requestAnimationFrame(frame);}catch(error){ui.title.innerHTML='CHARGEMENT<br><em>IMPOSSIBLE.</em>';ui.text.textContent='Le navigateur ne peut pas lancer la scène 3D. Vérifiez que WebGL est disponible et que tous les fichiers du projet sont présents.';start.disabled=true;console.error(error);}
 })();
