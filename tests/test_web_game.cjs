@@ -8,13 +8,14 @@ function element(id) {
     classList:{add(){},remove(){}},querySelector(){return {textContent:''}},
     addEventListener(name,fn){this.events[name]=fn;},focus(){}};
 }
-let nextFrame, state, lastCamera, now=1000;
+let nextFrame, state, liveState, lastCamera, now=1000;
 const document={getElementById:element,addEventListener(name,fn){(listeners[name]??=[]).push(fn);},pointerLockElement:null,exitPointerLock(){this.pointerLockElement=null;}};
-const context={console,Float32Array,Map,Set,Math,Number,Array,document,requestAnimationFrame(fn){nextFrame=fn;},addEventListener(){},SFRenderer:class{render(value){state=JSON.parse(JSON.stringify(value));const {player:p,cameraYaw:yaw,cameraPitch:pitch}=value;const sy=Math.sin(yaw),cy=Math.cos(yaw),cp=Math.cos(pitch),sp=Math.sin(pitch);const eye=[p.x+sy*cp*3.8+cy*.65,p.y+1.7+sp*3.8,p.z+cy*cp*3.8-sy*.65];lastCamera={eye,target:[eye[0]-sy*cp,eye[1]-sp,eye[2]-cy*cp]};return lastCamera;}}};
+const context={console,Float32Array,Map,Set,Math,Number,Array,document,requestAnimationFrame(fn){nextFrame=fn;},addEventListener(){},SFRenderer:class{render(value){liveState=value;state=JSON.parse(JSON.stringify(value));const {player:p,cameraYaw:yaw,cameraPitch:pitch}=value;const sy=Math.sin(yaw),cy=Math.cos(yaw),cp=Math.cos(pitch),sp=Math.sin(pitch);const eye=[p.x+sy*cp*3.8+cy*.65,p.y+1.7+sp*3.8,p.z+cy*cp*3.8-sy*.65];lastCamera={eye,target:[eye[0]-sy*cp,eye[1]-sp,eye[2]-cy*cp]};return lastCamera;}}};
 context.window=context;
 vm.createContext(context);
 vm.runInContext(fs.readFileSync('web/assets/georgia-street.js','utf8'),context);
 vm.runInContext(fs.readFileSync('web/ps1-rules.js','utf8'),context);
+vm.runInContext(fs.readFileSync('web/mission.js','utf8'),context);
 vm.runInContext(fs.readFileSync('web/game.js','utf8'),context);
 function advance(frames){for(let i=0;i<frames;i++){now+=16;nextFrame(now);}}
 function dispatch(name,event){for(const fn of listeners[name]||[])fn(event);}
@@ -46,7 +47,8 @@ assert.equal(element('ammo-hud').textContent,'15 / 39','Reloading replenishes th
 const dx=state.objective.x-state.player.x,dz=state.objective.z-state.player.z;
 const desired=Math.atan2(-dx,-dz),delta=Math.atan2(Math.sin(state.cameraYaw-desired),Math.cos(state.cameraYaw-desired));
 dispatch('mousemove',{movementX:delta/.003,movementY:0});down('z');advance(90);up('z');
-assert.match(element('overlay-title').innerHTML,/ACCOMPLIE/,'Reaching extraction completes the mission');
+assert.match(element('overlay-title').innerHTML,/ENTRAÎNEMENT/,'Reaching extraction completes the training scenario, not the original mission');
+assert.match(element('overlay-text').textContent,/restent à intégrer/,'The ending does not claim the original mission is complete');
 console.log('Web game smoke test passed: start, aiming, combat, reload, movement and extraction.');
 
 // The reticle's vertical direction matters: looking above a target must miss.
@@ -64,6 +66,8 @@ const withWall=new Float32Array(original.length+wall.length);withWall.set(origin
 aimAt(state.enemies[0]);element('game').events.mousedown({button:0,clientX:0,clientY:0});advance(1);
 assert.equal(state.enemies[0].health,2,'A wall blocks shots at enemies');
 assert.ok(state.impact && !state.impact.hit,'A blocked shot renders an impact');
+advance(20);
+assert.equal(state.enemies[0].marked,false,'Enemy markers are hidden behind walls');
 const healthBefore=state.player.health,armorBefore=state.player.armor;advance(260);
 assert.equal(state.player.health,healthBefore,'Enemy shots cannot pass through the wall');
 assert.equal(state.player.armor,armorBefore,'The wall also protects armor');
@@ -77,3 +81,25 @@ element('game').events.mousedown({button:0,clientX:0,clientY:0});
 assert.equal(captureRequests,1,'Clicking the game recaptures the pointer');
 assert.equal(element('ammo-hud').textContent,ammoBefore,'Recapturing the pointer does not consume ammunition');
 console.log('Pointer recapture test passed.');
+
+// Indicators obey real line of sight, and keyboard shooting and interactions are usable.
+context.SF_SCENE.positions=original;
+element('start').events.click();document.pointerLockElement=element('game');advance(20);
+assert.ok(state.enemies.some(e=>e.marked),'A visible enemy is identified by a marker');
+const enemy=state.enemies[0];aimAt(enemy);
+const ammoAtStart=liveState.player.ammo;down(' ');advance(1);
+assert.equal(liveState.player.ammo,ammoAtStart-1,'Space fires one shot');
+down(' ');advance(30);
+assert.equal(liveState.player.ammo,ammoAtStart-1,'Holding Space does not repeatedly shoot');
+up(' ');down(' ');up(' ');advance(1);
+assert.equal(state.enemies[0].alive,false,'A second deliberate Space shot can neutralize an enemy');
+Object.assign(liveState.player,{x:enemy.x,y:enemy.y,z:enemy.z});down('e');up('e');
+assert.match(element('message').textContent,/HOSTILE NEUTRALISÉ/,'E examines a nearby neutralized hostile');
+Object.assign(liveState.player,{x:-5.62,y:2.59,z:43.04});down('e');up('e');
+assert.match(element('message').textContent,/SÉCURITÉ REPÉRÉE.*À INTÉGRER/,'Original switch coordinates are recognized without claiming the gate opened');
+Object.assign(liveState.player,{x:1.28,y:22.85,z:51.31});down('e');up('e');
+assert.match(element('message').textContent,/ASCENSEUR REPÉRÉ.*À INTÉGRER/,'Original elevator coordinates are recognized without a fake teleport');
+Object.assign(liveState.player,{x:47.8,y:21.32,z:28.25});down('e');up('e');
+assert.match(element('message').textContent,/AUCUNE INTERACTION À PROXIMITÉ/,'E gives a useful result away from interactive objects');
+assert.equal(element('overlay').hidden,true,'Interactions do not end the mission');
+console.log('Indicators, keyboard shooting and honest contextual interaction tests passed.');

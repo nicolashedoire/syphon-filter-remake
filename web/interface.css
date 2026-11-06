@@ -110,3 +110,31 @@
 /* Keep the briefing controls visible while long mission text scrolls. */
 .overlay.briefing .overlay-card{display:flex;flex-direction:column;overflow:hidden}.overlay.briefing .overlay-card>*{flex-shrink:0}.overlay.briefing p.briefing-text{flex:1 1 auto;min-height:70px;max-height:none;max-width:none;overflow-y:auto}.overlay.briefing button:not(.help-link){align-self:flex-start}.overlay.briefing .overlay-meta{display:none}
 .briefing-hint{display:none}.overlay.briefing .briefing-hint{display:block;color:#d6ddff;font:9px 'Courier New',monospace;letter-spacing:.03em;margin:0 0 10px}
+/* Original PS1 title movie and compact menu; the French dossier remains separate. */
+.title-background{display:none}
+.overlay:not(.briefing){padding:0;background:#000;align-items:center;justify-content:center}
+.overlay:not(.briefing) .overlay-inner{position:relative;display:block;width:min(100vw,133.333vh);height:auto;max-height:100vh;aspect-ratio:4/3;padding:0;overflow:hidden;border:0;box-shadow:none;background:#030b05}
+.overlay:not(.briefing) .title-background{display:block;position:absolute;inset:0;width:100%;height:100%;object-fit:fill;image-rendering:pixelated}
+.overlay:not(.briefing) .overlay-inner::after{content:'';position:absolute;inset:56% 0 0;z-index:1;pointer-events:none;background:linear-gradient(transparent,rgba(0,0,0,.40) 40%,rgba(0,0,0,.72))}
+.overlay:not(.briefing) .overlay-card{display:block;position:absolute;inset:0;z-index:2;width:100%;max-width:none;pointer-events:none}
+.overlay:not(.briefing) .overlay-kicker,.overlay:not(.briefing) .rule,.overlay:not(.briefing) .briefing-label,.overlay:not(.briefing) .overlay-meta{display:none}
+.overlay:not(.briefing) .overlay-card h1{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.overlay:not(.briefing) #overlay-title{position:absolute;left:17%;bottom:17%;margin:0;color:#b7eeb1;font:700 clamp(12px,1.7vw,19px)/1.1 'Courier New',monospace;letter-spacing:.06em;text-shadow:2px 2px #000}
+.overlay:not(.briefing) #overlay-title em{color:#b7eeb1}.overlay:not(.briefing) #overlay-title br{display:none}
+.overlay:not(.briefing) #overlay-text{position:absolute;left:17%;bottom:6%;width:34%;max-width:none;max-height:9%;overflow:auto;margin:0;color:#d6ebd3;font:clamp(9px,1.15vw,13px)/1.35 'Courier New',monospace;text-shadow:1px 1px #000}
+.overlay:not(.briefing) #start,.overlay:not(.briefing) #help-brief{position:absolute;right:4%;width:36%;min-width:0;max-width:none;margin:0;padding:7px 7px 7px 24px;border:0;background:none;box-shadow:none;text-align:left;pointer-events:auto;cursor:pointer;color:#a7f878;font:900 clamp(13px,2vw,22px)/1.2 'Arial Black',Arial,sans-serif;letter-spacing:.02em;text-shadow:2px 2px #001a02,0 0 7px #38a748}
+.overlay:not(.briefing) #start{bottom:16%}.overlay:not(.briefing) #help-brief{bottom:8%;font-size:clamp(11px,1.55vw,17px);color:#8acb70}
+.overlay:not(.briefing) #start span{display:none}.overlay:not(.briefing) #start::before,.overlay:not(.briefing) #help-brief::before{content:'▶';position:absolute;left:2px;color:#d5ffaf;font-size:.7em;line-height:1.8;opacity:0}
+.overlay:not(.briefing) #start::before,.overlay:not(.briefing) #help-brief:hover::before,.overlay:not(.briefing) #help-brief:focus-visible::before{opacity:1}
+.overlay:not(.briefing) #start:hover,.overlay:not(.briefing) #help-brief:hover,.overlay:not(.briefing) #start:focus-visible,.overlay:not(.briefing) #help-brief:focus-visible{background:none;color:#e7ffd3;text-decoration:none}
+.overlay:not(.briefing) .cover-display{position:absolute;z-index:2;left:3%;bottom:4%;width:11%;max-width:100px;margin:0}.overlay:not(.briefing) .cover-topline,.overlay:not(.briefing) .cover-display figcaption{display:none}.overlay:not(.briefing) .cover-frame{padding:2px;border:1px solid #8ab284;background:#000;box-shadow:2px 2px 0 #000}
+@media(max-width:600px){.overlay:not(.briefing) .overlay-inner{width:100vw;min-height:0;aspect-ratio:4/3}.overlay:not(.briefing) #overlay-title{left:17%;bottom:19%;font-size:11px}.overlay:not(.briefing) #overlay-text{left:17%;bottom:5%;font-size:9px;line-height:1.15}.overlay:not(.briefing) #start{right:2%;bottom:16%;font-size:12px}.overlay:not(.briefing) #help-brief{right:2%;bottom:7%;font-size:10px}.overlay:not(.briefing) .cover-display{left:3%;bottom:5%;width:11%}}
+/* The first menu item uses the French sprite from the original PS1 title. */
+.overlay:not(.briefing) #start{width:31%;bottom:16%;padding:0 0 0 22px;overflow:visible}
+.overlay:not(.briefing) #start .title-start-label{display:block;position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.overlay:not(.briefing) #start .title-start-sprite{display:block;width:100%;height:auto;image-rendering:pixelated;filter:drop-shadow(1px 1px 1px #000)}
+.overlay:not(.briefing) #start::before{left:0;top:42%;line-height:1;opacity:1}
+.overlay:not(.briefing) #start:hover .title-start-sprite,.overlay:not(.briefing) #start:focus-visible .title-start-sprite{filter:brightness(1.3) drop-shadow(0 0 5px #64ff75)}
+/* The handgun indicator uses the two original PS1 interface sprites. */
+.ammo{display:flex;align-items:center;gap:10px}.weapon-icon{width:96px;height:auto;image-rendering:pixelated;filter:brightness(2) drop-shadow(1px 1px 1px #000)}
+@media(max-width:700px){.weapon-icon{width:64px}}

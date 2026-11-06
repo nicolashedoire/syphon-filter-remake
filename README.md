@@ -10,13 +10,15 @@ Open `index.html` directly in a recent desktop browser with WebGL enabled. The g
 
 - **Z / S** (or up / down arrows): move forward / backward.
 - **Q / D** (or left / right arrows): turn the character; the camera follows.
-- **Mouse**: look around; **left click**: shoot.
+- **Mouse**: look around; **left click or Space**: shoot. A red diamond identifies a visible enemy.
+- **E**: examine a nearby defeated enemy or recognized mission mechanism; some mechanisms are not yet functional.
 - **R**: reload; **Shift**: walk; **Escape**: release the pointer; **H**: open the PC controls guide.
+- **PlayStation controller** (standard browser mapping): left stick moves and turns, right stick aims, R2 fires, Square reloads, Cross interacts or confirms, and Options opens or closes the guide. Press a controller button first so the browser can detect it. Controller availability depends on the browser and operating system.
 - The original intro movies can be skipped; the French mission briefing is shown before gameplay.
 
-This is an early playable 3D prototype, not a complete remake. It uses the starting point, level geometry, PS1 textures, original Gabe and terrorist models, Gabe's idle/walk/run animations, and selected street objects from the French disc. It plays the two original intro videos and displays the original French briefing before the mission. The video audio comes from the French disc; its spoken language has not been independently verified.
+This is an early playable 3D prototype, not a complete remake. It uses the original title video and French menu sprite, the starting point, level geometry, PS1 textures, original Gabe and terrorist models, Gabe's idle/walk/run animations, the original silenced handgun, and selected street objects from the French disc. The handgun follows the animated hand using an approximate attachment; its original joint orientation remains to be recovered. It plays the two original intro videos and displays the original French briefing before the mission. The intro video audio comes from the French disc; its spoken language has not been independently verified. The title video is muted for browser autoplay.
 
-A PC controls guide opens before the first mission and can be reopened with H; the game pauses while it is open. Enemies do not attack until the player hits one; an alert and short delay precede retaliation. This is a temporary playability safeguard, not a verified PS1 rule. The camera, shooting, enemy behavior, objectives and collision approximations are new implementations, and the prototype's three-enemy objective is provisional. A first mission-state port exists in `web/mission.js`, but its authentic actors and interactions are not connected to the playable prototype yet. Dynamic texture changes, complete character animations, in-game voices and the rest of the game are also not yet implemented. A keyboard and mouse are required.
+A controls guide opens before the first mission and can be reopened with H or Options; the game pauses while it is open. Enemies do not attack until the player hits one; an alert and short delay precede retaliation. This is a temporary playability safeguard, not a verified PS1 rule. The camera, shooting, enemy behavior, objectives and collision approximations are new implementations, and the prototype's three-enemy objective is provisional. A first mission-state port exists in `web/mission.js`: interaction locations can be recognized, but their mechanisms and authentic actors are not yet connected to playable mission progression. Dynamic texture changes, complete character animations, in-game voices and the rest of the game are also not yet implemented.
 
 ## French PS1 Disc Image
 

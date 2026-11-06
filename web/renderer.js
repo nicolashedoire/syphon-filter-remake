@@ -135,6 +135,13 @@ void main(){
       const textured=global.SF_TEXTURED_SCENE;
       const data=textured && textured.positions && textured.uvs ? textured : scene;
       this.scene=makeBuffer(gl,sceneVertices(data.positions));this.cube=makeBuffer(gl,cubeVertices());
+      // A small diamond makes visible enemies distinguishable from the scenery.
+      this.enemyMarker=makeBuffer(gl,sceneVertices(new Float32Array([
+        0,1,0, -1,0,0, 0,0,1, 0,1,0, 0,0,1, 1,0,0,
+        0,1,0, 1,0,0, 0,0,-1, 0,1,0, 0,0,-1, -1,0,0,
+        0,-1,0, 0,0,1, -1,0,0, 0,-1,0, 1,0,0, 0,0,1,
+        0,-1,0, 0,0,-1, 1,0,0, 0,-1,0, -1,0,0, 0,0,-1
+      ])));
       this.rooms=Array.isArray(data.rooms)?data.rooms:null;this.visibility=Array.isArray(data.visibility)?data.visibility:null;
       this.currentRoom=73;this.sceneRanges=null;
       this.texturedReady=false;this.atlasTexture=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,this.atlasTexture);
@@ -165,6 +172,17 @@ void main(){
         }
         this.characters[name]=mesh;
       }}
+      const weapon=global.SF_WEAPON;
+      if(weapon&&weapon.positions&&weapon.uvs&&weapon.atlas){
+        const mesh=makeBuffer(gl,sceneVertices(weapon.positions));
+        mesh.uv=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,mesh.uv);gl.bufferData(gl.ARRAY_BUFFER,weapon.uvs,gl.STATIC_DRAW);
+        mesh.texture=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,mesh.texture);
+        gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.NEAREST);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+        gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,1,1,0,gl.RGBA,gl.UNSIGNED_BYTE,new Uint8Array([255,255,255,255]));
+        const image=new Image();image.onload=()=>{gl.bindTexture(gl.TEXTURE_2D,mesh.texture);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,false);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,image);mesh.textureReady=true;};image.src=weapon.atlas;
+        this.weapon=mesh;
+      }
       const extra=global.SF_PROPS&&global.SF_PROPS.positions;
       const collisionData=new Float32Array(scene.positions.length+(extra?extra.length:0));collisionData.set(scene.positions);if(extra)collisionData.set(extra,scene.positions.length);
       this.cameraWalls=cameraCollisionGrid(collisionData);
@@ -181,8 +199,8 @@ void main(){
     }
     draw(mesh,transform,color,isScene,ranges) {
       const gl=this.gl,loc=this.locations;this.bind(mesh);gl.uniformMatrix4fv(loc.model,false,transform);
-      gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,this.atlasTexture);gl.uniform1i(loc.atlas,0);
-      gl.uniform1f(loc.useTexture,mesh.uv && this.texturedReady ? 1 : 0);
+      gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,mesh.texture||this.atlasTexture);gl.uniform1i(loc.atlas,0);
+      gl.uniform1f(loc.useTexture,mesh.uv && (mesh.texture?mesh.textureReady:this.texturedReady) ? 1 : 0);
       gl.uniform1f(loc.useVertexColor,mesh.colors ? 1 : 0);
       gl.uniform3fv(loc.color,color);gl.uniform1f(loc.scene,isScene?1:0);
       if(ranges){for(const range of ranges)gl.drawArrays(gl.TRIANGLES,range.start,range.count);}
@@ -206,12 +224,14 @@ void main(){
       const x=person.x||0,y=person.y||0,z=person.z||0,a=person.angle||0,c=Math.cos(a),s=Math.sin(a);
       const original=this.characters[enemy?'terro':'gabe'];
       if(original){
+        let pose=global.SF_CHARACTERS[enemy?'terro':'gabe'].positions;
         if(!enemy && global.SF_ANIMATIONS && global.SF_ANIMATIONS.gabe){
           const name=person.moving?(person.running?'run':'walk'):'idle';
           const clip=global.SF_ANIMATIONS.gabe[name];
           if(clip&&clip.frames&&clip.frames.length){
             const phase=Math.floor((Number.isFinite(person.animationTime)?person.animationTime:this.animationTime||0)*clip.fps)%clip.frames.length;
             const frame=person.reverse&&name!=='idle'?clip.frames.length-1-phase:phase;
+            pose=clip.frames[frame];
             if(original.clip!==name||original.frame!==frame){
               this.gl.bindBuffer(this.gl.ARRAY_BUFFER,original.buffer);
               this.gl.bufferSubData(this.gl.ARRAY_BUFFER,0,sceneVertices(clip.frames[frame]));
@@ -220,7 +240,17 @@ void main(){
           }
         }
         // The exported HMD's visible front faces the reverse of the game heading.
-        this.draw(original,M.model(x,y,z,a+Math.PI,1,1,1),[1,1,1],false);
+        const characterModel=M.model(x,y,z,a+Math.PI,1,1,1);
+        this.draw(original,characterModel,[1,1,1],false);
+        if(!enemy&&this.weapon){
+          // The original attaches GLOKSIL to RightHan. Our baked frames retain
+          // hand vertices but not their joint matrices, so use their centroid.
+          const parts=global.SF_CHARACTERS.gabe.parts;let hx=0,hy=0,hz=0,count=0;
+          for(let i=0;i<parts.length;i++)if(parts[i]===8){hx+=pose[i*3];hy+=pose[i*3+1];hz+=pose[i*3+2];count++;}
+          // Turn the approximate wrist slightly outward so the barrel remains
+          // visible from the third-person camera until joint rotations are recovered.
+          if(count){const grip=M.model(hx/count,hy/count,hz/count,Math.PI+.55,1,1,1);this.draw(this.weapon,M.multiply(characterModel,grip),[.3,.3,.3],false);}
+        }
         return;
       }
       const part=(dx,dy,dz,sx,sy,sz,color) => this.box(x+c*dx+s*dz,y+dy,z-s*dx+c*dz,a,sx,sy,sz,color);
@@ -266,7 +296,10 @@ void main(){
       if(state.objective){const o=state.objective;this.box(o.x,o.y+.1,o.z,0,.55,.2,.55,[.80,.82,.24]);this.box(o.x,o.y+.7,o.z,0,.12,1.2,.12,[.92,.82,.21]);}
       if(state.impact){const i=state.impact;this.box(i.x,i.y,i.z,0,.17,.17,.17,i.hit?[1,.72,.18]:[.9,.85,.55]);}
       this.person(p,false,!!state.impact);
-      if(Array.isArray(state.enemies)) for(const enemy of state.enemies) if(enemy.alive!==false) this.person(enemy,true);
+      if(Array.isArray(state.enemies)) for(const enemy of state.enemies) if(enemy.alive!==false) {
+        this.person(enemy,true);
+        if(enemy.marked) this.draw(this.enemyMarker,M.model(enemy.x,enemy.y+2.12,enemy.z,0,.13,.19,.13),[1,.13,.08],false);
+      }
       return {eye,target,yaw};
     }
   }

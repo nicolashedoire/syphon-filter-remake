@@ -1,0 +1,20 @@
+'use strict';
+// Check that the original weapon stays a usable textured triangle mesh.
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const vm = require('node:vm');
+const context = {window: {}};
+vm.runInNewContext(fs.readFileSync(path.join(__dirname, '../web/assets/weapon.js'), 'utf8'), context);
+const weapon = context.window.SF_WEAPON;
+assert.equal(weapon.triangleCount, 32);
+assert.equal(weapon.positions.length, weapon.triangleCount * 9);
+assert.equal(weapon.uvs.length, weapon.triangleCount * 6);
+assert.ok(Array.from(weapon.positions).every(Number.isFinite));
+assert.ok(Array.from(weapon.uvs).every(n => Number.isFinite(n) && n >= 0 && n <= 1));
+assert.ok(Math.min(...Array.from(weapon.positions).filter((_, i) => i % 3 === 2)) < -0.32);
+const png = Buffer.from(weapon.atlas.replace(/^data:image\/png;base64,/, ''), 'base64');
+assert.equal(png.subarray(0, 8).toString('hex'), '89504e470d0a1a0a');
+assert.equal(png.readUInt32BE(16), 256);
+assert.equal(png.readUInt32BE(20), 512);
+console.log('Original handgun geometry, UVs and texture atlas are valid.');
