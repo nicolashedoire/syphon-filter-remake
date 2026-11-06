@@ -16,7 +16,7 @@ The observed entry point is `0x800e44b4`; 32 instructions were disassembled ther
 
 The browser implementation in `web/ps1-rules.js` ports a small, testable subset of the community PC port's combat behavior: a hit is applied to armor while any armor remains; excess damage from that hit is discarded, and health is affected only by a later hit. Initial health (150), armor (600), 9 mm magazine (15), reserve (45), and movement rates are taken from the community US-version port and have not all been independently validated against the French executable. The safe starting area and enemy awareness behavior in the browser remain approximations, not verified original behavior.
 
-In the French executable, a matching structured weapon table was located at file offset `0xfd29c` (PS-X address `0x8010ca9c`): its silenced 9 mm fields match the US-port values of 50 close damage, 25 distant damage, and cadence 4. The original damage routine has not yet been identified and verified in the French executable; the US routine address cannot be assumed to apply unchanged.
+In the French executable, a matching structured weapon table was located at file offset `0xfd29c` (PS-X address `0x8010ca9c`): its silenced 9 mm fields match the US-port values of 50 close damage, 25 distant damage, and cadence 4. REA also found a probable French damage routine entry at `0x80069070`, with a structure strongly resembling the US draft, but no complete instruction-by-instruction or runtime validation has been performed; the US routine address does not apply unchanged.
 
 ## Browser assets
 

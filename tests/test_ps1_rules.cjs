@@ -1,7 +1,10 @@
 // Verify the small rules port against the US reference implementation.
 const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
 const c={window:{},Math,Object};vm.runInNewContext(fs.readFileSync('web/ps1-rules.js','utf8'),c);
-const r=c.window.SFPS1Rules,p={health:r.initialHealth,armor:r.initialArmor,ammo:r.magazineCapacity,reserve:r.initialReserve};
+const r=c.window.SFPS1Rules,decoded=r.decodeWeaponData([0x8a,0x0c,0x19,0x10]);
+assert.deepEqual([decoded.closeDamage,decoded.farDamage,decoded.cadenceTicks],[50,25,4],'French executable weapon record');
+assert.throws(()=>r.decodeWeaponData([1,2,3]),/four weapon data bytes/);
+const p={health:r.initialHealth,armor:r.initialArmor,ammo:r.magazineCapacity,reserve:r.initialReserve};
 assert.deepEqual([p.health,p.armor,p.ammo,p.reserve],[150,600,15,45]);
 r.applyPlayerDamage(p,650);assert.deepEqual([p.health,p.armor],[150,0],'The hit that empties armor does not spill into health');
 r.applyPlayerDamage(p,20);assert.deepEqual([p.health,p.armor],[130,0]);
