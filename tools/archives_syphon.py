@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Inventorier ou extraire un fichier d'une archive locale FOG/HOG de Syphon Filter.
+"""List or extract files from a local Syphon Filter FOG/HOG archive.
 
-Adapté des descriptions et vérifications des parseurs de SF-pc-port,
-https://github.com/Madxbio97/SF-pc-port (licence MIT, voir son fichier LICENSE).
-Les fichiers produits restent sur votre machine ; aucune donnée du jeu n'est incluse.
-Prend en charge le format FOG à secteurs de 2048 octets et HOG v1 du premier jeu.
-La taille de la dernière entrée HOG inclut l'éventuel remplissage de fin d'archive.
+Adapted from the format descriptions and validation in SF-pc-port,
+https://github.com/Madxbio97/SF-pc-port (MIT license; see its LICENSE file).
+Generated files stay on your machine; no game data is included.
+Supports 2048-byte-sector FOG and HOG v1 from the first game.
+The final HOG entry's size includes any padding at the end of the archive.
 """
 from __future__ import annotations
 
@@ -40,7 +40,7 @@ def name_ascii(raw: bytes) -> str:
         raise ArchiveError("Nom non ASCII") from exc
     if not name or any(ord(c) < 0x20 or ord(c) > 0x7e for c in name):
         raise ArchiveError("Nom de fichier invalide")
-    # Les noms restent des étiquettes et ne sont jamais interprétés comme chemins.
+    # Names remain labels and are never interpreted as paths.
     return name
 
 
@@ -64,7 +64,7 @@ def parse_fog(data: bytes) -> list[Entry]:
         name = name_ascii(data[pos:pos + 16].split(b'\0', 1)[0])
         start = read32(data, pos + 16)
         count = read32(data, pos + 20)
-        if count == 0:  # Marqueurs de banques absentes dans certains disques PAL.
+        if count == 0:  # Markers for absent banks on some PAL discs.
             continue
         end = start + count
         if start < 1 or end > available:
@@ -119,17 +119,17 @@ def extract(data: bytes, entries: list[Entry], name: str, destination: Path) -> 
     if len(matches) != 1:
         raise ArchiveError(f"Fichier introuvable dans l'archive : {name}")
     entry = matches[0]
-    # Écriture exclusive : ne pas écraser un fichier utilisateur, y compris l'archive source.
+    # Exclusive creation: do not overwrite a user file, including the source archive.
     with destination.open('xb') as out:
         out.write(data[entry.offset:entry.offset + entry.size])
 
 
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('format', choices=['fog', 'hog'], help='Format de l’archive')
-    parser.add_argument('archive', type=Path, help='Fichier archive local')
-    parser.add_argument('--extraire', metavar='NOM', help='Nom exact du fichier à extraire')
-    parser.add_argument('--vers', type=Path, metavar='DESTINATION', help='Chemin de sortie explicite, sans écrasement')
+    parser.add_argument('format', choices=['fog', 'hog'], help='Archive format')
+    parser.add_argument('archive', type=Path, help='Local archive file')
+    parser.add_argument('--extraire', metavar='NAME', help='Exact name of the file to extract')
+    parser.add_argument('--vers', type=Path, metavar='DESTINATION', help='Explicit output path; existing files are not overwritten')
     args = parser.parse_args(argv)
     if bool(args.extraire) != bool(args.vers):
         parser.error('--extraire et --vers doivent être utilisés ensemble')

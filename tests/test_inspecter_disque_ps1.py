@@ -1,4 +1,4 @@
-"""Tests sur des images ISO factices : aucune donnée du jeu n'est utilisée."""
+"""Tests using synthetic ISO images; no game data is used."""
 import importlib.util
 import io
 import struct

@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Préparer localement le décor brut 3D de Georgia Street depuis une image PS1.
+"""Prepare raw Georgia Street 3D geometry locally from a PS1 disc image.
 
-La géométrie créée est issue de l'image fournie et reste sur la machine. Les
-textures, objets, personnages et animations ne sont pas inclus. Une destination
-nouvelle doit être indiquée : aucun fichier existant n'est écrasé.
+The generated geometry comes from the supplied image and remains on the local
+machine. Textures, objects, characters, and animations are excluded. A new
+output directory is required: no existing files are overwritten.
 """
 from __future__ import annotations
 
@@ -23,7 +23,7 @@ NOM_MODELE = re.compile(r"[A-Za-z0-9_-]+\.EMD\Z", re.IGNORECASE)
 
 
 def fusionner(fichiers: list[Path], destination: Path) -> tuple[int, int]:
-    """Fusionne les OBJ produits par l'exporteur ; ses indices sont absolus et positifs."""
+    """Merge the exporter OBJ files, which use positive absolute indices."""
     decalage = 0
     triangles = 0
     with destination.open("x", encoding="ascii", newline="\n") as sortie:
@@ -58,7 +58,7 @@ def preparer(image: Path, destination: Path) -> tuple[int, int, int]:
         raise RuntimeError("Sources SF-pc-port absentes ; lancez git submodule update --init --recursive.")
     if not image.is_file():
         raise FileNotFoundError(f"Image introuvable : {image}")
-    # Création exclusive avant toute écriture : ne jamais toucher un dossier existant.
+    # Create exclusively before writing: never touch an existing directory.
     destination.mkdir(parents=False, exist_ok=False)
     sortie_obj = destination / "obj"
     sortie_obj.mkdir()
@@ -95,8 +95,8 @@ def preparer(image: Path, destination: Path) -> tuple[int, int, int]:
 
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("image", type=Path, help="Fichier CUE accompagné de son BIN, ou image ISO 2048")
-    parser.add_argument("destination", type=Path, help="Nouveau dossier à créer pour les fichiers OBJ")
+    parser.add_argument("image", type=Path, help="CUE file with its BIN, or a 2048-byte ISO image")
+    parser.add_argument("destination", type=Path, help="New directory to create for the OBJ files")
     args = parser.parse_args(argv)
     try:
         nb, sommets, triangles = preparer(args.image, args.destination)

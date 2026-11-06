@@ -1,4 +1,4 @@
-"""Contrôles synthétiques de l'export EMD : aucune donnée du jeu."""
+"""Synthetic EMD export checks; no game data is used."""
 import pathlib
 import struct
 import subprocess
@@ -12,7 +12,7 @@ def section(polygons):
     vertices = [(0, 0, 0), (10, 0, 0), (0, 10, 0), (10, 10, 0)]
     h = bytearray(44)
     struct.pack_into('<HH', h, 4, len(polygons), len(vertices))
-    # Bornes valides : min et max xyz à zéro sont acceptées.
+    # Valid bounds: zero minimum and maximum xyz coordinates are accepted.
     struct.pack_into('<I', h, 0x14, sum(bool(p[0] & 0x80000000) for p in polygons))
     struct.pack_into('<I', h, 0x24, 44 + 16 * len(polygons))
     p = b''.join(struct.pack('<IIII', w0, w1, w2, 0) for w0, w1, w2 in polygons)
@@ -52,7 +52,7 @@ class TestEmdObj(unittest.TestCase):
         return result, outfile
 
     def test_quad_and_triangle_order_with_two_sections(self):
-        # Les indices sont stockés comme offsets divisibles par 3.
+        # Indices are stored as offsets divisible by 3.
         w2 = (3 << 16) | (6 << 24)
         quad = (0x80000001, 0, w2 | 9)
         triangle = (1, 0, w2)

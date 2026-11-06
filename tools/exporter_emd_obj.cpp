@@ -1,7 +1,7 @@
-// Export local de géométrie EMD en OBJ, sans textures ni données du jeu.
-// Utilise EmdScene du projet SF-pc-port : Copyright (c) 2026
-// SyphonFilterPC contributors, licence MIT :
-// references/sf-pc-port/LICENSE et https://github.com/Madxbio97/SF-pc-port
+// Export EMD geometry locally to OBJ, without textures or game data.
+// Uses EmdScene from the SF-pc-port project: Copyright (c) 2026
+// SyphonFilterPC contributors, MIT license:
+// references/sf-pc-port/LICENSE and https://github.com/Madxbio97/SF-pc-port
 #include "sf/assets/emd_scene.hpp"
 
 #include <cstddef>
@@ -64,8 +64,8 @@ int main(int argc, char **argv) {
     }
     if (!out) throw std::runtime_error("Préparation du fichier OBJ impossible");
     const auto contenu = out.str();
-    // Le mode x demande au système de créer la destination uniquement si elle
-    // n'existe pas, y compris si le chemin désigne un lien symbolique.
+    // Exclusive mode creates the destination only if the path does not exist,
+    // including when it names a symbolic link.
     std::FILE *fichier = std::fopen(sortie.string().c_str(), "wbx");
     if (!fichier)
       throw std::runtime_error("Impossible de créer le fichier OBJ : destination existante ou inaccessible");

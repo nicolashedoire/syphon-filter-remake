@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Inventaire et extraction explicite depuis une image PlayStation ISO 9660.
+"""List and explicitly extract files from a PlayStation ISO 9660 disc image.
 
-Formats : ISO 2048 octets ou CUE/BIN avec piste de données MODE1/2048,
-MODE1/2352 ou MODE2/2352 Form 1. Les pistes audio, fichiers CHD/PBP,
-secteurs Form 2 et disques multisession ne sont pas pris en charge.
+Supported formats: 2048-byte ISO or CUE/BIN with a MODE1/2048, MODE1/2352,
+or MODE2/2352 Form 1 data track. Audio tracks, CHD/PBP files, Form 2 sectors,
+and multisession discs are not supported.
 """
 from __future__ import annotations
 
@@ -21,7 +21,7 @@ MAX_ENTRIES = 100_000
 
 
 class ImageError(Exception):
-    """Format non pris en charge ou image tronquée."""
+    """Unsupported format or truncated image."""
 
 
 @dataclass(frozen=True)
@@ -190,8 +190,8 @@ def inspect(path: Path, extraction: tuple[str, Path] | None = None) -> dict:
             if source not in file_extents:
                 raise ImageError(f"Fichier introuvable dans l'image : {source}")
             entry_lba, entry_size = file_extents[source]
-            # Écriture exclusive : ne jamais remplacer un fichier existant.
-            # Sur erreur de lecture, retirer uniquement le fichier créé ici.
+            # Exclusive creation: never overwrite an existing file.
+            # On a read error, remove only the file created here.
             created = False
             try:
                 with Path(destination).open('xb') as output:
@@ -217,11 +217,11 @@ def inspect(path: Path, extraction: tuple[str, Path] | None = None) -> dict:
 
 
 def main(argv=None):
-    parser = argparse.ArgumentParser(description="Inspecter une image PS1 locale et extraire explicitement un fichier.")
-    parser.add_argument('image', type=Path, help="Image .cue (avec son BIN) ou .iso 2048 octets")
-    parser.add_argument('--json', action='store_true', help="Afficher le résultat au format JSON")
-    parser.add_argument('--extraire', metavar='CHEMIN_ISO', help="Fichier ISO à extraire, par exemple /SUBWAY.FOG")
-    parser.add_argument('--vers', type=Path, metavar='DESTINATION', help="Fichier local à créer ; ne remplace jamais un fichier existant")
+    parser = argparse.ArgumentParser(description="Inspect a local PS1 disc image and explicitly extract a file.")
+    parser.add_argument('image', type=Path, help="CUE image with its BIN, or a 2048-byte ISO image")
+    parser.add_argument('--json', action='store_true', help="Display the result as JSON")
+    parser.add_argument('--extraire', metavar='ISO_PATH', help="ISO file to extract, for example /SUBWAY.FOG")
+    parser.add_argument('--vers', type=Path, metavar='DESTINATION', help="Local file to create; never overwrites an existing file")
     args = parser.parse_args(argv)
     if bool(args.extraire) != bool(args.vers):
         parser.error("--extraire et --vers doivent être utilisés ensemble")

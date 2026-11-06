@@ -1,4 +1,4 @@
-"""Tests de la fusion OBJ et de la protection des données locales."""
+"""Tests for OBJ merging and local data protection."""
 import sys
 import tempfile
 import unittest

@@ -1,63 +1,70 @@
-# Syphon Filter — recherche et prototype de remake
+# Syphon Filter — Remake Research and Prototype
 
-Ce dépôt rassemble les premières étapes d'un projet non officiel de remake francophone du premier *Syphon Filter* sur PlayStation. Le code source original d'Eidetic n'a pas été trouvé ; les sources communautaires ci-dessous sont des travaux distincts. Le remake 3D et sa traduction française ne sont pas encore réalisés.
+This repository contains the first steps toward an unofficial French-language remake of the original PlayStation *Syphon Filter*. Eidetic's original source code has not been found; the community projects referenced below are separate efforts. The 3D remake and its French localization have not yet been completed.
 
-## Premiers travaux sur le disque français
+## French PS1 Disc Image
 
-L'édition française PS1 **SCES-01911** a été identifiée à partir de son `SYSTEM.CNF`. Sur cette image, `/FOG/SUBWAY.FOG` contient l'archive `WLDEMD.HOG` et ses 91 modèles du décor de la première zone. Les 91 modèles ont été convertis localement : 32 323 sommets et 36 021 triangles. Ces données sont générées sur la machine de l'utilisateur et ne sont pas incluses dans ce dépôt.
+The French SCES-01911 disc image is stored in `game-disc/` as a BIN/CUE pair. The BIN file is tracked with [Git LFS](https://git-lfs.com/) because it exceeds GitHub's regular file size limit. Install Git LFS before cloning; for an existing clone run `git lfs install` and `git lfs pull` to download the image. Keep the BIN next to its CUE file.
 
-Un visualiseur de géométrie brute est disponible dans `visualiseur/index.html` : ouvrir la page dans un navigateur puis choisir les fichiers OBJ générés. Il permet de tourner et de zoomer dans la scène. **Il ne s'agit pas encore d'un jeu** : les textures, personnages, animations, collisions et gameplay ne sont pas implémentés.
+Git LFS storage and public downloads count toward the repository owner's quota and may incur charges if the included allowance is exceeded.
 
-Les outils `tools/inspecter_disque_ps1.py`, `tools/archives_syphon.py` et `tools/exporter_emd_obj.cpp` inspectent localement l'image, les archives FOG/HOG et la géométrie EMD. Le parseur EMD vient du projet SF-pc-port, référencé ci-dessous. Pour reproduire l'export à partir d'une image CUE/BIN locale, avec Python 3 et un compilateur C++20 (`clang++` ou `c++`) :
+## Initial Work on the French Disc
+
+The French PS1 edition, **SCES-01911**, was identified using its `SYSTEM.CNF` file. On this disc image, `/FOG/SUBWAY.FOG` contains `WLDEMD.HOG` and its 91 environment models for the first area. All 91 models were converted locally: 32,323 vertices and 36,021 triangles. The converted geometry is generated on the user's machine and is not included in this repository.
+
+A raw geometry viewer is available at `visualiseur/index.html`: open the page in a browser and choose the generated OBJ files. You can rotate and zoom the scene. **This is not a game yet**: textures, characters, animations, collisions, and gameplay have not been implemented.
+
+The tools `tools/inspecter_disque_ps1.py`, `tools/archives_syphon.py`, and `tools/exporter_emd_obj.cpp` inspect the local disc image, FOG/HOG archives, and EMD geometry. The EMD parser comes from the SF-pc-port project referenced below. To reproduce the export from a local CUE/BIN image, using Python 3 and a C++20 compiler (`clang++` or `c++`):
 
 ```sh
-python3 tools/preparer_geometrie.py "chemin/vers/Syphon Filter (France).cue" work/geometrie
+mkdir -p work
+python3 tools/preparer_geometrie.py "game-disc/Syphon Filter (France).cue" work/geometry
 ```
 
-Le dossier de destination doit être nouveau et son parent doit exister. Le résultat `work/geometrie/georgia-street.obj` s'ouvre dans le visualiseur, ainsi que les OBJ individuels. Le programme ne modifie pas l'image source.
+The destination directory must not already exist, and its parent must exist. The resulting `work/geometry/georgia-street.obj` and individual OBJ files can be opened in the viewer. The tool does not modify the source image.
 
-Les tests se lancent avec :
+Run the tests with:
 
 ```sh
 python3 -m unittest discover -s tests -v
 ```
 
-Le détail de ces premiers résultats et de l’analyse avec REA se trouve dans [docs/recherche-ps1-fr.md](docs/recherche-ps1-fr.md).
+See [docs/french-ps1-research.md](docs/french-ps1-research.md) for details on these initial findings and the REA analysis.
 
-## Sources PS1 et port PC récupérés
+## Recovered PS1 Sources and PC Port
 
-Les deux projets sont référencés sous forme de sous-modules Git, à une version précise, avec leur historique et leurs notices conservés dans leurs dépôts respectifs :
+The two projects are referenced as Git submodules at pinned revisions, with their histories and notices preserved in their respective repositories:
 
-- [`references/syphon-filter-xport`](https://github.com/psxports/SyphonFilter-xport) : projet de décompilation du jeu PS1 en C. Il est expérimental ; son degré d'achèvement et sa compilation n'ont pas été vérifiés. Son code mentionne la version américaine v1.0.
-- [`references/sf-pc-port`](https://github.com/Madxbio97/SF-pc-port) : port PC Windows non officiel. Il utilise du code du jeu PS1 avec un environnement d'exécution PC et annonce une campagne de 20 missions. Pour jouer, il demande une image BIN/CUE de **Syphon Filter USA NTSC-U v1.1**, numéro SCUS-94240. La compilation du projet ne nécessite pas cette image. L'interface du port est en anglais ou en russe.
+- [`references/syphon-filter-xport`](https://github.com/psxports/SyphonFilter-xport): a C decompilation project for the PS1 game. It is experimental; its degree of completion and build process have not been verified. Its code references the US v1.0 release.
+- [`references/sf-pc-port`](https://github.com/Madxbio97/SF-pc-port): an unofficial Windows PC port. It uses PS1 game code with a PC runtime and advertises a 20-mission campaign. Playing it requires a BIN/CUE image of **Syphon Filter USA NTSC-U v1.1**, serial number SCUS-94240. The image is not required to compile the project. The port's interface is available in English or Russian.
 
-Pour récupérer ce dépôt avec les deux projets :
+To clone this repository with both projects:
 
 ```sh
 git clone --recurse-submodules https://github.com/nicolashedoire/syphon-filter-remake.git
 ```
 
-Si le dépôt est déjà cloné :
+If the repository is already cloned:
 
 ```sh
 git submodule update --init --recursive
 ```
 
-Les licences des projets, dépendances et éléments graphiques doivent être consultées dans leurs dépôts respectifs. Une licence sur du code communautaire ne donne pas automatiquement les droits sur les données du jeu original. Ce dépôt ne contient aucune image de disque PS1.
+Consult the respective repositories for the licenses of each project, dependency, and visual asset. A license covering community code does not automatically grant rights to the original game data.
 
-## Français et version d'origine
+## French Language and Original Release
 
-Sony publie un [manuel officiel en français](https://secure.cdn.us.playstation.com/manuals/classic/games/syphon-filter-manual-fr.pdf) identifié SCES-01911. L'édition française PS1 est une piste pour retrouver les textes et l'ambiance. Sa compatibilité avec les projets ci-dessus n'est pas établie : ils ciblent des versions américaines différentes.
+Sony provides an [official French manual](https://secure.cdn.us.playstation.com/manuals/classic/games/syphon-filter-manual-fr.pdf) identified as SCES-01911. The French PS1 edition provides a reference for the text and atmosphere. Its compatibility with the projects above has not been established: they target different US releases.
 
-Étapes à étudier : prise en charge de la version française ou traduction du port ; restitution et validation des menus, briefings et textes en français ; puis améliorations visuelles et de gameplay pour construire un remake fidèle. Les voix et cinématiques dépendent également de la version du jeu utilisée.
+Work to investigate includes supporting the French release or translating the port; restoring and validating French menus, briefings, and text; and then improving the visuals and gameplay to build a faithful remake. Voices and cinematics also depend on the game release used.
 
-La [recherche Internet Archive](https://archive.org/search?query=syphon+filter&tab=all) contient notamment des images de jeu, vidéos et modèles ; aucune source officielle de développement n'a été identifiée dans les notices consultées.
+The [Internet Archive search](https://archive.org/search?query=syphon+filter&tab=all) includes game images, videos, and models. No official development source code was identified in the records examined.
 
-## Prototype indépendant
+## Independent Prototype
 
-Le prototype initial « Opération Sillage » reste disponible : ouvrir `index.html` dans un navigateur récent sur ordinateur. Il s'agit d'une mission en vue de dessus inspirée de l'infiltration, pas d'une reproduction du jeu PS1.
+The initial prototype, “Opération Sillage,” remains available: open `index.html` in a recent desktop browser. It is a top-down stealth mission inspired by the genre, not a reproduction of the PS1 game.
 
-- **ZQSD** ou **flèches** : se déplacer ; **souris** : viser et tirer.
-- **Maj** : marcher discrètement ; **E** : interagir ; **R** : recharger.
+- **ZQSD** or **arrow keys**: move; **mouse**: aim and shoot.
+- **Shift**: walk stealthily; **E**: interact; **R**: reload.
 
-Projet non officiel, sans affiliation avec les ayants droit de Syphon Filter.
+This is an unofficial project with no affiliation to the rights holders of Syphon Filter.
