@@ -1,0 +1,21 @@
+resource,candidate_french_title,briefing_overlay,original_objectives_observed_in_emulator,notes
+SUBWAY,Georgia Street,SUBWAY.OVL,yes_initial_menu_only,Initial Georgia objective menu observed; triggers not established
+SUBWAY2,Métro détruit,SUBWAY2.OVL,no,Candidate title and text from static data; runtime verification pending
+SUBWAY3,Ligne principale du métro,SUBWAY3.OVL,no,Candidate title and text from static data; runtime verification pending
+PARK,Parc de Washington,PARK.OVL,no,Candidate title and text from static data; runtime verification pending
+PARK2,Mémorial de la Liberté,PARK2.OVL,no,Candidate title and text from static data; runtime verification pending
+MUSEUM,Réception de l'Exposition,MUSEUM.OVL,no,Candidate title and text from static data; runtime verification pending
+MUSEUM2,Exposition Dinorama,MUSEUM2.OVL,no,Candidate title and text from static data; runtime verification pending
+BASEEXT,Base de Rhoemer,BASEEXT.OVL,no,Candidate title and text from static data; runtime verification pending
+BUNKER,Bunker de la base,BASEEXT.OVL,no,Candidate title and text from static data; runtime verification pending
+CHOPPER,Tour de la base,CHOPPER.OVL,no,Candidate title and text from static data; runtime verification pending
+BASEEXT2,Fuite de la base,BASEEXT.OVL,no,Candidate title and text from static data; runtime verification pending
+CHURCH,Forteresse de Rhoemer,LEVSPEC.OVL,no,Candidate title and text from static data; runtime verification pending
+CHURCH2,Niveau le plus bas de la forteresse,LEVSPEC.OVL,no,Candidate title and text from static data; runtime verification pending
+CATACOMB,Catacombes de la forteresse,CATACOMB.OVL,no,Candidate title and text from static data; runtime verification pending
+WHOUSE,Entrepôts PHARCOM,WHOUSE.OVL,no,Candidate title and text from static data; runtime verification pending
+WHOUSE2,Gardes d'élite de PHARCOM,WHOUSE.OVL,no,Candidate title and text from static data; runtime verification pending
+INWHOUSE,Entrepôt 76,WHOUSE.OVL,no,Candidate title and text from static data; runtime verification pending
+CAVE,Tunnels d'accès au silo,CAVE.OVL,no,Candidate title and text from static data; runtime verification pending
+CAVE2,Tunnel blackout,CAVE.OVL,no,Candidate title and text from static data; runtime verification pending
+SILO,Silo à missiles,CAVE.OVL,no,Candidate title and text from static data; runtime verification pending
