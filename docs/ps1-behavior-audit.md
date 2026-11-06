@@ -68,6 +68,10 @@ A manual RetroArch / PCSX ReARMed HLE run reached a controllable French Georgia 
 - [Animation selection](ps1-animation-selector-investigation.md) traces a generic indexed selector, without mapping a roll clip to a runtime index. A [new isolated Georgia run](ps1-roll-runtime-observation.md) observed a roll and captured intermediate poses; timing and other mission scenarios remain unverified.
 - [Actor decision candidate](ps1-actor-decision-investigation.md) documents an object-related counter and conditional BIOS call, without identifying it as a verified enemy behavior.
 - [Objective descriptor investigation](ps1-objective-descriptor-investigation.md) links two French overlay descriptors to code and surveys 13 overlays; it does not establish runtime triggers or completion rules. The [runtime coverage table](ps1-runtime-mission-coverage.csv) distinguishes the single mission with an observed initial objective menu from the other 19.
+- [Objective mask and actor-link investigation](ps1-objective-mask-investigation.md) documents distinct candidate descriptor bitfields and cross-checks static class/link data against code in three overlays. Runtime event meanings remain unknown.
+- [Actor audio-path investigation](ps1-actor-audio-investigation.md) follows one candidate decision branch into an ID selector and conditional PS1 audio-register writes. It does not establish a grenade action, enemy reaction or sound identity.
+- A [mission-selection experiment](ps1-mission-select-experiment.md) did not unlock additional levels; Georgia remains the only mission with its original objective menu observed in this emulator.
+- An [isolated DuckStation session](ps1-duckstation-runtime.md) reached Georgia, accepted movement, and restored a saved state without restarting. This one trial does not establish full emulator compatibility or long-term stability.
 
 ## Additional investigation
 
