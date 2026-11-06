@@ -1,7 +1,7 @@
 (function () {
   'use strict';
   const $ = id => document.getElementById(id);
-  const canvas = $('game'), overlay = $('overlay'), start = $('start');
+  const canvas = $('game'), overlay = $('overlay'), start = $('start'), reticle=$('reticle');
   const rules=window.SFPS1Rules;
   const cinematics=$('cinematics'), introVideo=$('intro-video'), skipIntro=$('skip-intro');
   let phase='introduction',introIndex=0;
@@ -10,6 +10,24 @@
   let renderer, groundGrid, wallGrid, collisionPositions, enemies=[], exitPoint=null, running=false, finished=false, last=0, clock=0, reloadUntil=0, lastShot=-10, messageUntil=0, yaw=Math.PI/2, pitch=.05, drag=false, lastX=0, lastY=0, pointerError=false, fallbackPositionKnown=false, camera=null, cameraImmediate=false, impact=null, impactUntil=0, combatActive=false, combatStartsAt=0, nextMarkerUpdate=0;
   let gamepadIndex=null, gamepadButtons=[], gamepadNeedsRelease=false, inputFocused=true, usingGamepad=false, gamepadMenuSelection=0, gamepadMenuAxis=0;
   let gamepadAxes={turn:0,forward:0,lookX:0,lookY:0};
+  // Screen-space coordinates use -1..1 for the full viewport, with Y down.
+  let aimX=0,aimY=0;
+  function moveReticle(x,y){
+    aimX=Math.max(-.9,Math.min(.9,x));aimY=Math.max(-.9,Math.min(.9,y));
+    if(reticle&&reticle.style){reticle.style.left=(50+aimX*50)+'%';reticle.style.top=(50+aimY*50)+'%';}
+  }
+  function shotDirection(view){
+    const delta=view.target.map((v,i)=>v-view.eye[i]),length=Math.hypot(...delta);if(length<1e-6)return null;
+    const f=delta.map(v=>v/length),horizontal=Math.hypot(f[0],f[2]);
+    if(horizontal<1e-6)return f;
+    const right=[-f[2]/horizontal,0,f[0]/horizontal];
+    const up=[-right[2]*f[1],right[2]*f[0]-right[0]*f[2],right[0]*f[1]];
+    // Must match the WebGL renderer's 60° vertical FOV and viewport aspect.
+    const width=canvas.clientWidth||canvas.width||1,height=canvas.clientHeight||canvas.height||1;
+    const tangent=Math.tan(Math.PI/6),horizontalOffset=aimX*tangent*width/height,verticalOffset=-aimY*tangent;
+    const ray=f.map((v,i)=>v+right[i]*horizontalOffset+up[i]*verticalOffset),n=Math.hypot(...ray);
+    return ray.map(v=>v/n);
+  }
   const normAngle = a => Math.atan2(Math.sin(a),Math.cos(a));
   const tutorialOpen = () => document.documentElement?.dataset?.tutorialOpen === 'true';
   const key=(x,z)=>`${x},${z}`;
@@ -67,6 +85,7 @@
     setMessage('AUCUNE INTERACTION À PROXIMITÉ · H POUR LES COMMANDES',3);
   }
   function reset(){
+    moveReticle(0,0);
     player.x=47.8;player.y=heightAt(47.8,28.25,21.32,3,3)??21.32;player.z=28.25;player.angle=Math.PI/2;player.moving=false;player.running=false;player.reverse=false;player.animation='idle';player.animationTime=0;player.health=rules.initialHealth;player.armor=rules.initialArmor;player.ammo=rules.magazineCapacity;player.reserve=rules.initialReserve;yaw=Math.PI/2;pitch=.05;clock=0;lastShot=-10;reloadUntil=0;impact=null;camera=null;cameraImmediate=true;finished=false;combatActive=false;combatStartsAt=0;nextMarkerUpdate=0;fallbackPositionKnown=false;keys.clear();
     const exitX=player.x-6, exitY=heightAt(exitX,player.z,player.y,1.5,2);exitPoint=exitY!==null&&!wallAt(exitX,exitY,player.z)?{x:exitX,y:exitY,z:player.z}:{x:player.x,y:player.y,z:player.z};enemies=placeEnemies();ui.threats.classList.remove('done');ui.exit.classList.remove('done');ui.threats.querySelector('b').textContent='01';ui.exit.querySelector('b').textContent='02';setMessage('HOSTILES : REPÈRES ROUGES · CLIC GAUCHE OU ESPACE POUR TIRER',6);sync();
   }
@@ -125,9 +144,9 @@
     if(player.ammo<=0){setMessage('CHARGEUR VIDE · APPUYEZ SUR R');return;}
     if(!camera||!camera.eye||!camera.target){setMessage('VISÉE EN PRÉPARATION');return;}
     lastShot=clock;player.ammo--;player.angle=camera?.yaw??yaw;
-    const origin=camera.eye,delta=camera.target.map((v,i)=>v-origin[i]),len=Math.hypot(...delta);
-    if(len<1e-6){sync();return;}
-    const direction=delta.map(v=>v/len),range=70,wallDistance=traceScene(origin,direction,range);
+    const origin=camera.eye,direction=shotDirection(camera);
+    if(!direction){sync();return;}
+    const range=70,wallDistance=traceScene(origin,direction,range);
     let distance=wallDistance??range,target=null;
     for(const e of enemies){if(!e.alive)continue;
       const d=rayBox(origin,direction,[e.x-.48,e.y+.02,e.z-.48],[e.x+.48,e.y+1.85,e.z+.48],distance);
@@ -150,7 +169,7 @@
     const clampAxis=value=>Math.max(-1,Math.min(1,value));
     const turn=clampAxis((keys.has('d')||keys.has('arrowright')?1:0)-(keys.has('q')||keys.has('a')||keys.has('arrowleft')?1:0)+gamepadAxes.turn);
     const forward=clampAxis((keys.has('z')||keys.has('w')||keys.has('arrowup')?1:0)-(keys.has('s')||keys.has('arrowdown')?1:0)+gamepadAxes.forward);
-    if(gamepadAxes.lookX||gamepadAxes.lookY)look(gamepadAxes.lookX*800*dt,gamepadAxes.lookY*650*dt);
+    if(gamepadAxes.lookX||gamepadAxes.lookY)moveReticle(aimX+gamepadAxes.lookX*1.15*dt,aimY+gamepadAxes.lookY*1.15*dt);
     const speed=(keys.has('shift')||forward<0)?rules.walkSpeed:rules.runSpeed;
     // PS1-style tank controls: turn in place, then travel along the agent's heading.
     if(turn){player.angle=normAngle(player.angle-turn*2.1*dt);yaw=player.angle;cameraImmediate=false;}
@@ -211,7 +230,7 @@
     if(buttons.some(Boolean))usingGamepad=true;
     // Edges are recorded before actions: one held button cannot activate the
     // title, close the guide, and interact again after a phase change.
-    const cross=pressed(0),square=pressed(2),trigger=pressed(7),options=pressed(9);
+    const cross=pressed(0),square=pressed(2),trigger=pressed(7),options=pressed(9),recenter=pressed(11);
     const confirm=cross||(!pad.mapping&&[1,2,3].some(pressed));
     const up=pressed(12),down=pressed(13);
     gamepadButtons=buttons;
@@ -228,6 +247,7 @@
       return;
     }
     if(options){$('help-open').click();return;}
+    if(recenter)moveReticle(0,0);
     if(cross)interact();
     if(square)reload();
     if(trigger)fire();
@@ -240,7 +260,7 @@
     for(const e of enemies)e.marked=!!(e.alive&&segmentVisible(camera.eye,[e.x,e.y+1.3,e.z]));
   }
   function frame(time){const dt=Math.min((time-last)/1000||0,.05);last=time;pollGamepad();if(running&&!tutorialOpen())advance(dt);else if(tutorialOpen())keys.clear();if(running&&clock>=nextMarkerUpdate){updateEnemyMarkers();nextMarkerUpdate=clock+.2;}player.reloading=!!reloadUntil&&clock<reloadUntil;player.reloadTime=player.reloading?Math.max(0,1.1-(reloadUntil-clock)):0;player.aiming=clock>=lastShot&&clock-lastShot<.5;if(renderer)camera=renderer.render({player,cameraYaw:yaw,cameraPitch:pitch,cameraImmediate,time:clock,enemies,objective:running&&!remaining()&&enemies.length?exitPoint:null,impact:running&&clock<impactUntil?impact:null});cameraImmediate=false;requestAnimationFrame(frame);}
-  function look(dx,dy){const current=cameraImmediate?yaw:(camera?.yaw??yaw);yaw=normAngle(current-dx*.003);player.angle=yaw;cameraImmediate=true;pitch=Math.max(-.55,Math.min(.65,pitch+dy*.002));}
+  function look(dx,dy){moveReticle(0,0);const current=cameraImmediate?yaw:(camera?.yaw??yaw);yaw=normAngle(current-dx*.003);player.angle=yaw;cameraImmediate=true;pitch=Math.max(-.55,Math.min(.65,pitch+dy*.002));}
   function showBriefing(){
     phase='briefing';cinematics.hidden=true;introVideo.pause();introVideo.removeAttribute('src');introVideo.load();
     overlay.hidden=false;overlay.classList.add('briefing');
