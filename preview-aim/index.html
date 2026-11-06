@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#07100e">
+  <title>Syphon Filter — Georgia Street</title>
+  <link rel="stylesheet" href="web/interface.css?v=9">
+</head>
+<body>
+  <main class="game-shell" aria-label="Syphon Filter, mission Georgia Street">
+    <canvas id="game" tabindex="0" aria-label="Vue à la troisième personne de Georgia Street"></canvas>
+    <div class="screen-shade" aria-hidden="true"></div>
+    <header class="mission-header"><div class="mission-id"><span>AGENCE / OPÉRATION 01</span><strong>GEORGIA STREET</strong></div><div class="connection"><i></i><span id="frame-state">EN ATTENTE</span></div></header>
+    <div class="objectives"><div class="objectives-title">OBJECTIFS PROVISOIRES <span id="remaining-hud">MENACES · 03</span></div><div class="objective" id="objective-threats"><b>01</b><span>Sécuriser la zone</span></div><div class="objective" id="objective-exit"><b>02</b><span>Rejoindre l’extraction</span></div><span id="objective-hud" class="sr-only">SÉCURISEZ LA ZONE</span></div>
+    <div class="reticle" id="reticle" aria-hidden="true"><i></i></div>
+    <div class="message" id="message" aria-live="polite">EN ATTENTE DE L’AGENT</div>
+    <div class="hud-bottom"><div class="health"><div class="hud-label">INTÉGRITÉ <strong id="health-hud">100</strong></div><div class="meter"><div id="health-bar"></div></div></div><div class="agent-label"><span>AGENT DE TERRAIN</span><strong>GABE LOGAN</strong></div><div class="ammo"><img class="weapon-icon" src="web/assets/weapon-icon.png" alt="Pistolet équipé"><div><span>9 MM · SILENCIEUX</span><strong id="ammo-hud">15 / 45</strong></div></div></div>
+    <button class="help-open" id="help-open" type="button" aria-haspopup="dialog">? &nbsp; COMMANDES · H / OPTIONS</button>
+    <div class="controls-hint">Z / S <span>AVANCER / RECULER</span><i>·</i> Q / D <span>TOURNER</span><i>·</i> SOURIS <span>VISER</span><i>·</i> CLIC GAUCHE / ESPACE <span>TIRER</span><i>·</i> E <span>INTERAGIR</span><i>·</i> R <span>RECHARGER</span><i>·</i> H <span>AIDE</span></div>
+    <div class="sr-only" aria-hidden="true"><span id="health-side">100 %</span><span id="ammo-side">15 / 45</span><span id="status-side">EN ATTENTE</span></div>
+    <div class="cinematics" id="cinematics" hidden><video id="intro-video" playsinline preload="none" aria-label="Cinématique originale du jeu"></video><button type="button" id="skip-intro">PASSER LES CINÉMATIQUES <span>→</span></button></div>
+    <div class="overlay" id="overlay">
+      <div class="overlay-inner">
+        <video id="title-background" class="title-background" src="web/assets/title-loop.mp4" poster="web/assets/title-poster.png" autoplay muted loop playsinline preload="auto" aria-hidden="true"></video>
+        <div class="overlay-card">
+          <div class="overlay-kicker"><span></span> DOSSIER DE MISSION &nbsp; / &nbsp; 01</div>
+          <h1>SYPHON <em>FILTER</em></h1>
+          <div class="rule"></div>
+          <div class="briefing-label">WASHINGTON D.C. <span>/</span> GEORGIA STREET</div>
+          <h2 id="overlay-title">GEORGIA<br><em>STREET.</em></h2>
+          <p id="overlay-text">Les terroristes sont dans le secteur. Neutralisez les menaces et rejoignez la zone d’extraction. Restez vigilant, agent.</p>
+          <div class="briefing-hint">▼ &nbsp; FAIS DÉFILER LE TEXTE POUR LIRE LES OBJECTIFS</div>
+          <button id="start" type="button" data-gamepad-selected="true"><span class="title-start-label">NOUVELLE PARTIE</span><img class="title-start-sprite" src="web/assets/title-new.png" alt="" aria-hidden="true"></button>
+          <button class="help-link" id="help-brief" type="button" aria-haspopup="dialog">COMMANDES PC / MANETTE</button>
+          <div class="gamepad-status" id="gamepad-status" aria-live="polite">MANETTE : APPUYEZ SUR UNE TOUCHE</div>
+          <div class="overlay-meta"><span>CLAVIER + SOURIS</span><span>PROTOTYPE JOUABLE</span></div>
+        </div>
+        <figure class="cover-display" aria-label="Jaquette originale française du jeu PlayStation">
+          <div class="cover-topline"><span>ARCHIVES DE L’AGENCE</span><span>SCES-01911</span></div>
+          <div class="cover-frame"><img src="web/assets/cover.jpg" alt="Jaquette originale de Syphon Filter sur PlayStation" width="1406" height="1407"></div>
+          <figcaption><span>ÉDITION PLAYSTATION</span><span>1999 <b>◆</b> FR</span></figcaption>
+        </figure>
+      </div>
+    </div>
+    <dialog id="controls-dialog" class="controls-dialog" aria-labelledby="controls-title">
+      <div class="tutorial-heading"><span>GUIDE DE TERRAIN / PC &amp; MANETTE</span><h2 id="controls-title">COMMANDES <em>DE JEU</em></h2><p>La partie est en pause pendant la lecture. Pour détecter une manette branchée, appuie d’abord sur une de ses touches.</p></div>
+      <div class="tutorial-grid">
+        <div><div class="tutorial-keys"><kbd>Z</kbd><kbd>Q</kbd><kbd>S</kbd><kbd>D</kbd><span>ou</span><kbd>↑</kbd><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd></div><strong>Se déplacer</strong><p>Z avance, S recule ; Q et D font tourner Gabe à gauche et à droite.</p></div>
+        <div><div class="tutorial-keys"><kbd>SOURIS</kbd></div><strong>Regarder et viser</strong><p>Bouge la souris pour tourner la caméra et placer le viseur sur une cible.</p></div>
+        <div><div class="tutorial-keys"><kbd>CLIC GAUCHE</kbd><span>ou</span><kbd>ESPACE</kbd></div><strong>Tirer</strong><p>Vise puis tire. Un repère rouge signale un ennemi visible ; les murs et les véhicules arrêtent les balles.</p></div>
+        <div><div class="tutorial-keys"><kbd>E</kbd></div><strong>Examiner</strong><p>Approche-toi d’un ennemi neutralisé ou d’un mécanisme et appuie sur E. Certains mécanismes restent à intégrer.</p></div>
+        <div><div class="tutorial-keys"><kbd>R</kbd><kbd>MAJ</kbd></div><strong>Recharger / marcher</strong><p>R recharge. Maintiens Maj pour te déplacer plus lentement.</p></div>
+        <div><div class="tutorial-keys"><kbd>ÉCHAP</kbd><kbd>CLIC</kbd></div><strong>Libérer la souris</strong><p>Échap libère le pointeur ; clique dans le jeu pour reprendre la visée.</p></div>
+        <div><div class="tutorial-keys"><kbd>STICK GAUCHE</kbd><kbd>STICK DROIT</kbd><kbd>R3</kbd></div><strong>Manette : bouger et viser</strong><p>Stick gauche : avancer, reculer et tourner. Stick droit : déplacer le viseur à l’écran. Appuie sur R3 pour le recentrer.</p></div>
+        <div><div class="tutorial-keys"><kbd>R2</kbd><kbd>□</kbd><kbd>✕</kbd></div><strong>Manette : actions</strong><p>R2 : tirer (une pression par tir) ; Carré : recharger ; Croix : examiner, valider ou passer les cinématiques.</p></div>
+      </div>
+      <div class="tutorial-actions"><span>H ou Options : ouvrir ou fermer ce guide. Croix : valider.</span><button type="button" id="help-close">J’AI COMPRIS <b>→</b></button></div>
+    </dialog>
+  </main>
+  <script src="web/assets/intro-briefing.js?v=9"></script>
+  <script src="web/assets/georgia-street.js?v=9"></script>
+  <script src="web/assets/georgia-textured.js?v=9"></script>
+  <script src="web/assets/characters.js?v=9"></script>
+  <script src="web/assets/animations.js?v=9"></script>
+  <script src="web/assets/animations-extra.js?v=9"></script>
+  <script src="web/assets/props.js?v=9"></script>
+  <script src="web/assets/opening-actors.js?v=9"></script>
+  <script src="web/assets/weapon.js?v=9"></script>
+  <script src="web/math.js?v=9"></script>
+  <script src="web/renderer.js?v=9"></script>
+  <script src="web/title-screen.js?v=9"></script>
+  <script src="web/tutorial.js?v=9"></script>
+  <script src="web/mission.js?v=9"></script>
+  <script src="web/ps1-rules.js?v=9"></script>
+  <script src="web/game.js?v=9"></script>
+</body>
+</html>
