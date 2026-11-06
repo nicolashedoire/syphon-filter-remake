@@ -1,0 +1,6 @@
+[submodule "sf-pc-port"]
+	path = references/sf-pc-port
+	url = https://github.com/Madxbio97/SF-pc-port.git
+[submodule "syphon-filter-xport"]
+	path = references/syphon-filter-xport
+	url = https://github.com/psxports/SyphonFilter-xport.git
