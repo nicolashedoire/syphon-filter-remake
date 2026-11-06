@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#07100e">
+  <title>Syphon Filter — Georgia Street</title>
+  <link rel="stylesheet" href="web/interface.css">
+</head>
+<body>
+  <main class="game-shell" aria-label="Syphon Filter, mission Georgia Street">
+    <canvas id="game" tabindex="0" aria-label="Vue à la troisième personne de Georgia Street"></canvas>
+    <div class="screen-shade" aria-hidden="true"></div>
+    <header class="mission-header"><div class="mission-id"><span>AGENCE / OPÉRATION 01</span><strong>GEORGIA STREET</strong></div><div class="connection"><i></i><span id="frame-state">EN ATTENTE</span></div></header>
+    <div class="objectives"><div class="objectives-title">OBJECTIFS PROVISOIRES <span id="remaining-hud">MENACES · 03</span></div><div class="objective" id="objective-threats"><b>01</b><span>Sécuriser la zone</span></div><div class="objective" id="objective-exit"><b>02</b><span>Rejoindre l’extraction</span></div><span id="objective-hud" class="sr-only">SÉCURISEZ LA ZONE</span></div>
+    <div class="reticle" aria-hidden="true"><i></i></div>
+    <div class="message" id="message" aria-live="polite">EN ATTENTE DE L’AGENT</div>
+    <div class="hud-bottom"><div class="health"><div class="hud-label">INTÉGRITÉ <strong id="health-hud">100</strong></div><div class="meter"><div id="health-bar"></div></div></div><div class="agent-label"><span>AGENT DE TERRAIN</span><strong>GABE LOGAN</strong></div><div class="ammo"><span>9 MM · SILENCIEUX</span><strong id="ammo-hud">12 / 12</strong></div></div>
+    <div class="controls-hint">ZQSD <span>SE DÉPLACER</span><i>·</i> SOURIS <span>VISER</span><i>·</i> CLIC <span>TIRER</span><i>·</i> R <span>RECHARGER</span><i>·</i> ÉCHAP <span>LIBÉRER LA SOURIS</span></div>
+    <div class="sr-only" aria-hidden="true"><span id="health-side">100 %</span><span id="ammo-side">12 / 12</span><span id="status-side">EN ATTENTE</span></div>
+    <div class="cinematics" id="cinematics" hidden><video id="intro-video" playsinline preload="none" aria-label="Cinématique originale du jeu"></video><button type="button" id="skip-intro">PASSER LES CINÉMATIQUES <span>→</span></button></div>
+    <div class="overlay" id="overlay"><div class="overlay-card"><div class="overlay-kicker"><span></span> DOSSIER DE MISSION &nbsp; / &nbsp; 01</div><h1>SYPHON <em>FILTER</em></h1><div class="rule"></div><div class="briefing-label">WASHINGTON D.C. <span>/</span> GEORGIA STREET</div><h2 id="overlay-title">GEORGIA<br><em>STREET.</em></h2><p id="overlay-text">Les terroristes sont dans le secteur. Neutralisez les menaces et rejoignez la zone d’extraction. Restez vigilant, agent.</p><button id="start" type="button">LANCER L’OPÉRATION <span>→</span></button><div class="overlay-meta"><span>CLAVIER + SOURIS</span><span>PROTOTYPE JOUABLE</span></div></div></div>
+  </main>
+  <script src="web/assets/intro-briefing.js"></script>
+  <script src="web/assets/georgia-street.js"></script>
+  <script src="web/assets/georgia-textured.js"></script>
+  <script src="web/assets/characters.js"></script>
+  <script src="web/assets/animations.js"></script>
+  <script src="web/assets/props.js"></script>
+  <script src="web/math.js"></script>
+  <script src="web/renderer.js"></script>
+  <script src="web/game.js"></script>
+</body>
+</html>
