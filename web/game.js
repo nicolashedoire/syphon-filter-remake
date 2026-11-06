@@ -78,7 +78,7 @@
     Object.assign(player,saved.player,{moving:false,running:false,reverse:false,animation:'idle',animationTime:0});
     yaw=saved.camera.yaw;pitch=saved.camera.pitch;clock=saved.clock;combatActive=saved.combatActive;combatStartsAt=saved.combatStartsAt;reloadUntil=saved.reloadUntil;lastShot=saved.lastShot;exitPoint={...saved.exitPoint};
     const actor=(window.SF_OPENING_ACTORS||[]).find(a=>a.source===184);
-    enemies=saved.enemies.map(e=>({...e,moving:false,running:false,...(e.source===184&&actor?{route:actor.route.map(p=>p.map(n=>n/100))}:{})}));
+    enemies=saved.enemies.map(e=>({...e,moving:false,running:false,...(!e.alive?{deathAt:clock-2}:{}),...(e.source===184&&actor?{route:actor.route.map(p=>p.map(n=>n/100))}:{})}));
     camera=null;cameraImmediate=true;nextMarkerUpdate=0;sync();
   }
   // The original mission scripts use centimetre-like native coordinates and an
@@ -210,7 +210,7 @@
       if(block!==null)for(let i=0;i<3;i++)hitPoint[i]=muzzle[i]+muzzleRay[i]*block;
     }
     impact={x:hitPoint[0],y:hitPoint[1],z:hitPoint[2],hit:!!target};impactUntil=clock+.2;if(window.SFAudio)window.SFAudio.sound('impact');
-    if(target){const firstHit=!combatActive;if(firstHit){combatActive=true;combatStartsAt=clock+3.5;}target.health--;if(target.health<=0){target.alive=false;setMessage(remaining()?'MENACE NEUTRALISÉE':'ZONE SÉCURISÉE · REJOIGNEZ L’EXTRACTION',4);}else setMessage(firstHit?'CIBLE TOUCHÉE · ENNEMIS ALERTÉS':'CIBLE TOUCHÉE',firstHit?3.5:2);}
+    if(target){const firstHit=!combatActive;if(firstHit){combatActive=true;combatStartsAt=clock+3.5;}target.health--;if(target.health<=0){target.alive=false;target.deathAt=clock;target.deathTime=0;setMessage(remaining()?'MENACE NEUTRALISÉE':'ZONE SÉCURISÉE · REJOIGNEZ L’EXTRACTION',4);}else setMessage(firstHit?'CIBLE TOUCHÉE · ENNEMIS ALERTÉS':'CIBLE TOUCHÉE',firstHit?3.5:2);}
     else setMessage(blocked?'IMPACT SUR LE DÉCOR':'TIR EFFECTUÉ');
     sync();
   }
@@ -321,7 +321,7 @@
     if(!camera||!camera.eye)return;
     for(const e of enemies)e.marked=!!(e.alive&&segmentVisible(camera.eye,[e.x,e.y+1.3,e.z]));
   }
-  function frame(time){const dt=Math.min((time-last)/1000||0,.05);last=time;pollGamepad();if(running&&!tutorialOpen())advance(dt);else if(tutorialOpen())keys.clear();if(running&&clock>=nextSaveAt){saveGame();nextSaveAt=clock+2;}if(running&&clock>=nextMarkerUpdate){updateEnemyMarkers();nextMarkerUpdate=clock+.2;}enemyShots=enemyShots.filter(shot=>clock<shot.until);player.reloading=!!reloadUntil&&clock<reloadUntil;player.reloadTime=player.reloading?Math.max(0,1.1-(reloadUntil-clock)):0;player.aiming=lockHeld||(clock>=lastShot&&clock-lastShot<.5);if(renderer)camera=renderer.render({player,cameraYaw:yaw,cameraPitch:pitch,cameraImmediate,time:clock,enemies,enemyShots:running?enemyShots:[],objective:running&&!remaining()&&enemies.length?exitPoint:null,impact:running&&clock<impactUntil?impact:null});if(lockHeld)updateLock();cameraImmediate=false;requestAnimationFrame(frame);}
+  function frame(time){const dt=Math.min((time-last)/1000||0,.05);last=time;pollGamepad();if(running&&!tutorialOpen())advance(dt);else if(tutorialOpen())keys.clear();if(running&&clock>=nextSaveAt){saveGame();nextSaveAt=clock+2;}if(running&&clock>=nextMarkerUpdate){updateEnemyMarkers();nextMarkerUpdate=clock+.2;}enemyShots=enemyShots.filter(shot=>clock<shot.until);for(const e of enemies)if(!e.alive)e.deathTime=Number.isFinite(e.deathAt)?Math.max(0,clock-e.deathAt):2;player.reloading=!!reloadUntil&&clock<reloadUntil;player.reloadTime=player.reloading?Math.max(0,1.1-(reloadUntil-clock)):0;player.aiming=lockHeld||(clock>=lastShot&&clock-lastShot<.5);if(renderer)camera=renderer.render({player,cameraYaw:yaw,cameraPitch:pitch,cameraImmediate,time:clock,enemies,enemyShots:running?enemyShots:[],objective:running&&!remaining()&&enemies.length?exitPoint:null,impact:running&&clock<impactUntil?impact:null});if(lockHeld)updateLock();cameraImmediate=false;requestAnimationFrame(frame);}
   function look(dx,dy){moveReticle(0,0);const current=cameraImmediate?yaw:(camera?.yaw??yaw);yaw=normAngle(current-dx*.003);player.angle=yaw;cameraImmediate=true;pitch=Math.max(-.55,Math.min(.65,pitch+dy*.002));}
   function showBriefing(){
     phase='briefing';cinematics.hidden=true;introVideo.pause();introVideo.removeAttribute('src');introVideo.load();

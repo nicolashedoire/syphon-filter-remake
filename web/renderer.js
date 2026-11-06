@@ -121,6 +121,12 @@ void main(){
     const data=[];for(const face of faces) for(const index of [1,2,3,1,3,4]) data.push(...face[index],...face[0]);
     return new Float32Array(data);
   }
+  // If the extracted fall clip is unavailable, tilt the actor to the ground.
+  function fallbackFall(x,y,z,heading,seconds){
+    const t=Math.max(0,Math.min(1,(Number.isFinite(seconds)?seconds:2)/.7)),angle=t*t*(3-2*t)*Math.PI/2,c=Math.cos(angle),s=Math.sin(angle);
+    const fall=new Float32Array([1,0,0,0, 0,c,s,0, 0,-s,c,0, 0,0,0,1]);
+    return M.multiply(M.model(x,y+.2*t,z,heading,1,1,1),fall);
+  }
   class SFRenderer {
     constructor(canvas,scene) {
       if (!M) throw new Error('SFMath was not loaded');
@@ -224,18 +230,20 @@ void main(){
     box(x,y,z,angle,sx,sy,sz,color) {this.draw(this.cube,M.model(x,y,z,angle,sx,sy,sz),color,false);}
     person(person,enemy,firing) {
       const x=person.x||0,y=person.y||0,z=person.z||0,a=person.angle||0,c=Math.cos(a),s=Math.sin(a);
+      const dead=enemy&&person.alive===false;
       const original=this.characters[enemy?'terro':'gabe'];
       if(original){
         let pose=global.SF_CHARACTERS[enemy?'terro':'gabe'].positions;
         const extra=global.SF_EXTRA_ANIMATIONS;
         const clips=enemy?(extra&&extra.terro):(global.SF_ANIMATIONS&&global.SF_ANIMATIONS.gabe);
-        if(clips){
-          const name=!enemy&&person.reloading&&extra?.gabe?.reload?'reload':!enemy&&person.aiming&&extra?.gabe?.aim?'aim':person.moving?(person.running?'run':'walk'):'idle';
-          const clip=!enemy&&(name==='aim'||name==='reload')?extra.gabe[name]:clips[name];
+        const death=dead&&global.SF_ENEMY_DEATH?.frames?.length?global.SF_ENEMY_DEATH:null;
+        if(clips||death){
+          const name=death?'death':!enemy&&person.reloading&&extra?.gabe?.reload?'reload':!enemy&&person.aiming&&extra?.gabe?.aim?'aim':person.moving?(person.running?'run':'walk'):'idle';
+          const clip=death||(!enemy&&(name==='aim'||name==='reload')?extra.gabe[name]:clips?.[name]);
           if(clip&&clip.frames&&clip.frames.length){
-            const elapsed=name==='reload'&&Number.isFinite(person.reloadTime)?person.reloadTime:(Number.isFinite(person.animationTime)?person.animationTime:this.animationTime||0);
-            const phase=name==='reload'?Math.min(clip.frames.length-1,Math.floor(elapsed*clip.fps)):Math.floor(elapsed*clip.fps)%clip.frames.length;
-            const frame=person.reverse&&name!=='idle'?clip.frames.length-1-phase:phase;
+            const elapsed=name==='death'?(Number.isFinite(person.deathTime)?Math.max(0,person.deathTime):clip.frames.length/clip.fps):name==='reload'&&Number.isFinite(person.reloadTime)?person.reloadTime:(Number.isFinite(person.animationTime)?person.animationTime:this.animationTime||0);
+            const phase=name==='reload'||name==='death'?Math.min(clip.frames.length-1,Math.floor(elapsed*clip.fps)):Math.floor(elapsed*clip.fps)%clip.frames.length;
+            const frame=person.reverse&&(name==='walk'||name==='run')?clip.frames.length-1-phase:phase;
             pose=clip.frames[frame];
             if(original.clip!==name||original.frame!==frame){
               this.gl.bindBuffer(this.gl.ARRAY_BUFFER,original.buffer);
@@ -245,7 +253,7 @@ void main(){
           }
         }
         // The exported HMD's visible front faces the reverse of the game heading.
-        const characterModel=M.model(x,y,z,a+Math.PI,1,1,1);
+        const characterModel=dead&&!death?fallbackFall(x,y,z,a+Math.PI,person.deathTime):M.model(x,y,z,a+Math.PI,1,1,1);
         this.draw(original,characterModel,[1,1,1],false);
         if(!enemy&&this.weapon){
           // The original attaches GLOKSIL to RightHan. Our baked frames retain
@@ -258,7 +266,8 @@ void main(){
         }
         return;
       }
-      const part=(dx,dy,dz,sx,sy,sz,color) => this.box(x+c*dx+s*dz,y+dy,z-s*dx+c*dz,a,sx,sy,sz,color);
+      const fall=dead?fallbackFall(x,y,z,a,person.deathTime):null;
+      const part=(dx,dy,dz,sx,sy,sz,color) => fall?this.draw(this.cube,M.multiply(fall,M.model(dx,dy,dz,0,sx,sy,sz)),color,false):this.box(x+c*dx+s*dz,y+dy,z-s*dx+c*dz,a,sx,sy,sz,color);
       const cloth=enemy?[.30,.23,.20]:[.13,.18,.20], pants=enemy?[.22,.20,.18]:[.14,.15,.16];
       part(-.14,.43,0,.22,.77,.25,pants);part(.14,.43,0,.22,.77,.25,pants);
       part(-.14,.06,-.06,.23,.12,.38,[.08,.09,.09]);part(.14,.06,-.06,.23,.12,.38,[.08,.09,.09]);
@@ -301,9 +310,9 @@ void main(){
       if(state.objective){const o=state.objective;this.box(o.x,o.y+.1,o.z,0,.55,.2,.55,[.80,.82,.24]);this.box(o.x,o.y+.7,o.z,0,.12,1.2,.12,[.92,.82,.21]);}
       if(state.impact){const i=state.impact;this.box(i.x,i.y,i.z,0,.17,.17,.17,i.hit?[1,.72,.18]:[.9,.85,.55]);}
       this.person(p,false,!!state.impact);
-      if(Array.isArray(state.enemies)) for(const enemy of state.enemies) if(enemy.alive!==false) {
+      if(Array.isArray(state.enemies)) for(const enemy of state.enemies) {
         this.person(enemy,true);
-        if(enemy.marked) this.draw(this.enemyMarker,M.model(enemy.x,enemy.y+2.12,enemy.z,0,.13,.19,.13),[1,.13,.08],false);
+        if(enemy.alive!==false&&enemy.marked) this.draw(this.enemyMarker,M.model(enemy.x,enemy.y+2.12,enemy.z,0,.13,.19,.13),[1,.13,.08],false);
       }
       if(Array.isArray(state.enemyShots))for(const shot of state.enemyShots){
         if(!shot||!Array.isArray(shot.from)||!Array.isArray(shot.to)||shot.from.length!==3||shot.to.length!==3||![...shot.from,...shot.to].every(Number.isFinite))continue;
