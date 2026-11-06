@@ -57,6 +57,12 @@ The manual also describes mission objectives and parameters, mission updates, ma
 
 A manual RetroArch / PCSX ReARMed HLE run reached a controllable French Georgia Street mission: forward movement and pistol ammunition consumption were observed, alongside the initial objective screen and two armed characters. [Runtime observations and model-record inventories](ps1-georgia-runtime-observations.md) document the test and remaining limits. This does not yet establish enemy AI, timing, damage rules or full mission parity.
 
+## Further all-level investigation
+
+- The [mission-objective evidence map](ps1-mission-objectives-evidence.md) covers all 20 candidate resources and distinguishes shared text pools from confirmed runtime objectives. Five FOG DLF payloads duplicate a different overlay from the expected briefing candidate.
+- The [roll investigation](ps1-roll-investigation.md) measures five bounded candidate clips and documents REA/Ghidra code observations without claiming runtime timing or activation.
+- The [actor investigation](ps1-actor-investigation.md) inventories records for all 20 levels and links a candidate object routine to the candidate weapon table; the counts are not proof of enemy identity or spawn behavior.
+
 ## Additional investigation
 
 - The [cinematic and audio inventory](ps1-cinematics-inventory.md) records all 39 STR files, audio metadata and gaps in the web version. Playback triggers and spoken language have not been established.
