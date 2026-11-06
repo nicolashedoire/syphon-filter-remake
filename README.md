@@ -2,6 +2,26 @@
 
 Ce dépôt rassemble les premières étapes d'un projet non officiel de remake francophone du premier *Syphon Filter* sur PlayStation. Le code source original d'Eidetic n'a pas été trouvé ; les sources communautaires ci-dessous sont des travaux distincts. Le remake 3D et sa traduction française ne sont pas encore réalisés.
 
+## Premiers travaux sur le disque français
+
+L'édition française PS1 **SCES-01911** a été identifiée à partir de son `SYSTEM.CNF`. Sur cette image, `/FOG/SUBWAY.FOG` contient l'archive `WLDEMD.HOG` et ses 91 modèles du décor de la première zone. Les 91 modèles ont été convertis localement : 32 323 sommets et 36 021 triangles. Ces données sont générées sur la machine de l'utilisateur et ne sont pas incluses dans ce dépôt.
+
+Un visualiseur de géométrie brute est disponible dans `visualiseur/index.html` : ouvrir la page dans un navigateur puis choisir les fichiers OBJ générés. Il permet de tourner et de zoomer dans la scène. **Il ne s'agit pas encore d'un jeu** : les textures, personnages, animations, collisions et gameplay ne sont pas implémentés.
+
+Les outils `tools/inspecter_disque_ps1.py`, `tools/archives_syphon.py` et `tools/exporter_emd_obj.cpp` inspectent localement l'image, les archives FOG/HOG et la géométrie EMD. Le parseur EMD vient du projet SF-pc-port, référencé ci-dessous. Pour reproduire l'export à partir d'une image CUE/BIN locale, avec Python 3 et un compilateur C++20 (`clang++` ou `c++`) :
+
+```sh
+python3 tools/preparer_geometrie.py "chemin/vers/Syphon Filter (France).cue" work/geometrie
+```
+
+Le dossier de destination doit être nouveau et son parent doit exister. Le résultat `work/geometrie/georgia-street.obj` s'ouvre dans le visualiseur, ainsi que les OBJ individuels. Le programme ne modifie pas l'image source.
+
+Les tests se lancent avec :
+
+```sh
+python3 -m unittest discover -s tests -v
+```
+
 ## Sources PS1 et port PC récupérés
 
 Les deux projets sont référencés sous forme de sous-modules Git, à une version précise, avec leur historique et leurs notices conservés dans leurs dépôts respectifs :
