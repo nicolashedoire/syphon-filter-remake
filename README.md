@@ -9,8 +9,11 @@ Open `index.html` directly in a recent desktop browser with WebGL enabled. The g
 - **ZQSD**, **WASD**, or **arrow keys**: move.
 - **Mouse**: look around; **left click**: shoot.
 - **R**: reload; **Shift**: walk; **Escape**: release the pointer.
+- The original intro movies can be skipped; the French mission briefing is shown before gameplay.
 
-This is an early playable 3D prototype, not a complete remake. It uses the extracted geometry and original starting location of the French PS1 version. The placeholder characters, combat, mission objectives, camera and approximate geometry-based collisions are new implementations. Original textures, animations, audio, scripted missions and the rest of the game are not yet included. A keyboard and mouse are required.
+This is an early playable 3D prototype, not a complete remake. It uses the starting point, level geometry, PS1 textures, original Gabe and terrorist models, Gabe's idle/walk/run animations, and selected street objects from the French disc. It plays the two original intro videos and displays the original French briefing before the mission. The video audio comes from the French disc; its spoken language has not been independently verified.
+
+The camera, shooting, enemy behavior, objectives and collision approximations are new implementations, and the prototype's three-enemy objective is provisional. Dynamic texture changes, complete character animations, mission scripting, in-game voices and the rest of the game are not yet implemented. A keyboard and mouse are required.
 
 ## French PS1 Disc Image
 
@@ -39,7 +42,7 @@ Run the tests with:
 
 ```sh
 python3 -m unittest discover -s tests -v
-node tests/test_web_game.cjs
+for test in tests/*.cjs; do node "$test"; done
 ```
 
 See [docs/french-ps1-research.md](docs/french-ps1-research.md) for details on these initial findings and the REA analysis.
@@ -69,7 +72,7 @@ Consult the respective repositories for the licenses of each project, dependency
 
 Sony provides an [official French manual](https://secure.cdn.us.playstation.com/manuals/classic/games/syphon-filter-manual-fr.pdf) identified as SCES-01911. The French PS1 edition provides a reference for the text and atmosphere. Its compatibility with the projects above has not been established: they target different US releases.
 
-Work to investigate includes supporting the French release or translating the port; restoring and validating French menus, briefings, and text; and then improving the visuals and gameplay to build a faithful remake. Voices and cinematics also depend on the game release used.
+Work remains to restore the original French mission scripts, dialogue and in-game voices, and to validate the gameplay against the PS1 release.
 
 The [Internet Archive search](https://archive.org/search?query=syphon+filter&tab=all) includes game images, videos, and models. No official development source code was identified in the records examined.
 

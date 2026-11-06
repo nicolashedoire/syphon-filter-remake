@@ -4,13 +4,19 @@
   const M = global.SFMath;
   const VS = `attribute vec3 aPosition;
 attribute vec3 aNormal;
+attribute vec2 aUv;
+attribute vec3 aVertexColor;
 uniform mat4 uViewProjection;
 uniform mat4 uModel;
 uniform vec3 uCamera;
 varying vec3 vNormal;
 varying float vDistance;
 varying vec3 vWorld;
+varying vec2 vUv;
+varying vec3 vColor;
 void main(){
+  vUv=aUv;
+  vColor=aVertexColor;
   vec4 world=uModel*vec4(aPosition,1.0);
   vNormal=mat3(uModel)*aNormal;
   vWorld=world.xyz;
@@ -20,15 +26,23 @@ void main(){
   const FS = `precision mediump float;
 uniform vec3 uColor;
 uniform float uScene;
+uniform float uUseTexture;
+uniform float uUseVertexColor;
+uniform sampler2D uAtlas;
 varying vec3 vNormal;
 varying float vDistance;
 varying vec3 vWorld;
+varying vec2 vUv;
+varying vec3 vColor;
 void main(){
   vec3 n=normalize(vNormal);
   float light=0.44+0.48*abs(dot(n,normalize(vec3(0.36,0.84,0.40))));
   float grain=0.97+0.03*sin(vWorld.x*0.7)*sin(vWorld.z*0.6);
   float floorShade=mix(0.90,1.04,abs(n.y));
-  vec3 base=uColor*light*mix(1.0,grain*floorShade,uScene);
+  vec4 tex=texture2D(uAtlas,vUv);
+  if(uUseTexture>0.5 && tex.a<0.05) discard;
+  vec3 material=mix(mix(uColor,vColor,uUseVertexColor),tex.rgb,uUseTexture);
+  vec3 base=material*light*mix(1.0,grain*floorShade,uScene);
   float fog=smoothstep(32.0,125.0,vDistance);
   gl_FragColor=vec4(mix(base,vec3(0.055,0.077,0.074),fog),1.0);
 }`;
@@ -117,23 +131,100 @@ void main(){
       const p=gl.createProgram();gl.attachShader(p,compile(gl,gl.VERTEX_SHADER,VS));gl.attachShader(p,compile(gl,gl.FRAGMENT_SHADER,FS));gl.linkProgram(p);
       if(!gl.getProgramParameter(p,gl.LINK_STATUS))throw new Error('WebGL program: '+gl.getProgramInfoLog(p));
       this.program=p;gl.useProgram(p);
-      this.locations={position:gl.getAttribLocation(p,'aPosition'),normal:gl.getAttribLocation(p,'aNormal'),viewProjection:gl.getUniformLocation(p,'uViewProjection'),model:gl.getUniformLocation(p,'uModel'),camera:gl.getUniformLocation(p,'uCamera'),color:gl.getUniformLocation(p,'uColor'),scene:gl.getUniformLocation(p,'uScene')};
-      this.scene=makeBuffer(gl,sceneVertices(scene.positions));this.cube=makeBuffer(gl,cubeVertices());
-      this.cameraWalls=cameraCollisionGrid(scene.positions);
+      this.locations={position:gl.getAttribLocation(p,'aPosition'),normal:gl.getAttribLocation(p,'aNormal'),uv:gl.getAttribLocation(p,'aUv'),vertexColor:gl.getAttribLocation(p,'aVertexColor'),useVertexColor:gl.getUniformLocation(p,'uUseVertexColor'),useTexture:gl.getUniformLocation(p,'uUseTexture'),atlas:gl.getUniformLocation(p,'uAtlas'),viewProjection:gl.getUniformLocation(p,'uViewProjection'),model:gl.getUniformLocation(p,'uModel'),camera:gl.getUniformLocation(p,'uCamera'),color:gl.getUniformLocation(p,'uColor'),scene:gl.getUniformLocation(p,'uScene')};
+      const textured=global.SF_TEXTURED_SCENE;
+      const data=textured && textured.positions && textured.uvs ? textured : scene;
+      this.scene=makeBuffer(gl,sceneVertices(data.positions));this.cube=makeBuffer(gl,cubeVertices());
+      this.rooms=Array.isArray(data.rooms)?data.rooms:null;this.visibility=Array.isArray(data.visibility)?data.visibility:null;
+      this.currentRoom=73;this.sceneRanges=null;
+      this.texturedReady=false;this.atlasTexture=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,this.atlasTexture);
+      gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.NEAREST);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.NEAREST);
+      gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+      gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,1,1,0,gl.RGBA,gl.UNSIGNED_BYTE,new Uint8Array([255,255,255,255]));
+      if(data.uvs && data.uvs.length===data.positions.length/3*2 && data.atlas){
+        this.scene.uv=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,this.scene.uv);gl.bufferData(gl.ARRAY_BUFFER,data.uvs,gl.STATIC_DRAW);
+        const image=new Image();image.onload=()=>{gl.bindTexture(gl.TEXTURE_2D,this.atlasTexture);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,false);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,image);this.texturedReady=true;};image.src=data.atlas;
+      }
+      this.props=null;this.propObjects=[];
+      if(global.SF_PROPS&&data.materials){const source=global.SF_PROPS,uv=new Float32Array(source.positions.length/3*2);let valid=true;
+        for(let i=0;i<source.positions.length/3;i++){const slot=data.materials[source.pages[i]+':0:'+source.cluts[i]];if(!slot){valid=false;break;}
+          uv[i*2]=(slot[0]+Math.min(source.uvs[i*2],127)+.5)/1024;uv[i*2+1]=(slot[1]+source.uvs[i*2+1]+.5)/2048;}
+        if(valid){this.props=makeBuffer(gl,sceneVertices(source.positions));this.props.uv=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,this.props.uv);gl.bufferData(gl.ARRAY_BUFFER,uv,gl.STATIC_DRAW);this.propObjects=source.objects||[];}}
+      this.characters={};
+      if(global.SF_CHARACTERS){for(const name of ['gabe','terro']){
+        const source=global.SF_CHARACTERS[name];if(!source||!source.positions||!source.parts||source.parts.length!==source.positions.length/3)continue;
+        const mesh=makeBuffer(gl,sceneVertices(source.positions));const colors=new Float32Array(source.parts.length*3);
+        for(let i=0;i<source.parts.length;i++){const part=source.parts[i],skin=part===0||part===2||part===8,feet=part===1||part===7;
+          const color=skin?(name==='gabe'?[.68,.49,.35]:[.62,.43,.31]):feet?[.09,.09,.085]:name==='gabe'?[.16,.20,.23]:[.34,.27,.20];colors.set(color,i*3);}
+        mesh.colors=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,mesh.colors);gl.bufferData(gl.ARRAY_BUFFER,colors,gl.STATIC_DRAW);
+        if(data.materials && source.uvs && source.cluts && source.tpages){
+          const uv=new Float32Array(source.parts.length*2);let valid=true;
+          for(let i=0;i<source.parts.length;i++){const page=source.tpages[i]&31,clut=source.cluts[i],slot=data.materials[page+':0:'+clut];
+            if(!slot){valid=false;break;}uv[i*2]=(slot[0]+Math.min(source.uvs[i*2],127)+.5)/1024;uv[i*2+1]=(slot[1]+source.uvs[i*2+1]+.5)/2048;}
+          if(valid){mesh.uv=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,mesh.uv);gl.bufferData(gl.ARRAY_BUFFER,uv,gl.STATIC_DRAW);}
+        }
+        this.characters[name]=mesh;
+      }}
+      const extra=global.SF_PROPS&&global.SF_PROPS.positions;
+      const collisionData=new Float32Array(scene.positions.length+(extra?extra.length:0));collisionData.set(scene.positions);if(extra)collisionData.set(extra,scene.positions.length);
+      this.cameraWalls=cameraCollisionGrid(collisionData);
       gl.enable(gl.DEPTH_TEST);gl.depthFunc(gl.LEQUAL);gl.disable(gl.CULL_FACE);
     }
     bind(mesh) {
       const gl=this.gl,loc=this.locations;gl.bindBuffer(gl.ARRAY_BUFFER,mesh.buffer);
       gl.enableVertexAttribArray(loc.position);gl.vertexAttribPointer(loc.position,3,gl.FLOAT,false,24,0);
       gl.enableVertexAttribArray(loc.normal);gl.vertexAttribPointer(loc.normal,3,gl.FLOAT,false,24,12);
+      if(mesh.uv){gl.bindBuffer(gl.ARRAY_BUFFER,mesh.uv);gl.enableVertexAttribArray(loc.uv);gl.vertexAttribPointer(loc.uv,2,gl.FLOAT,false,0,0);}
+      else {gl.disableVertexAttribArray(loc.uv);gl.vertexAttrib2f(loc.uv,0,0);}
+      if(mesh.colors){gl.bindBuffer(gl.ARRAY_BUFFER,mesh.colors);gl.enableVertexAttribArray(loc.vertexColor);gl.vertexAttribPointer(loc.vertexColor,3,gl.FLOAT,false,0,0);}
+      else {gl.disableVertexAttribArray(loc.vertexColor);gl.vertexAttrib3f(loc.vertexColor,1,1,1);}
     }
-    draw(mesh,transform,color,isScene) {
+    draw(mesh,transform,color,isScene,ranges) {
       const gl=this.gl,loc=this.locations;this.bind(mesh);gl.uniformMatrix4fv(loc.model,false,transform);
-      gl.uniform3fv(loc.color,color);gl.uniform1f(loc.scene,isScene?1:0);gl.drawArrays(gl.TRIANGLES,0,mesh.count);
+      gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,this.atlasTexture);gl.uniform1i(loc.atlas,0);
+      gl.uniform1f(loc.useTexture,mesh.uv && this.texturedReady ? 1 : 0);
+      gl.uniform1f(loc.useVertexColor,mesh.colors ? 1 : 0);
+      gl.uniform3fv(loc.color,color);gl.uniform1f(loc.scene,isScene?1:0);
+      if(ranges){for(const range of ranges)gl.drawArrays(gl.TRIANGLES,range.start,range.count);}
+      else if(isScene&&this.sceneRanges){for(const range of this.sceneRanges)gl.drawArrays(gl.TRIANGLES,range.start,range.count);}
+      else gl.drawArrays(gl.TRIANGLES,0,mesh.count);
+    }
+    updateRooms(player){
+      if(!this.rooms||!this.visibility)return;
+      const contains=r=>r&&player.x>=r.min[0]-.05&&player.x<=r.max[0]+.05&&player.z>=r.min[2]-.05&&player.z<=r.max[2]+.05&&player.y>=r.min[1]-.3&&player.y<=r.max[1]+.3;
+      if(!contains(this.rooms[this.currentRoom])){
+        let best=-1,bestArea=Infinity;
+        for(let i=0;i<this.rooms.length;i++){const r=this.rooms[i];if(!contains(r))continue;const area=(r.max[0]-r.min[0])*(r.max[2]-r.min[2]);if(area<bestArea){bestArea=area;best=i;}}
+        if(best>=0)this.currentRoom=best;
+      }
+      const ids=[this.currentRoom,...(this.visibility[this.currentRoom]||[])];
+      this.visibleRooms=new Set(ids);
+      this.sceneRanges=[...this.visibleRooms].map(i=>this.rooms[i]).filter(r=>r&&r.count>0);
     }
     box(x,y,z,angle,sx,sy,sz,color) {this.draw(this.cube,M.model(x,y,z,angle,sx,sy,sz),color,false);}
-    person(person,enemy) {
+    person(person,enemy,firing) {
       const x=person.x||0,y=person.y||0,z=person.z||0,a=person.angle||0,c=Math.cos(a),s=Math.sin(a);
+      const original=this.characters[enemy?'terro':'gabe'];
+      if(original){
+        if(!enemy && global.SF_ANIMATIONS && global.SF_ANIMATIONS.gabe){
+          const name=person.moving?(person.running?'run':'walk'):'idle';
+          const clip=global.SF_ANIMATIONS.gabe[name];
+          if(clip&&clip.frames&&clip.frames.length){
+            const frame=Math.floor((this.animationTime||0)*clip.fps)%clip.frames.length;
+            if(original.clip!==name||original.frame!==frame){
+              this.gl.bindBuffer(this.gl.ARRAY_BUFFER,original.buffer);
+              this.gl.bufferSubData(this.gl.ARRAY_BUFFER,0,sceneVertices(clip.frames[frame]));
+              original.clip=name;original.frame=frame;
+            }
+          }
+        }
+        this.draw(original,M.model(x,y,z,a,1,1,1),[1,1,1],false);
+        // Temporary weapon mesh until the original weapon attachment is decoded.
+        const gx=x+c*.32-s*.27,gz=z-s*.32-c*.27;
+        this.box(gx,y+1.12,gz,a,.11,.14,.43,[.08,.085,.08]);
+        if(firing)this.box(gx-s*.29,y+1.12,gz-c*.29,a,.13,.13,.18,[1,.72,.24]);
+        return;
+      }
       const part=(dx,dy,dz,sx,sy,sz,color) => this.box(x+c*dx+s*dz,y+dy,z-s*dx+c*dz,a,sx,sy,sz,color);
       const cloth=enemy?[.30,.23,.20]:[.13,.18,.20], pants=enemy?[.22,.20,.18]:[.14,.15,.16];
       part(-.14,.43,0,.22,.77,.25,pants);part(.14,.43,0,.22,.77,.25,pants);
@@ -145,17 +236,23 @@ void main(){
     }
     render(state) {
       const gl=this.gl,loc=this.locations,p=state.player||{x:0,y:0,z:0,angle:0};
+      this.animationTime=Number.isFinite(state.time)?state.time:0;
       const dpr=Math.min(global.devicePixelRatio||1,2),w=Math.max(1,Math.round(this.canvas.clientWidth*dpr)),h=Math.max(1,Math.round(this.canvas.clientHeight*dpr));
       if(this.canvas.width!==w||this.canvas.height!==h){this.canvas.width=w;this.canvas.height=h;}
       gl.viewport(0,0,w,h);gl.clearColor(.055,.077,.074,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.useProgram(this.program);
-      const yaw=Number.isFinite(state.cameraYaw)?state.cameraYaw:0,pitch=Math.max(.06,Math.min(1.15,Number.isFinite(state.cameraPitch)?state.cameraPitch:.28)),distance=Math.max(1,Math.min(15,state.cameraDistance||4.3));
-      const target=[p.x,p.y+1.15,p.z],eye=[target[0]+Math.sin(yaw)*Math.cos(pitch)*distance,target[1]+Math.sin(pitch)*distance,target[2]+Math.cos(yaw)*Math.cos(pitch)*distance];
-      const fraction=cameraFraction(this.cameraWalls,target,eye);for(let i=0;i<3;i++)eye[i]=target[i]+(eye[i]-target[i])*fraction;
+      const yaw=Number.isFinite(state.cameraYaw)?state.cameraYaw:0,pitch=Math.max(-.7,Math.min(.8,Number.isFinite(state.cameraPitch)?state.cameraPitch:.1)),distance=Math.max(1,Math.min(15,state.cameraDistance||3.8));
+      const anchor=[p.x,p.y+1.45,p.z],sy=Math.sin(yaw),cy=Math.cos(yaw),cp=Math.cos(pitch),sp=Math.sin(pitch);
+      const eye=[anchor[0]+sy*cp*distance+cy*.65,anchor[1]+sp*distance+.25,anchor[2]+cy*cp*distance-sy*.65];
+      const fraction=cameraFraction(this.cameraWalls,anchor,eye);for(let i=0;i<3;i++)eye[i]=anchor[i]+(eye[i]-anchor[i])*fraction;
+      const target=[eye[0]-sy*cp,eye[1]-sp,eye[2]-cy*cp];
       const view=M.lookAt(eye,target,[0,1,0]),projection=M.perspective(Math.PI/3,w/h,.08,300),vp=M.multiply(projection,view);
       gl.uniformMatrix4fv(loc.viewProjection,false,vp);gl.uniform3fv(loc.camera,eye);
+      this.updateRooms(p);
       this.draw(this.scene,M.identity(),[.45,.49,.46],true);
+      if(this.props){const visible=this.propObjects.filter(o=>!this.visibleRooms||o.rooms.some(r=>this.visibleRooms.has(r)));this.draw(this.props,M.identity(),[1,1,1],false,visible);}
       if(state.objective){const o=state.objective;this.box(o.x,o.y+.1,o.z,0,.55,.2,.55,[.80,.82,.24]);this.box(o.x,o.y+.7,o.z,0,.12,1.2,.12,[.92,.82,.21]);}
-      this.person(p,false);
+      if(state.impact){const i=state.impact;this.box(i.x,i.y,i.z,0,.17,.17,.17,i.hit?[1,.72,.18]:[.9,.85,.55]);}
+      this.person(p,false,!!state.impact);
       if(Array.isArray(state.enemies)) for(const enemy of state.enemies) if(enemy.alive!==false) this.person(enemy,true);
       return {eye,target};
     }
