@@ -4,6 +4,8 @@ This repository contains the first steps toward an unofficial French-language re
 
 ## French PS1 Disc Image
 
+**[Open the French PS1 disc image (BIN and CUE)](game-disc/)** — Syphon Filter, French edition SCES-01911. The BIN contains the disc data (697 MB); the accompanying CUE describes the disc track.
+
 The French SCES-01911 disc image is stored in `game-disc/` as a BIN/CUE pair. The BIN file is tracked with [Git LFS](https://git-lfs.com/) because it exceeds GitHub's regular file size limit. Install Git LFS before cloning; for an existing clone run `git lfs install` and `git lfs pull` to download the image. Keep the BIN next to its CUE file.
 
 Git LFS storage and public downloads count toward the repository owner's quota and may incur charges if the included allowance is exceeded.
