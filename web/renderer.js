@@ -225,11 +225,14 @@ void main(){
       const original=this.characters[enemy?'terro':'gabe'];
       if(original){
         let pose=global.SF_CHARACTERS[enemy?'terro':'gabe'].positions;
-        if(!enemy && global.SF_ANIMATIONS && global.SF_ANIMATIONS.gabe){
-          const name=person.moving?(person.running?'run':'walk'):'idle';
-          const clip=global.SF_ANIMATIONS.gabe[name];
+        const extra=global.SF_EXTRA_ANIMATIONS;
+        const clips=enemy?(extra&&extra.terro):(global.SF_ANIMATIONS&&global.SF_ANIMATIONS.gabe);
+        if(clips){
+          const name=!enemy&&person.reloading&&extra?.gabe?.reload?'reload':!enemy&&person.aiming&&extra?.gabe?.aim?'aim':person.moving?(person.running?'run':'walk'):'idle';
+          const clip=!enemy&&(name==='aim'||name==='reload')?extra.gabe[name]:clips[name];
           if(clip&&clip.frames&&clip.frames.length){
-            const phase=Math.floor((Number.isFinite(person.animationTime)?person.animationTime:this.animationTime||0)*clip.fps)%clip.frames.length;
+            const elapsed=name==='reload'&&Number.isFinite(person.reloadTime)?person.reloadTime:(Number.isFinite(person.animationTime)?person.animationTime:this.animationTime||0);
+            const phase=name==='reload'?Math.min(clip.frames.length-1,Math.floor(elapsed*clip.fps)):Math.floor(elapsed*clip.fps)%clip.frames.length;
             const frame=person.reverse&&name!=='idle'?clip.frames.length-1-phase:phase;
             pose=clip.frames[frame];
             if(original.clip!==name||original.frame!==frame){

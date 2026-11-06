@@ -8,7 +8,7 @@
   const ui = {title:$('overlay-title'), text:$('overlay-text'), message:$('message'), health:$('health-hud'), healthSide:$('health-side'), healthBar:$('health-bar'), ammo:$('ammo-hud'), ammoSide:$('ammo-side'), status:$('status-side'), frame:$('frame-state'), objective:$('objective-hud'), remaining:$('remaining-hud'), threats:$('objective-threats'), exit:$('objective-exit')};
   const keys = new Set(), TAU=Math.PI*2, CELL=6, player={x:47.8,y:21.32,z:28.25,angle:Math.PI/2,health:150,armor:600,ammo:15,reserve:45};
   let renderer, groundGrid, wallGrid, collisionPositions, enemies=[], exitPoint=null, running=false, finished=false, last=0, clock=0, reloadUntil=0, lastShot=-10, messageUntil=0, yaw=Math.PI/2, pitch=.05, drag=false, lastX=0, lastY=0, pointerError=false, fallbackPositionKnown=false, camera=null, cameraImmediate=false, impact=null, impactUntil=0, combatActive=false, combatStartsAt=0, nextMarkerUpdate=0;
-  let gamepadIndex=null, gamepadButtons=[], gamepadNeedsRelease=false, inputFocused=true, usingGamepad=false;
+  let gamepadIndex=null, gamepadButtons=[], gamepadNeedsRelease=false, inputFocused=true, usingGamepad=false, gamepadMenuSelection=0, gamepadMenuAxis=0;
   let gamepadAxes={turn:0,forward:0,lookX:0,lookY:0};
   const normAngle = a => Math.atan2(Math.sin(a),Math.cos(a));
   const tutorialOpen = () => document.documentElement?.dataset?.tutorialOpen === 'true';
@@ -72,13 +72,19 @@
   }
   function placeEnemies(){
     const result=[];
-    for(const [d,offset] of [[8,-2],[13,2],[18,-1]]){
+    const authored=(window.SF_OPENING_ACTORS||[]).find(a=>a.source===184&&a.model==='TERRO.HMD'&&Array.isArray(a.route)&&a.route.length);
+    // Keep two local training targets; the third follows an authored French-disc route.
+    for(const [d,offset] of (authored?[[8,-2],[13,2]]:[[8,-2],[13,2],[18,-1]])){
       let chosen=null;
       for(let radius=0;radius<=8&&!chosen;radius+=1.5)for(let j=0;j<12&&!chosen;j++){
         const a=j*TAU/12,x=player.x-d+Math.cos(a)*radius,z=player.z+offset+Math.sin(a)*radius,y=heightAt(x,z,player.y,1.5,2);
-        if(y!==null&&!wallAt(x,y,z)&&Math.hypot(x-player.x,z-player.z)>4&&segmentVisible([player.x,player.y+1.2,player.z],[x,y+1.2,z])&&result.every(e=>Math.hypot(e.x-x,e.z-z)>2.5))chosen={x,y,z,angle:-Math.PI/2,alive:true,health:2,fire:2+d/10};
+        if(y!==null&&!wallAt(x,y,z)&&Math.hypot(x-player.x,z-player.z)>4&&segmentVisible([player.x,player.y+1.2,player.z],[x,y+1.2,z])&&result.every(e=>Math.hypot(e.x-x,e.z-z)>2.5))chosen={x,y,z,angle:-Math.PI/2,alive:true,health:2,fire:2+d/10,moving:false,running:false};
       }
       if(chosen)result.push(chosen);
+    }
+    if(authored){
+      const [x,y,z]=authored.position.map(n=>n/100),ground=heightAt(x,z,y,1.5,2);
+      if(ground!==null&&!wallAt(x,ground,z))result.push({source:authored.source,x,y:ground,z,angle:0,alive:true,health:2,fire:3,moving:false,running:false,route:authored.route.map(p=>[p[0]/100,p[1]/100,p[2]/100]),routeIndex:0});
     }
     return result;
   }
@@ -154,7 +160,16 @@
     player.moving=Math.hypot(player.x-previousX,player.z-previousZ)>.0001;player.reverse=player.moving&&forward<0;player.running=player.moving&&!keys.has('shift')&&!player.reverse;
     const animation=player.moving?(player.running?'run':'walk'):'idle';
     if(player.animation!==animation){player.animation=animation;player.animationTime=0;}else player.animationTime+=dt;
-    for(const e of enemies){if(!e.alive)continue;const dx=player.x-e.x,dz=player.z-e.z,d=Math.hypot(dx,dz);e.angle=Math.atan2(-dx,-dz);
+    for(const e of enemies){if(!e.alive)continue;
+      e.moving=false;
+      // Route nodes are original; timing and the switch from patrol to combat
+      // are provisional until the PS1 actor state machine has been recovered.
+      if(!combatActive&&e.route&&e.routeIndex<e.route.length){
+        let target=e.route[e.routeIndex],rx=target[0]-e.x,rz=target[2]-e.z,dist=Math.hypot(rx,rz);
+        if(dist<.12){e.routeIndex++;target=e.route[e.routeIndex];if(target){rx=target[0]-e.x;rz=target[2]-e.z;dist=Math.hypot(rx,rz);}}
+        if(target&&dist>0){const step=Math.min(dist,1.4*dt);e.angle=Math.atan2(-rx,-rz);e.moving=moveAxis(e,rx/dist*step,rz/dist*step);}
+      }
+      const dx=player.x-e.x,dz=player.z-e.z,d=Math.hypot(dx,dz);if(combatActive||!e.route)e.angle=Math.atan2(-dx,-dz);
       const facing=Math.abs(normAngle(Math.atan2(dx,dz)-yaw))<.85;
       if(combatActive&&clock>=combatStartsAt&&d<20&&facing&&segmentVisible([e.x,e.y+1.25,e.z],[player.x,player.y+1.25,player.z])){
         e.fire-=dt;if(e.fire<=0){e.fire=2.5;rules.applyPlayerDamage(player,7);setMessage('CONTACT ENNEMI · RIPOSTEZ',1.8);}
@@ -165,15 +180,29 @@
   }
   // Browsers may expose a standard gamepad only after its first button press.
   // Polling also makes disconnection safe even when the event is missed.
+  function gamepadStatus(text){const status=$('gamepad-status');if(status&&status.textContent!==text)status.textContent=text;}
+  function selectGamepadMenu(selection){
+    gamepadMenuSelection=selection;
+    const help=$('help-brief');
+    for(const [node,selected] of [[start,selection===0],[help,selection===1]])if(node&&node.dataset)node.dataset.gamepadSelected=selected?'true':'false';
+    const target=selection===0?start:help;if(target&&typeof target.focus==='function')target.focus();
+  }
   function pollGamepad(){
     gamepadAxes={turn:0,forward:0,lookX:0,lookY:0};
     let pads=[];
-    try{if(typeof navigator!=='undefined'&&typeof navigator.getGamepads==='function')pads=navigator.getGamepads()||[];}catch(error){pads=[];}
+    let available=false;
+    try{if(typeof navigator!=='undefined'&&typeof navigator.getGamepads==='function'){available=true;pads=navigator.getGamepads()||[];}}catch(error){available=false;pads=[];}
     const pad=Array.from(pads).find(p=>p&&p.connected!==false&&(p.mapping==='standard'||!p.mapping));
-    if(!pad){if(gamepadIndex!==null)gamepadNeedsRelease=true;gamepadIndex=null;gamepadButtons=[];return;}
+    if(!pad){gamepadStatus(available?'MANETTE : APPUYEZ SUR UNE TOUCHE':'MANETTE : NAVIGATEUR NON COMPATIBLE');if(gamepadIndex!==null)gamepadNeedsRelease=true;gamepadIndex=null;gamepadButtons=[];gamepadMenuAxis=0;return;}
+    gamepadStatus('MANETTE CONNECTÉE · CROIX / OPTIONS : VALIDER');
+    const firstDetection=gamepadIndex===null;
     if(gamepadIndex!==null&&gamepadIndex!==pad.index)gamepadNeedsRelease=true;
     gamepadIndex=pad.index;
     const buttons=Array.from(pad.buttons||[],b=>!!(b&&(b.pressed||b.value>=.5)));
+    // A browser may reveal a controller only on its first press. Accept that
+    // press in menus even if the window previously lost focus; in gameplay we
+    // still require a release after disconnect or focus loss to prevent shots.
+    if(firstDetection&&inputFocused&&!running&&phase!=='cinematics')gamepadNeedsRelease=false;
     if(!inputFocused||gamepadNeedsRelease){
       if(inputFocused&&!buttons.some(Boolean))gamepadNeedsRelease=false;
       gamepadButtons=buttons;return;
@@ -183,14 +212,22 @@
     // Edges are recorded before actions: one held button cannot activate the
     // title, close the guide, and interact again after a phase change.
     const cross=pressed(0),square=pressed(2),trigger=pressed(7),options=pressed(9);
+    const confirm=cross||(!pad.mapping&&[1,2,3].some(pressed));
+    const up=pressed(12),down=pressed(13);
     gamepadButtons=buttons;
     if(tutorialOpen()){
-      if(cross||options)$('help-close').click();
+      if(confirm||options)$('help-close').click();
+      return;
+    }
+    if(phase==='cinematics'){if(confirm||options)skipIntro.click();return;}
+    if(!running){
+      const vertical=Number(pad.axes&&pad.axes[1])||0,axis=vertical<-.65?-1:vertical>.65?1:0;
+      if(up||down||(axis&&axis!==gamepadMenuAxis))selectGamepadMenu((down||axis>0)?1:0);
+      gamepadMenuAxis=axis;
+      if(confirm||options){const target=gamepadMenuSelection===1?$('help-brief'):start;if(target)target.click();}
       return;
     }
     if(options){$('help-open').click();return;}
-    if(phase==='cinematics'){if(cross)skipIntro.click();return;}
-    if(!running){if(cross)start.click();return;}
     if(cross)interact();
     if(square)reload();
     if(trigger)fire();
@@ -202,7 +239,7 @@
     if(!camera||!camera.eye)return;
     for(const e of enemies)e.marked=!!(e.alive&&segmentVisible(camera.eye,[e.x,e.y+1.3,e.z]));
   }
-  function frame(time){const dt=Math.min((time-last)/1000||0,.05);last=time;pollGamepad();if(running&&!tutorialOpen())advance(dt);else if(tutorialOpen())keys.clear();if(running&&clock>=nextMarkerUpdate){updateEnemyMarkers();nextMarkerUpdate=clock+.2;}if(renderer)camera=renderer.render({player,cameraYaw:yaw,cameraPitch:pitch,cameraImmediate,time:clock,enemies,objective:running&&!remaining()&&enemies.length?exitPoint:null,impact:running&&clock<impactUntil?impact:null});cameraImmediate=false;requestAnimationFrame(frame);}
+  function frame(time){const dt=Math.min((time-last)/1000||0,.05);last=time;pollGamepad();if(running&&!tutorialOpen())advance(dt);else if(tutorialOpen())keys.clear();if(running&&clock>=nextMarkerUpdate){updateEnemyMarkers();nextMarkerUpdate=clock+.2;}player.reloading=!!reloadUntil&&clock<reloadUntil;player.reloadTime=player.reloading?Math.max(0,1.1-(reloadUntil-clock)):0;player.aiming=clock>=lastShot&&clock-lastShot<.5;if(renderer)camera=renderer.render({player,cameraYaw:yaw,cameraPitch:pitch,cameraImmediate,time:clock,enemies,objective:running&&!remaining()&&enemies.length?exitPoint:null,impact:running&&clock<impactUntil?impact:null});cameraImmediate=false;requestAnimationFrame(frame);}
   function look(dx,dy){const current=cameraImmediate?yaw:(camera?.yaw??yaw);yaw=normAngle(current-dx*.003);player.angle=yaw;cameraImmediate=true;pitch=Math.max(-.55,Math.min(.65,pitch+dy*.002));}
   function showBriefing(){
     phase='briefing';cinematics.hidden=true;introVideo.pause();introVideo.removeAttribute('src');introVideo.load();
