@@ -2,43 +2,27 @@
 <html lang="fr">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#090e10">
-  <title>Opération Sillage — Prototype d’infiltration</title>
-  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#07110f">
+  <title>Syphon Filter — Georgia Street</title>
+  <link rel="stylesheet" href="web/interface.css">
 </head>
 <body>
   <main class="shell">
-    <header class="topbar">
-      <div class="brand"><span class="brand-mark">◈</span><span>SECTION <b>09</b><small>UNITÉ D’INTERVENTION</small></span></div>
-      <div class="topline"><span class="live-dot"></span> CANAL SÉCURISÉ <span class="top-divider">/</span> DOSSIER 01</div>
-      <span class="version">PROTOTYPE JOUABLE · FR</span>
-    </header>
-    <section class="heading">
-      <div><div class="eyebrow"><span>MISSION 01</span> <i></i> ZONE INDUSTRIELLE</div><h1>OPÉRATION <em>SILLAGE</em></h1><p>Infiltrez le complexe. Récupérez les données. Disparaissez.</p></div>
-      <div class="mission-code"><span>CLASSIFICATION</span><strong>CONFIDENTIEL</strong><small>ACCÈS AGENT AUTORISÉ</small></div>
-    </section>
-    <div class="game-layout">
-      <section class="game-frame" aria-label="Zone de jeu">
-        <div class="frame-top"><span><b>●</b> TRANSMISSION EN DIRECT</span><span id="frameStatus">EN ATTENTE</span><span>CAM 01 / 01</span></div>
-        <div class="canvas-wrap">
-          <canvas id="game" width="1200" height="720" aria-label="Jeu d’infiltration en vue de dessus"></canvas>
-          <div class="overlay" id="overlay">
-            <div class="overlay-box"><div class="overlay-kicker">SECTION 09 / BRIEFING</div><h2 id="overlayTitle">ENTREZ DANS<br>LA ZONE.</h2><p id="overlayText">Un terminal contenant des données sensibles se trouve au cœur du complexe. Restez hors du champ de vision des patrouilles, récupérez les données et rejoignez le point d’extraction.</p><button id="startButton">COMMENCER LA MISSION <span>↗</span></button><small>UNE EXPÉRIENCE D’INFILTRATION ORIGINALE</small></div>
-          </div>
-          <div class="crosshair-note">VUE TACTIQUE / EN TEMPS RÉEL</div>
-        </div>
-        <div class="frame-bottom"><span>▸ SIGNAL STABLE</span><span id="feedback">EN ATTENTE DE L’AGENT</span><span>SEC. 09</span></div>
+    <header class="header"><a class="brand" href="#top"><span class="brand-mark">◈</span><span>SYPHON <strong>FILTER</strong><small>PROJET DE REMAKE · PS1</small></span></a><div class="header-meta"><span class="status-dot"></span> TRANSMISSION SÉCURISÉE <i>/</i> FR</div></header>
+    <section class="intro" id="top"><div><div class="eyebrow"><b>MISSION 01</b><span></span> WASHINGTON D.C.</div><h1>GEORGIA <em>STREET</em></h1><p>La menace est sur le terrain. À vous d’intervenir.</p></div><div class="classification"><small>STATUT DE L’OPÉRATION</small><strong>PROTOTYPE 3D</strong><span>VERSION NAVIGATEUR</span></div></section>
+    <div class="layout">
+      <section class="frame" aria-label="Zone de jeu"><div class="frame-bar"><span><b>●</b> LIAISON AGENT</span><span id="frame-state">EN ATTENTE</span><span>CAM 01</span></div>
+        <div class="game-wrap"><canvas id="game" tabindex="0" aria-label="Jeu 3D d’infiltration à Georgia Street"></canvas><div class="reticle" aria-hidden="true"><i></i><i></i></div><div class="hud-top"><span id="objective-hud">SÉCURISEZ LA ZONE</span><span id="remaining-hud">MENACES · 03</span></div><div class="hud-bottom"><span>INTÉGRITÉ <b id="health-hud">100</b></span><span>9 MM <b id="ammo-hud">12 / 12</b></span></div>
+          <div class="overlay" id="overlay"><div class="overlay-card"><div class="overlay-kicker">AGENCE / BRIEFING 01</div><h2 id="overlay-title">GEORGIA<br><em>STREET.</em></h2><p id="overlay-text">Les terroristes sont dans le secteur. Neutralisez les menaces et rejoignez la zone d’extraction. Restez vigilant, agent.</p><button id="start" type="button">COMMENCER LA MISSION <span>↗</span></button><small>PROTOTYPE DE JEU · CLAVIER ET SOURIS</small></div></div>
+        </div><div class="frame-bar bottom"><span>▸ SIGNAL STABLE</span><span id="message" aria-live="polite">EN ATTENTE DE L’AGENT</span><span>SEC. 01</span></div>
       </section>
-      <aside class="sidebar">
-        <div class="side-section"><div class="side-heading"><span>ÉTAT DE L’AGENT</span><b>01</b></div><div class="agent-row"><div class="agent-icon">◈</div><div><strong>AGENT 09</strong><small>OPÉRATEUR DE TERRAIN</small></div><span class="online"></span></div><div class="meter-label"><span>INTÉGRITÉ</span><b id="healthText">100 %</b></div><div class="meter"><span id="healthBar"></span></div><div class="stat-row"><span>MUNITIONS</span><strong id="ammoText">12 <small>/ 12</small></strong></div><div class="stat-row"><span>STATUT</span><strong id="alertText" class="green">NON DÉTECTÉ</strong></div></div>
-        <div class="side-section"><div class="side-heading"><span>OBJECTIFS</span><b>02</b></div><div class="objective" id="objData"><span class="objective-check">01</span><div><strong>Récupérer les données</strong><small>Accéder au terminal sécurisé</small></div></div><div class="objective" id="objExit"><span class="objective-check">02</span><div><strong>Rejoindre l’extraction</strong><small>Quitter la zone en vie</small></div></div></div>
-        <div class="side-section controls"><div class="side-heading"><span>COMMANDES</span><b>03</b></div><div><kbd>ZQSD</kbd><span>ou flèches · se déplacer</span></div><div><kbd>SOURIS</kbd><span>viser et tirer</span></div><div><kbd>MAJ</kbd><span>marcher discrètement</span></div><div><kbd>E</kbd><span>interagir</span></div><div><kbd>R</kbd><span>recharger</span></div></div>
-        <div class="side-foot"><span>◉</span> RESTEZ DANS L’OMBRE.<br>ILS NE VOUS ATTENDENT PAS.</div>
+      <aside class="sidebar"><section><h2>ÉTAT DE L’AGENT <span>01</span></h2><div class="agent"><div class="agent-mark">◈</div><div><strong>GABE LOGAN</strong><small>AGENT DE TERRAIN</small></div><i></i></div><div class="meter-label"><span>INTÉGRITÉ</span><b id="health-side">100 %</b></div><div class="meter"><div id="health-bar"></div></div><div class="stat"><span>MUNITIONS</span><b id="ammo-side">12 / 12</b></div><div class="stat"><span>STATUT</span><b id="status-side">EN ATTENTE</b></div></section>
+        <section><h2>OBJECTIFS <span>02</span></h2><div class="objective" id="objective-threats"><b>01</b><div><strong>Sécuriser la zone</strong><small>Neutraliser les menaces</small></div></div><div class="objective" id="objective-exit"><b>02</b><div><strong>Rejoindre l’extraction</strong><small>Atteindre le point indiqué</small></div></div></section>
+        <section class="controls"><h2>COMMANDES <span>03</span></h2><div><kbd>ZQSD</kbd><span>ou flèches · se déplacer</span></div><div><kbd>SOURIS</kbd><span>tourner la caméra</span></div><div><kbd>CLIC</kbd><span>tirer</span></div><div><kbd>R</kbd><span>recharger</span></div><div><kbd>ÉCHAP</kbd><span>libérer la souris</span></div></section><div class="footnote">◉ &nbsp;RESTEZ EN ALERTE.<br> &nbsp;&nbsp;&nbsp;L’AGENCE COMPTE SUR VOUS.</div>
       </aside>
-    </div>
-    <footer><span>SECTION 09 <b> / </b> OPÉRATIONS SPÉCIALES</span><span>CONSTRUIT POUR LA MISSION <b>◆</b></span></footer>
+    </div><footer><span>SYPHON FILTER <b>/</b> REMAKE NON OFFICIEL</span><span>HTML · JAVASCRIPT · WEBGL</span></footer>
   </main>
-  <script src="game.js"></script>
-</body>
-</html>
+  <script src="web/assets/georgia-street.js"></script>
+  <script src="web/math.js"></script><script src="web/renderer.js"></script><script src="web/game.js"></script>
+</body></html>

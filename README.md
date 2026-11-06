@@ -2,6 +2,16 @@
 
 This repository contains the first steps toward an unofficial French-language remake of the original PlayStation *Syphon Filter*. Eidetic's original source code has not been found; the community projects referenced below are separate efforts. The 3D remake and its French localization have not yet been completed.
 
+## Play the HTML prototype
+
+Open `index.html` directly in a recent desktop browser with WebGL enabled. The game uses local HTML, CSS, and JavaScript; it does not require a server, a build step, a disc image, or an internet connection after the repository files are downloaded.
+
+- **ZQSD**, **WASD**, or **arrow keys**: move.
+- **Mouse**: look around; **left click**: shoot.
+- **R**: reload; **Shift**: walk; **Escape**: release the pointer.
+
+This is an early playable 3D prototype, not a complete remake. It uses the extracted geometry and original starting location of the French PS1 version. The placeholder characters, combat, mission objectives, camera and approximate geometry-based collisions are new implementations. Original textures, animations, audio, scripted missions and the rest of the game are not yet included. A keyboard and mouse are required.
+
 ## French PS1 Disc Image
 
 **[Open the French PS1 disc image (BIN and CUE)](game-disc/)** — Syphon Filter, French edition SCES-01911. The BIN contains the disc data (697 MB); the accompanying CUE describes the disc track.
@@ -12,9 +22,9 @@ Git LFS storage and public downloads count toward the repository owner's quota a
 
 ## Initial Work on the French Disc
 
-The French PS1 edition, **SCES-01911**, was identified using its `SYSTEM.CNF` file. On this disc image, `/FOG/SUBWAY.FOG` contains `WLDEMD.HOG` and its 91 environment models for the first area. All 91 models were converted locally: 32,323 vertices and 36,021 triangles. The converted geometry is generated on the user's machine and is not included in this repository.
+The French PS1 edition, **SCES-01911**, was identified using its `SYSTEM.CNF` file. On this disc image, `/FOG/SUBWAY.FOG` contains `WLDEMD.HOG` and its 91 environment models for the first area. All 91 models were converted locally: 32,323 vertices and 36,021 triangles. The converted geometry is included as `web/assets/georgia-street.js` for the standalone HTML prototype.
 
-A raw geometry viewer is available at `visualiseur/index.html`: open the page in a browser and choose the generated OBJ files. You can rotate and zoom the scene. **This is not a game yet**: textures, characters, animations, collisions, and gameplay have not been implemented.
+A raw geometry viewer is available at `visualiseur/index.html`: open the page in a browser and choose the generated OBJ files. You can rotate and zoom the scene. This separate viewer shows the geometry only, without textures, characters, animations, or gameplay.
 
 The tools `tools/inspecter_disque_ps1.py`, `tools/archives_syphon.py`, and `tools/exporter_emd_obj.cpp` inspect the local disc image, FOG/HOG archives, and EMD geometry. The EMD parser comes from the SF-pc-port project referenced below. To reproduce the export from a local CUE/BIN image, using Python 3 and a C++20 compiler (`clang++` or `c++`):
 
@@ -29,6 +39,7 @@ Run the tests with:
 
 ```sh
 python3 -m unittest discover -s tests -v
+node tests/test_web_game.cjs
 ```
 
 See [docs/french-ps1-research.md](docs/french-ps1-research.md) for details on these initial findings and the REA analysis.
@@ -64,7 +75,7 @@ The [Internet Archive search](https://archive.org/search?query=syphon+filter&tab
 
 ## Independent Prototype
 
-The initial prototype, “Opération Sillage,” remains available: open `index.html` in a recent desktop browser. It is a top-down stealth mission inspired by the genre, not a reproduction of the PS1 game.
+The initial prototype, “Opération Sillage,” remains available: open `prototype.html` in a recent desktop browser. It is a top-down stealth mission inspired by the genre, not a reproduction of the PS1 game.
 
 - **ZQSD** or **arrow keys**: move; **mouse**: aim and shoot.
 - **Shift**: walk stealthily; **E**: interact; **R**: reload.
