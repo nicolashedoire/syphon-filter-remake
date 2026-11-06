@@ -165,18 +165,32 @@ void main(){
         for(let i=0;i<source.positions.length/3;i++){const slot=data.materials[source.pages[i]+':0:'+source.cluts[i]];if(!slot){valid=false;break;}
           uv[i*2]=(slot[0]+Math.min(source.uvs[i*2],127)+.5)/1024;uv[i*2+1]=(slot[1]+source.uvs[i*2+1]+.5)/2048;}
         if(valid){this.props=makeBuffer(gl,sceneVertices(source.positions));this.props.uv=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,this.props.uv);gl.bufferData(gl.ARRAY_BUFFER,uv,gl.STATIC_DRAW);this.propObjects=source.objects||[];}}
+      // Character UVs were exported against Georgia's original actor atlas.
+      // Keep that atlas separate when a different level supplies the terrain.
+      const characterData=global.SF_CHARACTER_TEXTURED_SCENE||data;
       this.characters={};
+      let characterTexture=null,characterTextureReady=false;
+      if(characterData!==data&&characterData.atlas){
+        characterTexture=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,characterTexture);
+        gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.NEAREST);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+        gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,1,1,0,gl.RGBA,gl.UNSIGNED_BYTE,new Uint8Array([255,255,255,255]));
+        const image=new Image();image.onload=()=>{gl.bindTexture(gl.TEXTURE_2D,characterTexture);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,false);
+          gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,image);characterTextureReady=true;
+          for(const mesh of Object.values(this.characters))if(mesh.texture===characterTexture)mesh.textureReady=true;};image.src=characterData.atlas;
+      }
       if(global.SF_CHARACTERS){for(const name of ['gabe','terro','cbdc']){
         const source=global.SF_CHARACTERS[name];if(!source||!source.positions||!source.parts||source.parts.length!==source.positions.length/3)continue;
         const mesh=makeBuffer(gl,sceneVertices(source.positions));const colors=new Float32Array(source.parts.length*3);
         for(let i=0;i<source.parts.length;i++){const part=source.parts[i],skin=part===0||part===2||part===8,feet=part===1||part===7;
           const color=name==='cbdc'?(feet?[.10,.11,.10]:[.82,.69,.12]):skin?(name==='gabe'?[.68,.49,.35]:[.62,.43,.31]):feet?[.09,.09,.085]:name==='gabe'?[.16,.20,.23]:[.34,.27,.20];colors.set(color,i*3);}
         mesh.colors=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,mesh.colors);gl.bufferData(gl.ARRAY_BUFFER,colors,gl.STATIC_DRAW);
-        if(data.materials && source.uvs && source.cluts && source.tpages){
+        if(characterData.materials && source.uvs && source.cluts && source.tpages){
           const uv=new Float32Array(source.parts.length*2);let valid=true;
-          for(let i=0;i<source.parts.length;i++){const page=source.tpages[i]&31,clut=source.cluts[i],slot=data.materials[page+':0:'+clut];
+          for(let i=0;i<source.parts.length;i++){const page=source.tpages[i]&31,clut=source.cluts[i],slot=characterData.materials[page+':0:'+clut];
             if(!slot){valid=false;break;}uv[i*2]=(slot[0]+Math.min(source.uvs[i*2],127)+.5)/1024;uv[i*2+1]=(slot[1]+source.uvs[i*2+1]+.5)/2048;}
-          if(valid){mesh.uv=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,mesh.uv);gl.bufferData(gl.ARRAY_BUFFER,uv,gl.STATIC_DRAW);}
+          if(valid){mesh.uv=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,mesh.uv);gl.bufferData(gl.ARRAY_BUFFER,uv,gl.STATIC_DRAW);
+            if(characterTexture){mesh.texture=characterTexture;mesh.textureReady=characterTextureReady;}}
         }
         this.characters[name]=mesh;
       }}
@@ -190,52 +204,6 @@ void main(){
         gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,1,1,0,gl.RGBA,gl.UNSIGNED_BYTE,new Uint8Array([255,255,255,255]));
         const image=new Image();image.onload=()=>{gl.bindTexture(gl.TEXTURE_2D,mesh.texture);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,false);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,image);mesh.textureReady=true;};image.src=weapon.atlas;
         this.weapon=mesh;
-      }
-      // Visual-only accents follow the original Georgia Street police prop.
-      this.sceneDetails=global.SFSceneDetails&&!global.SF_METRO_ACTIVE?global.SFSceneDetails.make(global.SF_PROPS):null;
-      this.policeMeshy=null;
-      // Only replace the original visible car after both the mesh and texture load.
-      // The PS1 triangles remain untouched in the gameplay and camera collision grids.
-      if(!global.SF_METRO_ACTIVE&&global.SFMeshyStatic&&typeof fetch==='function'){
-        fetch('web/assets/police-meshy.glb?v=15').then(response=>{
-          if(!response.ok)throw new Error('Police asset HTTP '+response.status);
-          return response.arrayBuffer();
-        }).then(buffer=>{
-          const model=global.SFMeshyStatic.decode(buffer),placement=global.SFMeshyStatic.policePlacement(model,global.SF_PROPS);
-          const mesh=makeBuffer(gl,model.vertices);
-          mesh.uv=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,mesh.uv);gl.bufferData(gl.ARRAY_BUFFER,model.uv,gl.STATIC_DRAW);
-          mesh.texture=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,mesh.texture);
-          gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
-          gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
-          const url=URL.createObjectURL(new Blob([model.texture.bytes],{type:model.texture.mimeType})),image=new Image();
-          image.onload=()=>{gl.bindTexture(gl.TEXTURE_2D,mesh.texture);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,false);
-            gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,image);mesh.textureReady=true;URL.revokeObjectURL(url);
-            this.policeMeshy={mesh,placement};};
-          image.onerror=()=>{URL.revokeObjectURL(url);console.warn('Police texture could not load; using PS1 car');};image.src=url;
-        }).catch(error=>console.warn('Police asset could not load; using PS1 car:',error));
-      }
-      this.metroFireMesh=global.SF_METRO_ACTIVE&&global.SFMetroFireEffects?global.SFMetroFireEffects.create(gl,makeBuffer,sceneVertices):null;
-      this.meshy=null;
-      // Keep the original PS1 character until both the optional GLB and its texture are ready.
-      if(global.SFMeshyCharacter && typeof fetch==='function'){
-        fetch('web/assets/gabe-meshy.glb?v=13').then(response=>{
-          if(!response.ok)throw new Error('Character asset HTTP '+response.status);
-          return response.arrayBuffer();
-        }).then(buffer=>{
-          const character=new global.SFMeshyCharacter.Character(buffer);
-          if(!character.texture)throw new Error('Character texture missing');
-          const first=character.pose('Walking',0,{inPlace:true});
-          const mesh=makeBuffer(gl,first.vertices);
-          mesh.uv=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,mesh.uv);gl.bufferData(gl.ARRAY_BUFFER,first.uv,gl.STATIC_DRAW);
-          mesh.texture=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,mesh.texture);
-          gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
-          gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
-          const url=URL.createObjectURL(new Blob([character.texture.bytes],{type:character.texture.mimeType}));
-          const image=new Image();image.onload=()=>{gl.bindTexture(gl.TEXTURE_2D,mesh.texture);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,false);
-            gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,image);mesh.textureReady=true;URL.revokeObjectURL(url);
-            this.meshy={character,mesh,key:null,pose:first};};
-          image.onerror=()=>{URL.revokeObjectURL(url);console.warn('Character texture could not load; using PS1 model');};image.src=url;
-        }).catch(error=>console.warn('Character could not load; using PS1 model:',error));
       }
       const extra=global.SF_PROPS&&global.SF_PROPS.positions;
       const collisionData=new Float32Array(scene.positions.length+(extra?extra.length:0));collisionData.set(scene.positions);if(extra)collisionData.set(extra,scene.positions.length);
@@ -274,43 +242,8 @@ void main(){
       this.sceneRanges=[...this.visibleRooms].map(i=>this.rooms[i]).filter(r=>r&&r.count>0);
     }
     box(x,y,z,angle,sx,sy,sz,color) {this.draw(this.cube,M.model(x,y,z,angle,sx,sy,sz),color,false);}
-    meshyPerson(person) {
-      const asset=this.meshy,character=asset.character;
-      const rolling=person.rolling && character.animations.Roll_Dodge;
-      const base=rolling?'Roll_Dodge':person.moving?(person.running?'Running':'Walking'):'Walking';
-      let seconds=rolling?Math.max(0,person.rollTime||0)/.65*character.animations.Roll_Dodge.duration:person.moving?Math.max(0,person.animationTime||0):0;
-      const armed=!rolling&&!!person.aiming&&!!character.animations.Run_and_Shoot;
-      const shotAge=Number.isFinite(person.shotAge)?person.shotAge:Infinity;
-      const firing=shotAge>=0&&shotAge<.16;
-      // A stable firing stance is layered over the moving legs; a short portion
-      // of the upper-body firing clip provides the recoil for each actual shot.
-      const upperTime=firing?Math.min(.18,shotAge*1.125):0;
-      if(person.reverse&&person.moving&&!rolling)seconds=Math.max(0,character.animations[base].duration-seconds%character.animations[base].duration);
-      const options={inPlace:true,loop:!rolling};
-      if(armed)options.upperBody={name:'Run_and_Shoot',time:upperTime,loop:false};
-      // CPU skinning uses unique indexed vertices first. Limit buffer uploads to
-      // 24 per second, while transforms and the muzzle flash remain per-frame.
-      const key=[base,Math.floor(seconds*24),armed?Math.floor(upperTime*24):-1].join(':');
-      if(asset.key!==key){asset.pose=character.pose(base,Math.floor(seconds*24)/24,options);
-        this.gl.bindBuffer(this.gl.ARRAY_BUFFER,asset.mesh.buffer);this.gl.bufferSubData(this.gl.ARRAY_BUFFER,0,asset.pose.vertices);asset.key=key;
-        asset.groundOffset=0;
-        if(rolling){let minY=Infinity;for(let i=1;i<asset.pose.vertices.length;i+=6)minY=Math.min(minY,asset.pose.vertices[i]);
-          if(Number.isFinite(minY))asset.groundOffset=minY;}
-      }
-      const model=M.model(person.x||0,(person.y||0)-(rolling?asset.groundOffset:0),person.z||0,(person.angle||0)+Math.PI,1,1,1);
-      this.draw(asset.mesh,model,[1,1,1],false);
-      if(this.weapon){
-        // In this Mixamo rig +Y follows the fingers. Rotate the original weapon
-        // so its -Z barrel follows that axis, then place its grip in the palm.
-        const grip=new Float32Array([.65,0,0,0, 0,0,.65,0, 0,-.65,0,0, 0,.065,0,1]);
-        const gun=M.multiply(M.multiply(model,asset.pose.rightHand),grip);
-        this.draw(this.weapon,gun,[.3,.3,.3],false);
-        if(firing){const flash=M.multiply(gun,M.model(0,.1,-.34,0,.09,.09,.09));this.draw(this.enemyMarker,flash,[1,.78,.32],false);}
-      }
-    }
     person(person,enemy,firing) {
       const x=person.x||0,y=person.y||0,z=person.z||0,a=person.angle||0,c=Math.cos(a),s=Math.sin(a);
-      if(!enemy&&this.meshy){this.meshyPerson(person);return;}
       const dead=enemy&&person.alive===false;
       const kind=person.ally?'cbdc':enemy?'terro':'gabe';
       const original=this.characters[kind];
@@ -319,12 +252,13 @@ void main(){
         const extra=global.SF_EXTRA_ANIMATIONS;
         const clips=person.ally?null:enemy?(extra&&extra.terro):(global.SF_ANIMATIONS&&global.SF_ANIMATIONS.gabe);
         const death=dead&&global.SF_ENEMY_DEATH?.frames?.length?global.SF_ENEMY_DEATH:null;
-        if(clips||death){
-          const name=death?'death':!enemy&&person.reloading&&extra?.gabe?.reload?'reload':!enemy&&person.aiming&&extra?.gabe?.aim?'aim':person.moving?(person.running?'run':'walk'):'idle';
-          const clip=death||(!enemy&&(name==='aim'||name==='reload')?extra.gabe[name]:clips?.[name]);
+        const roll=!enemy&&person.rolling&&global.SF_GABE_ROLL?.frames?.length?global.SF_GABE_ROLL:null;
+        if(clips||death||roll){
+          const name=death?'death':roll?'roll':!enemy&&person.reloading&&extra?.gabe?.reload?'reload':!enemy&&person.aiming&&extra?.gabe?.aim?'aim':person.moving?(person.running?'run':'walk'):'idle';
+          const clip=death||roll||(!enemy&&(name==='aim'||name==='reload')?extra.gabe[name]:clips?.[name]);
           if(clip&&clip.frames&&clip.frames.length){
-            const elapsed=name==='death'?(Number.isFinite(person.deathTime)?Math.max(0,person.deathTime):clip.frames.length/clip.fps):name==='reload'&&Number.isFinite(person.reloadTime)?person.reloadTime:(Number.isFinite(person.animationTime)?person.animationTime:this.animationTime||0);
-            const phase=name==='reload'||name==='death'?Math.min(clip.frames.length-1,Math.floor(elapsed*clip.fps)):Math.floor(elapsed*clip.fps)%clip.frames.length;
+            const elapsed=name==='roll'?(Number.isFinite(person.rollTime)?Math.max(0,person.rollTime):0):name==='death'?(Number.isFinite(person.deathTime)?Math.max(0,person.deathTime):clip.frames.length/clip.fps):name==='reload'&&Number.isFinite(person.reloadTime)?person.reloadTime:(Number.isFinite(person.animationTime)?person.animationTime:this.animationTime||0);
+            const phase=name==='reload'||name==='death'||name==='roll'?Math.min(clip.frames.length-1,Math.floor(elapsed*clip.fps)):Math.floor(elapsed*clip.fps)%clip.frames.length;
             const frame=person.reverse&&(name==='walk'||name==='run')?clip.frames.length-1-phase:phase;
             pose=clip.frames[frame];
             if(original.clip!==name||original.frame!==frame){
@@ -388,13 +322,8 @@ void main(){
       gl.uniformMatrix4fv(loc.viewProjection,false,vp);gl.uniform3fv(loc.camera,eye);
       this.updateRooms(p);
       this.draw(this.scene,M.identity(),[.45,.49,.46],true);
-      if(this.props){const visible=this.propObjects.filter(o=>(!this.visibleRooms||o.rooms.some(r=>this.visibleRooms.has(r)))&&
-        !(this.policeMeshy&&((o.name==='CP'&&o.id===57)||(o.name==='CPTOP'&&o.id===61)||(o.name==='LIGHT'&&o.id===139))));
+      if(this.props){const visible=this.propObjects.filter(o=>!this.visibleRooms||o.rooms.some(r=>this.visibleRooms.has(r)));
         this.draw(this.props,M.identity(),[1,1,1],false,visible);}
-      if(this.policeMeshy&&(!this.visibleRooms||this.visibleRooms.has(74))){const {mesh,placement:p}=this.policeMeshy;
-        this.draw(mesh,M.model(p.x,p.y,p.z,p.angle,p.scale,p.scale,p.scale),[1,1,1],false);}
-      if(this.sceneDetails)global.SFSceneDetails.draw(this,this.sceneDetails,state.time,this.policeMeshy?-.18:0);
-      if(this.metroFireMesh)global.SFMetroFireEffects.draw(this,this.metroFireMesh,global.SF_METRO_FIRES,p,state.time);
       if(state.objective){const o=state.objective;this.box(o.x,o.y+.1,o.z,0,.55,.2,.55,[.80,.82,.24]);this.box(o.x,o.y+.7,o.z,0,.12,1.2,.12,[.92,.82,.21]);}
       if(Array.isArray(state.bombs))for(const bomb of state.bombs){this.box(bomb.x,bomb.y+.22,bomb.z,0,.9,.44,.65,[.40,.29,.18]);this.box(bomb.x,bomb.y+.48,bomb.z,0,.20,.08,.20,[1,.1,.05]);this.draw(this.enemyMarker,M.model(bomb.x,bomb.y+1,bomb.z,0,.12,.18,.12),[1,.25,.06],false);}
       if(state.impact){const i=state.impact;this.box(i.x,i.y,i.z,0,.17,.17,.17,i.hit?[1,.72,.18]:[.9,.85,.55]);}
