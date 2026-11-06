@@ -210,7 +210,7 @@ void main(){
           const name=person.moving?(person.running?'run':'walk'):'idle';
           const clip=global.SF_ANIMATIONS.gabe[name];
           if(clip&&clip.frames&&clip.frames.length){
-            const frame=Math.floor((this.animationTime||0)*clip.fps)%clip.frames.length;
+            const frame=Math.floor((Number.isFinite(person.animationTime)?person.animationTime:this.animationTime||0)*clip.fps)%clip.frames.length;
             if(original.clip!==name||original.frame!==frame){
               this.gl.bindBuffer(this.gl.ARRAY_BUFFER,original.buffer);
               this.gl.bufferSubData(this.gl.ARRAY_BUFFER,0,sceneVertices(clip.frames[frame]));
@@ -218,7 +218,8 @@ void main(){
             }
           }
         }
-        this.draw(original,M.model(x,y,z,a,1,1,1),[1,1,1],false);
+        // The exported HMD's visible front faces the reverse of the game heading.
+        this.draw(original,M.model(x,y,z,a+Math.PI,1,1,1),[1,1,1],false);
         // Temporary weapon mesh until the original weapon attachment is decoded.
         const gx=x+c*.32-s*.27,gz=z-s*.32-c*.27;
         this.box(gx,y+1.12,gz,a,.11,.14,.43,[.08,.085,.08]);
@@ -243,7 +244,13 @@ void main(){
       const yaw=Number.isFinite(state.cameraYaw)?state.cameraYaw:0,pitch=Math.max(-.7,Math.min(.8,Number.isFinite(state.cameraPitch)?state.cameraPitch:.1)),distance=Math.max(1,Math.min(15,state.cameraDistance||3.8));
       const anchor=[p.x,p.y+1.45,p.z],sy=Math.sin(yaw),cy=Math.cos(yaw),cp=Math.cos(pitch),sp=Math.sin(pitch);
       const eye=[anchor[0]+sy*cp*distance+cy*.65,anchor[1]+sp*distance+.25,anchor[2]+cy*cp*distance-sy*.65];
-      const fraction=cameraFraction(this.cameraWalls,anchor,eye);for(let i=0;i<3;i++)eye[i]=anchor[i]+(eye[i]-anchor[i])*fraction;
+      const desiredFraction=cameraFraction(this.cameraWalls,anchor,eye);
+      const elapsed=this.animationTime-(this.cameraTime??this.animationTime);
+      if(!Number.isFinite(this.cameraDistanceFraction)||elapsed<0)this.cameraDistanceFraction=desiredFraction;
+      else if(desiredFraction<this.cameraDistanceFraction)this.cameraDistanceFraction=desiredFraction;
+      else this.cameraDistanceFraction+=(desiredFraction-this.cameraDistanceFraction)*(1-Math.exp(-8*Math.min(.1,Math.max(1/60,elapsed))));
+      this.cameraTime=this.animationTime;
+      for(let i=0;i<3;i++)eye[i]=anchor[i]+(eye[i]-anchor[i])*this.cameraDistanceFraction;
       const target=[eye[0]-sy*cp,eye[1]-sp,eye[2]-cy*cp];
       const view=M.lookAt(eye,target,[0,1,0]),projection=M.perspective(Math.PI/3,w/h,.08,300),vp=M.multiply(projection,view);
       gl.uniformMatrix4fv(loc.viewProjection,false,vp);gl.uniform3fv(loc.camera,eye);

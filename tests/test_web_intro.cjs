@@ -5,7 +5,7 @@ function setup(){
   function el(id){return elements[id]??={textContent:'',innerHTML:'',hidden:false,style:{},disabled:false,events:{},classList:{add(){},remove(){}},querySelector(){return {textContent:''}},addEventListener(n,f){this.events[n]=f;},focus(){},play(){this.played=(this.played||0)+1;return Promise.resolve();},pause(){},removeAttribute(name){if(name==='src')this.src='';},load(){}};}
   const document={getElementById:el,addEventListener(n,f){(events[n]??=[]).push(f)},pointerLockElement:null,exitPointerLock(){}};
   const c={console,Float32Array,Map,Set,Math,Number,Array,document,requestAnimationFrame(f){nextFrame=f;},addEventListener(){},SFRenderer:class{render(){return {eye:[0,0,1],target:[0,0,0]};}}};c.window=c;vm.createContext(c);
-  for(const file of ['web/assets/intro-briefing.js','web/assets/georgia-street.js','web/game.js'])vm.runInContext(fs.readFileSync(file,'utf8'),c,{filename:file});
+  for(const file of ['web/assets/intro-briefing.js','web/assets/georgia-street.js','web/ps1-rules.js','web/game.js'])vm.runInContext(fs.readFileSync(file,'utf8'),c,{filename:file});
   assert.ok(nextFrame);return {el,c};
 }
 const first=setup();first.el('start').events.click();

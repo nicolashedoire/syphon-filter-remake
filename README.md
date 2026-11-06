@@ -4,16 +4,18 @@ This repository contains the first steps toward an unofficial French-language re
 
 ## Play the HTML prototype
 
+**[Play the browser prototype online](https://nicolashedoire.github.io/syphon-filter-remake/)**
+
 Open `index.html` directly in a recent desktop browser with WebGL enabled. The game uses local HTML, CSS, and JavaScript; it does not require a server, a build step, a disc image, or an internet connection after the repository files are downloaded.
 
 - **ZQSD**, **WASD**, or **arrow keys**: move.
 - **Mouse**: look around; **left click**: shoot.
-- **R**: reload; **Shift**: walk; **Escape**: release the pointer.
+- **R**: reload; **Shift**: walk; **Escape**: release the pointer; **H**: open the PC controls guide.
 - The original intro movies can be skipped; the French mission briefing is shown before gameplay.
 
 This is an early playable 3D prototype, not a complete remake. It uses the starting point, level geometry, PS1 textures, original Gabe and terrorist models, Gabe's idle/walk/run animations, and selected street objects from the French disc. It plays the two original intro videos and displays the original French briefing before the mission. The video audio comes from the French disc; its spoken language has not been independently verified.
 
-The camera, shooting, enemy behavior, objectives and collision approximations are new implementations, and the prototype's three-enemy objective is provisional. Dynamic texture changes, complete character animations, mission scripting, in-game voices and the rest of the game are not yet implemented. A keyboard and mouse are required.
+A PC controls guide opens before the first mission and can be reopened with H; the game pauses while it is open. The initial area is safe until the player fires or moves away. The camera, shooting, enemy behavior, objectives and collision approximations are new implementations, and the prototype's three-enemy objective is provisional. Dynamic texture changes, complete character animations, mission scripting, in-game voices and the rest of the game are not yet implemented. A keyboard and mouse are required.
 
 ## French PS1 Disc Image
 

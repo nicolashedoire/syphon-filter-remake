@@ -14,6 +14,7 @@ const context={console,Float32Array,Map,Set,Math,Number,Array,document,requestAn
 context.window=context;
 vm.createContext(context);
 vm.runInContext(fs.readFileSync('web/assets/georgia-street.js','utf8'),context);
+vm.runInContext(fs.readFileSync('web/ps1-rules.js','utf8'),context);
 vm.runInContext(fs.readFileSync('web/game.js','utf8'),context);
 function advance(frames){for(let i=0;i<frames;i++){now+=16;nextFrame(now);}}
 function dispatch(name,event){for(const fn of listeners[name]||[])fn(event);}
@@ -38,9 +39,9 @@ for(let i=0;i<3;i++){
 }
 assert.equal(state.enemies.filter(e=>e.alive).length,0,'The three enemies can be defeated');
 assert.ok(state.objective,'The extraction marker appears after combat');
-assert.equal(element('ammo-hud').textContent,'6 / 12','Shots consume ammunition');
+assert.equal(element('ammo-hud').textContent,'9 / 45','Shots consume ammunition');
 down('r');up('r');advance(75);
-assert.equal(element('ammo-hud').textContent,'12 / 12','Reloading replenishes the magazine');
+assert.equal(element('ammo-hud').textContent,'15 / 39','Reloading replenishes the magazine and consumes reserve ammunition');
 // Face the marked extraction point and walk to it using the French keyboard control.
 const dx=state.objective.x-state.player.x,dz=state.objective.z-state.player.z;
 const desired=Math.atan2(-dx,-dz),delta=Math.atan2(Math.sin(state.cameraYaw-desired),Math.cos(state.cameraYaw-desired));
@@ -63,8 +64,9 @@ const withWall=new Float32Array(original.length+wall.length);withWall.set(origin
 aimAt(state.enemies[0]);element('game').events.mousedown({button:0,clientX:0,clientY:0});advance(1);
 assert.equal(state.enemies[0].health,2,'A wall blocks shots at enemies');
 assert.ok(state.impact && !state.impact.hit,'A blocked shot renders an impact');
-const healthBefore=state.player.health;advance(260);
+const healthBefore=state.player.health,armorBefore=state.player.armor;advance(260);
 assert.equal(state.player.health,healthBefore,'Enemy shots cannot pass through the wall');
+assert.equal(state.player.armor,armorBefore,'The wall also protects armor');
 console.log('Web shooting tests passed: vertical aim, wall impacts and enemy line of sight.');
 
 // The first click after Escape recaptures the pointer without firing.

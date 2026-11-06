@@ -12,6 +12,12 @@ On November 6, 2026, [REA](https://github.com/morluto/rea) 6.8.0 with Rizin 0.9.
 
 The observed entry point is `0x800e44b4`; 32 instructions were disassembled there. The initial instructions include a loop that writes zeros, followed by stack setup, suggesting program initialization. **This does not yet establish how the gameplay mechanics work.** The executable was not modified. Detailed evidence files remain local.
 
+## Browser combat rule port
+
+The browser implementation in `web/ps1-rules.js` ports a small, testable subset of the community PC port's combat behavior: a hit is applied to armor while any armor remains; excess damage from that hit is discarded, and health is affected only by a later hit. Initial health (150), armor (600), 9 mm magazine (15), reserve (45), and movement rates are taken from the community US-version port and have not all been independently validated against the French executable. The safe starting area and enemy awareness behavior in the browser remain approximations, not verified original behavior.
+
+In the French executable, a matching structured weapon table was located at file offset `0xfd29c` (PS-X address `0x8010ca9c`): its silenced 9 mm fields match the US-port values of 50 close damage, 25 distant damage, and cadence 4. The original damage routine has not yet been identified and verified in the French executable; the US routine address cannot be assumed to apply unchanged.
+
 ## Browser assets
 
 The browser prototype includes the original French disc's terrain textures, Gabe and terrorist HMD models, Gabe idle/walk/run animation poses, and 16 static objects from the initial visibility set. `web/assets/intro-general.mp4` and `intro-georgia.mp4` are converted from `/SOL/INTRO.STR` and `/SOL/SUBWAY.STR`; the original French briefing is stored in `web/assets/intro-briefing.js`. The videos retain the audio decoded from the French disc, although its spoken language has not been independently verified.

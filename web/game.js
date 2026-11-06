@@ -2,12 +2,14 @@
   'use strict';
   const $ = id => document.getElementById(id);
   const canvas = $('game'), overlay = $('overlay'), start = $('start');
+  const rules=window.SFPS1Rules;
   const cinematics=$('cinematics'), introVideo=$('intro-video'), skipIntro=$('skip-intro');
   let phase='introduction',introIndex=0;
   const ui = {title:$('overlay-title'), text:$('overlay-text'), message:$('message'), health:$('health-hud'), healthSide:$('health-side'), healthBar:$('health-bar'), ammo:$('ammo-hud'), ammoSide:$('ammo-side'), status:$('status-side'), frame:$('frame-state'), objective:$('objective-hud'), remaining:$('remaining-hud'), threats:$('objective-threats'), exit:$('objective-exit')};
-  const keys = new Set(), TAU=Math.PI*2, CELL=6, player={x:47.8,y:21.32,z:28.25,angle:Math.PI/2,health:100,ammo:12};
-  let renderer, groundGrid, wallGrid, collisionPositions, enemies=[], exitPoint=null, running=false, finished=false, last=0, clock=0, reloadUntil=0, lastShot=-10, messageUntil=0, yaw=Math.PI/2, pitch=.05, drag=false, lastX=0, lastY=0, pointerError=false, camera=null, impact=null, impactUntil=0;
+  const keys = new Set(), TAU=Math.PI*2, CELL=6, player={x:47.8,y:21.32,z:28.25,angle:Math.PI/2,health:150,armor:600,ammo:15,reserve:45};
+  let renderer, groundGrid, wallGrid, collisionPositions, enemies=[], exitPoint=null, running=false, finished=false, last=0, clock=0, reloadUntil=0, lastShot=-10, messageUntil=0, yaw=Math.PI/2, pitch=.05, drag=false, lastX=0, lastY=0, pointerError=false, fallbackPositionKnown=false, camera=null, impact=null, impactUntil=0, combatActive=false, combatStartsAt=0;
   const normAngle = a => Math.atan2(Math.sin(a),Math.cos(a));
+  const tutorialOpen = () => document.documentElement?.dataset?.tutorialOpen === 'true';
   const key=(x,z)=>`${x},${z}`;
   const push=(grid,x,z,value)=>{const k=key(x,z);let a=grid.get(k);if(!a){a=[];grid.set(k,a);}a.push(value);};
   function prepareCollision(positions){
@@ -43,7 +45,7 @@
   function moveAxis(p,dx,dz){const x=p.x+dx,z=p.z+dz,y=heightAt(x,z,p.y);if(y!==null&&!wallAt(x,y,z)){p.x=x;p.z=z;p.y=y;return true;}return false;}
   function setMessage(text,seconds=2){ui.message.textContent=text;messageUntil=clock+seconds;}
   function reset(){
-    player.x=47.8;player.y=heightAt(47.8,28.25,21.32,3,3)??21.32;player.z=28.25;player.angle=Math.PI/2;player.moving=false;player.running=false;player.health=100;player.ammo=12;yaw=Math.PI/2;pitch=.05;clock=0;lastShot=-10;reloadUntil=0;impact=null;camera=null;finished=false;keys.clear();
+    player.x=47.8;player.y=heightAt(47.8,28.25,21.32,3,3)??21.32;player.z=28.25;player.angle=Math.PI/2;player.moving=false;player.running=false;player.animation='idle';player.animationTime=0;player.health=rules.initialHealth;player.armor=rules.initialArmor;player.ammo=rules.magazineCapacity;player.reserve=rules.initialReserve;yaw=Math.PI/2;pitch=.05;clock=0;lastShot=-10;reloadUntil=0;impact=null;camera=null;finished=false;combatActive=false;combatStartsAt=0;fallbackPositionKnown=false;keys.clear();
     const exitX=player.x-6, exitY=heightAt(exitX,player.z,player.y,1.5,2);exitPoint=exitY!==null&&!wallAt(exitX,exitY,player.z)?{x:exitX,y:exitY,z:player.z}:{x:player.x,y:player.y,z:player.z};enemies=placeEnemies();ui.threats.classList.remove('done');ui.exit.classList.remove('done');ui.threats.querySelector('b').textContent='01';ui.exit.querySelector('b').textContent='02';setMessage('SÉCURISEZ LA ZONE',4);sync();
   }
   function placeEnemies(){
@@ -59,7 +61,7 @@
     return result;
   }
   function remaining(){return enemies.filter(e=>e.alive).length;}
-  function sync(){const left=remaining();ui.health.textContent=Math.ceil(player.health);ui.healthSide.textContent=Math.ceil(player.health)+' %';ui.healthBar.style.width=player.health+'%';ui.ammo.textContent=player.ammo+' / 12';ui.ammoSide.textContent=player.ammo+' / 12';ui.remaining.textContent='MENACES · '+String(left).padStart(2,'0');ui.status.textContent=running?'EN MISSION':finished?'MISSION TERMINÉE':'EN ATTENTE';ui.frame.textContent=running?'EN MISSION':finished?'FIN DE TRANSMISSION':'EN ATTENTE';ui.objective.textContent=left?'SÉCURISEZ LA ZONE':'REJOIGNEZ L’EXTRACTION';if(!left&&enemies.length){ui.threats.classList.add('done');ui.threats.querySelector('b').textContent='✓';}}
+  function sync(){const left=remaining(),integrity=Math.ceil(100*(player.health+player.armor)/(rules.initialHealth+rules.initialArmor));ui.health.textContent=integrity;ui.healthSide.textContent=integrity+' %';ui.healthBar.style.width=integrity+'%';ui.ammo.textContent=player.ammo+' / '+player.reserve;ui.ammoSide.textContent=player.ammo+' / '+player.reserve;ui.remaining.textContent='MENACES · '+String(left).padStart(2,'0');ui.status.textContent=running?'EN MISSION':finished?'MISSION TERMINÉE':'EN ATTENTE';ui.frame.textContent=running?'EN MISSION':finished?'FIN DE TRANSMISSION':'EN ATTENTE';ui.objective.textContent=left?'SÉCURISEZ LA ZONE':'REJOIGNEZ L’EXTRACTION';if(!left&&enemies.length){ui.threats.classList.add('done');ui.threats.querySelector('b').textContent='✓';}}
   function finish(won){running=false;finished=true;phase='briefing';if(document.pointerLockElement===canvas)document.exitPointerLock();ui.title.innerHTML=won?'MISSION<br><em>ACCOMPLIE.</em>':'MISSION<br><em>INTERROMPUE.</em>';ui.text.textContent=won?'Zone sécurisée. Vous avez rejoint le point d’extraction.':'Votre intégrité est épuisée. Reprenez la mission depuis le début.';start.innerHTML='RECOMMENCER LA MISSION <span>↗</span>';overlay.hidden=false;if(won){ui.exit.classList.add('done');ui.exit.querySelector('b').textContent='✓';}sync();}
   // Intersect a normalized ray with the actual level triangles using the
   // double-sided Möller–Trumbore test. Return the nearest positive distance.
@@ -91,9 +93,10 @@
     const direction=delta.map(v=>v/len);return traceScene(a,direction,len-.04)===null;
   }
   function fire(){
-    if(!running||clock<reloadUntil||clock-lastShot<.28)return;
+    if(!running||tutorialOpen()||clock<reloadUntil||clock-lastShot<.28)return;
     if(player.ammo<=0){setMessage('CHARGEUR VIDE · APPUYEZ SUR R');return;}
     if(!camera||!camera.eye||!camera.target){setMessage('VISÉE EN PRÉPARATION');return;}
+    if(!combatActive){combatActive=true;combatStartsAt=clock+2.5;}
     lastShot=clock;player.ammo--;player.angle=yaw;
     const origin=camera.eye,delta=camera.target.map((v,i)=>v-origin[i]),len=Math.hypot(...delta);
     if(len<1e-6){sync();return;}
@@ -114,20 +117,28 @@
     else setMessage(blocked?'IMPACT SUR LE DÉCOR':'TIR EFFECTUÉ');
     sync();
   }
-  function reload(){if(!running||player.ammo===12||clock<reloadUntil)return;reloadUntil=clock+1.1;setMessage('RECHARGEMENT…',1.1);}
+  function reload(){if(!running||tutorialOpen()||player.ammo===rules.magazineCapacity||clock<reloadUntil)return;if(!player.reserve){setMessage('PLUS DE MUNITIONS EN RÉSERVE',2);return;}reloadUntil=clock+1.1;setMessage('RECHARGEMENT…',1.1);}
   function advance(dt){
-    clock+=dt;if(reloadUntil&&clock>=reloadUntil){reloadUntil=0;player.ammo=12;setMessage('CHARGEUR REMPLI');}
-    const strafe=(keys.has('d')||keys.has('arrowright')?1:0)-(keys.has('q')||keys.has('a')||keys.has('arrowleft')?1:0),forward=(keys.has('z')||keys.has('w')||keys.has('arrowup')?1:0)-(keys.has('s')||keys.has('arrowdown')?1:0),m=Math.hypot(strafe,forward)||1,speed=keys.has('shift')?1.9:5.4;
+    clock+=dt;if(reloadUntil&&clock>=reloadUntil){reloadUntil=0;rules.reload(player);setMessage('CHARGEUR RECHARGÉ');}
+    const strafe=(keys.has('d')||keys.has('arrowright')?1:0)-(keys.has('q')||keys.has('a')||keys.has('arrowleft')?1:0),forward=(keys.has('z')||keys.has('w')||keys.has('arrowup')?1:0)-(keys.has('s')||keys.has('arrowdown')?1:0),m=Math.hypot(strafe,forward)||1,speed=keys.has('shift')?rules.walkSpeed:rules.runSpeed;
     const dx=(Math.cos(yaw)*strafe-Math.sin(yaw)*forward)/m*speed*dt,dz=(-Math.sin(yaw)*strafe-Math.cos(yaw)*forward)/m*speed*dt;
     const previousX=player.x,previousZ=player.z;
     if(dx||dz){if(!moveAxis(player,dx,dz)){moveAxis(player,dx,0);moveAxis(player,0,dz);}}
-    player.moving=Math.hypot(player.x-previousX,player.z-previousZ)>.0001;player.running=player.moving&&!keys.has('shift');player.angle=yaw;
-    for(const e of enemies){if(!e.alive)continue;const dx=player.x-e.x,dz=player.z-e.z,d=Math.hypot(dx,dz);e.angle=Math.atan2(-dx,-dz);if(d<20){e.fire-=dt;if(e.fire<=0){e.fire=2.5;if(segmentVisible([e.x,e.y+1.25,e.z],[player.x,player.y+1.25,player.z])){player.health=Math.max(0,player.health-7);setMessage('CONTACT ENNEMI · RIPOSTEZ',1.8);}}}}
+    player.moving=Math.hypot(player.x-previousX,player.z-previousZ)>.0001;player.running=player.moving&&!keys.has('shift');
+    if(player.moving){const heading=Math.atan2(-dx,-dz);player.angle=normAngle(player.angle+normAngle(heading-player.angle)*Math.min(1,dt*14));}
+    const animation=player.moving?(player.running?'run':'walk'):'idle';
+    if(player.animation!==animation){player.animation=animation;player.animationTime=0;}else player.animationTime+=dt;
+    if(!combatActive&&Math.hypot(player.x-47.8,player.z-28.25)>4){combatActive=true;combatStartsAt=clock+3;setMessage('ZONE HOSTILE · RESTEZ VIGILANT',3);}
+    for(const e of enemies){if(!e.alive)continue;const dx=player.x-e.x,dz=player.z-e.z,d=Math.hypot(dx,dz);e.angle=Math.atan2(-dx,-dz);
+      const facing=Math.abs(normAngle(Math.atan2(dx,dz)-yaw))<.85;
+      if(combatActive&&clock>=combatStartsAt&&d<20&&facing&&segmentVisible([e.x,e.y+1.25,e.z],[player.x,player.y+1.25,player.z])){
+        e.fire-=dt;if(e.fire<=0){e.fire=2.5;rules.applyPlayerDamage(player,7);setMessage('CONTACT ENNEMI · RIPOSTEZ',1.8);}
+      }}
     if(player.health<=0){finish(false);return;}
     if(enemies.length&&remaining()===0&&Math.hypot(player.x-exitPoint.x,player.z-exitPoint.z)<1.7){finish(true);return;}
     if(clock>messageUntil)ui.message.textContent=remaining()?'NEUTRALISEZ LES MENACES':'REJOIGNEZ LE POINT D’EXTRACTION';sync();
   }
-  function frame(time){const dt=Math.min((time-last)/1000||0,.05);last=time;if(running)advance(dt);if(renderer)camera=renderer.render({player,cameraYaw:yaw,cameraPitch:pitch,time:clock,enemies,objective:running&&!remaining()&&enemies.length?exitPoint:null,impact:running&&clock<impactUntil?impact:null});requestAnimationFrame(frame);}
+  function frame(time){const dt=Math.min((time-last)/1000||0,.05);last=time;if(running&&!tutorialOpen())advance(dt);else if(tutorialOpen())keys.clear();if(renderer)camera=renderer.render({player,cameraYaw:yaw,cameraPitch:pitch,time:clock,enemies,objective:running&&!remaining()&&enemies.length?exitPoint:null,impact:running&&clock<impactUntil?impact:null});requestAnimationFrame(frame);}
   function look(dx,dy){yaw=normAngle(yaw-dx*.003);pitch=Math.max(-.55,Math.min(.65,pitch+dy*.002));}
   function showBriefing(){
     phase='briefing';cinematics.hidden=true;introVideo.pause();introVideo.removeAttribute('src');introVideo.load();
@@ -150,7 +161,7 @@
     phase='mission';overlay.classList.remove('briefing');ui.text.classList.remove('briefing-text');
     reset();if(!enemies.length){phase='briefing';ui.text.textContent='Impossible de placer les menaces dans cette zone.';return;}
     running=true;overlay.hidden=true;canvas.focus();sync();
-    if(canvas.requestPointerLock){const p=canvas.requestPointerLock();if(p&&p.catch)p.catch(()=>{pointerError=true;setMessage('MAINTENEZ LE CLIC POUR TOURNER LA CAMÉRA',5);});}
+    if(canvas.requestPointerLock){const p=canvas.requestPointerLock();if(p&&p.catch)p.catch(()=>{pointerError=true;fallbackPositionKnown=false;setMessage('DÉPLACEZ LA SOURIS SUR LE JEU POUR VISER',5);});}else{pointerError=true;fallbackPositionKnown=false;setMessage('DÉPLACEZ LA SOURIS SUR LE JEU POUR VISER',5);}
   }
   introVideo.addEventListener('ended',playNextIntro);
   introVideo.addEventListener('error',()=>{if(phase==='cinematics')playNextIntro();});
@@ -160,11 +171,11 @@
     if(phase==='introduction'&&window.SF_BRIEFING){phase='cinematics';introIndex=0;overlay.hidden=true;cinematics.hidden=false;playNextIntro();return;}
     startMission();
   });
-  document.addEventListener('keydown',e=>{const k=e.key.toLowerCase();if(['arrowup','arrowdown','arrowleft','arrowright',' '].includes(k)&&running)e.preventDefault();if(!keys.has(k)&&k==='r')reload();keys.add(k);});document.addEventListener('keyup',e=>keys.delete(e.key.toLowerCase()));window.addEventListener('blur',()=>{keys.clear();drag=false;});
+  document.addEventListener('keydown',e=>{if(tutorialOpen())return;const k=e.key.toLowerCase();if(['arrowup','arrowdown','arrowleft','arrowright',' '].includes(k)&&running)e.preventDefault();if(!keys.has(k)&&k==='r')reload();keys.add(k);});document.addEventListener('keyup',e=>keys.delete(e.key.toLowerCase()));window.addEventListener('blur',()=>{keys.clear();drag=false;});
   document.addEventListener('pointerlockchange',()=>{if(running){if(document.pointerLockElement===canvas)setMessage('SOURIS ACTIVÉE · CLIQUEZ POUR TIRER',2);else setMessage('SOURIS LIBÉRÉE · CLIQUEZ POUR REPRENDRE LA VISÉE',4);}});
-  document.addEventListener('mousemove',e=>{if(!running)return;if(document.pointerLockElement===canvas)look(e.movementX,e.movementY);else if(drag){look(e.clientX-lastX,e.clientY-lastY);lastX=e.clientX;lastY=e.clientY;}});
-  canvas.addEventListener('mousedown',e=>{if(!running||e.button!==0)return;if(document.pointerLockElement!==canvas){drag=true;lastX=e.clientX;lastY=e.clientY;if(!pointerError&&canvas.requestPointerLock){const p=canvas.requestPointerLock();if(p&&p.catch)p.catch(()=>{pointerError=true;setMessage('MAINTENEZ LE CLIC POUR TOURNER LA CAMÉRA',5);});return;}}fire();});window.addEventListener('mouseup',()=>drag=false);canvas.addEventListener('contextmenu',e=>e.preventDefault());
-  try{if(!window.SF_SCENE||!window.SFRenderer)throw new Error('Les ressources du jeu sont absentes.');const terrain=SF_SCENE.positions,props=window.SF_PROPS&&window.SF_PROPS.positions;
+  document.addEventListener('mousemove',e=>{if(!running||tutorialOpen())return;if(document.pointerLockElement===canvas){pointerError=false;look(e.movementX,e.movementY);}else if(pointerError&&(e.target===canvas||drag)){if(fallbackPositionKnown)look(e.clientX-lastX,e.clientY-lastY);lastX=e.clientX;lastY=e.clientY;fallbackPositionKnown=true;}});
+  canvas.addEventListener('mousedown',e=>{if(!running||tutorialOpen()||e.button!==0)return;if(document.pointerLockElement!==canvas){drag=true;lastX=e.clientX;lastY=e.clientY;if(!pointerError&&canvas.requestPointerLock){const p=canvas.requestPointerLock();if(p&&p.catch)p.catch(()=>{pointerError=true;fallbackPositionKnown=false;setMessage('DÉPLACEZ LA SOURIS SUR LE JEU POUR VISER',5);});return;}}fire();});window.addEventListener('mouseup',()=>drag=false);canvas.addEventListener('contextmenu',e=>e.preventDefault());
+  try{if(!window.SF_SCENE||!window.SFRenderer||!rules)throw new Error('Les ressources du jeu sont absentes.');const terrain=SF_SCENE.positions,props=window.SF_PROPS&&window.SF_PROPS.positions;
     collisionPositions=new Float32Array(terrain.length+(props?props.length:0));collisionPositions.set(terrain);if(props)collisionPositions.set(props,terrain.length);
     [groundGrid,wallGrid]=prepareCollision(collisionPositions);renderer=new SFRenderer(canvas,SF_SCENE);reset();requestAnimationFrame(frame);}catch(error){ui.title.innerHTML='CHARGEMENT<br><em>IMPOSSIBLE.</em>';ui.text.textContent='Le navigateur ne peut pas lancer la scène 3D. Vérifiez que WebGL est disponible et que tous les fichiers du projet sont présents.';start.disabled=true;console.error(error);}
 })();

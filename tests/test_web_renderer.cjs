@@ -1,11 +1,11 @@
 // Check renderer initialization, texture binding, room visibility and camera output.
 const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
-let draws=[], uniforms=[], bufferUpdates=0;
+let draws=[], uniforms=[], models=[], bufferUpdates=0;
 const gl=new Proxy({
   getShaderParameter(){return true;},getProgramParameter(){return true;},
   getAttribLocation(_,n){return {aPosition:0,aNormal:1,aUv:2,aVertexColor:3}[n];},getUniformLocation(_,n){return n;},
   createBuffer(){return {};},createTexture(){return {};},createShader(){return {};},createProgram(){return {};},
-  uniform1f(name,value){uniforms.push([name,value]);},drawArrays(...args){draws.push(args);},bufferSubData(){bufferUpdates++;},
+  uniform1f(name,value){uniforms.push([name,value]);},uniformMatrix4fv(name,transpose,value){if(name==='uModel')models.push(Array.from(value));},drawArrays(...args){draws.push(args);},bufferSubData(){bufferUpdates++;},
   getShaderInfoLog(){return '';},getProgramInfoLog(){return '';}
 },{get(target,key){if(key in target)return target[key];if(typeof key==='string'&&key===key.toUpperCase())return 1;return ()=>{};}});
 const context={console,Float32Array,Uint8Array,Uint16Array,Map,Set,Math,Number,Array,devicePixelRatio:1,Image:class{set src(value){assert.match(value,/^data:image\/png;base64,/);this.onload();}}};
@@ -26,6 +26,10 @@ assert.equal(renderer.sceneRanges.length,9,'The starting room and its eight visi
 assert.ok(draws.length>=11,'The terrain rooms, player and enemy are rendered');
 assert.ok(uniforms.some(([name,value])=>name==='uUseTexture'&&value===1),'Texturing is enabled');
 assert.ok(camera.eye.every(Number.isFinite)&&camera.target.every(Number.isFinite),'The camera reports a valid aim ray');
+const characterMatrix=models.find(m=>Math.abs(m[12]-47.8)<.01&&Math.abs(m[13]-21.32)<.01&&Math.abs(m[14]-28.25)<.01);
+assert.ok(characterMatrix,'The original character is drawn at the player position');
+const direction=[camera.target[0]-camera.eye[0],camera.target[2]-camera.eye[2]];
+assert.ok(characterMatrix[8]*direction[0]+characterMatrix[10]*direction[1]>.8,'The character faces away from the camera toward the aim direction');
 assert.equal(renderer.characters.gabe.clip,'idle','The original idle animation is used');
 renderer.render({player:{x:47.8,y:21.32,z:28.25,angle:Math.PI/2,moving:true,running:true},cameraYaw:Math.PI/2,cameraPitch:.05,time:1});
 assert.equal(renderer.characters.gabe.clip,'run','The original running animation is used');
