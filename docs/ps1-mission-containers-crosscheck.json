@@ -1,0 +1,765 @@
+{
+  "disc_bin_sha256": "c0f54d8110eb87b802cb6cadb304251fa5910eafa193a5de16cd2c2651911e72",
+  "format_version": 1,
+  "limit": "Source-level comparison only; US catalog mappings, DLF code/data interpretation, runtime selection and objective triggers are not proved. Overlay matches start at 0x14 and cover only the longest initial equal byte run.",
+  "rows": [
+    {
+      "resource": "SUBWAY",
+      "fog_path": "/FOG/SUBWAY.FOG",
+      "fog_lba": 27749,
+      "fog_iso_bytes": 4810885,
+      "dlf_entry_offset": "0xfe800",
+      "dlf_sector_padded_size": 299008,
+      "dlf_sha256": "dbf12874a794d612fe3f51946920f55a057db0ca5e7884e56705df0e4441e608",
+      "dlf_candidate_text_start": "0xd0",
+      "dlf_candidate_text_end": "0xf250",
+      "candidate_briefing_overlay": "SUBWAY.OVL",
+      "candidate_overlay_date_offset": "0x298",
+      "candidate_date": "08/23 22h45",
+      "candidate_title": "Georgia Street",
+      "candidate_date_dlf_offsets": [
+        "0x350"
+      ],
+      "candidate_title_present": true,
+      "all_dlf_date_anchors": [
+        {
+          "date": "08/23 22h45",
+          "dlf_offset": "0x350"
+        }
+      ],
+      "exact_overlay_runs": [
+        {
+          "overlay": "SUBWAY.OVL",
+          "overlay_sha256": "a1edd4a03015d46860c7d37cc8da85003e4331739401b24c17e133446eb716d4",
+          "overlay_offset": "0x14",
+          "dlf_offset": "0xcc",
+          "equal_run_bytes": 13608
+        }
+      ]
+    },
+    {
+      "resource": "SUBWAY2",
+      "fog_path": "/FOG/SUBWAY2.FOG",
+      "fog_lba": 30099,
+      "fog_iso_bytes": 3213190,
+      "dlf_entry_offset": "0xfb000",
+      "dlf_sector_padded_size": 284672,
+      "dlf_sha256": "be3d1801d8b3ba16d1dc3b6b98fde3a830b43760867353767c7c38b02eeea86f",
+      "dlf_candidate_text_start": "0xd0",
+      "dlf_candidate_text_end": "0x77a8",
+      "candidate_briefing_overlay": "SUBWAY2.OVL",
+      "candidate_overlay_date_offset": "0x1dc",
+      "candidate_date": "08/23 23h45",
+      "candidate_title": "Métro détruit",
+      "candidate_date_dlf_offsets": [
+        "0x294"
+      ],
+      "candidate_title_present": true,
+      "all_dlf_date_anchors": [
+        {
+          "date": "08/23 23h45",
+          "dlf_offset": "0x294"
+        }
+      ],
+      "exact_overlay_runs": [
+        {
+          "overlay": "SUBWAY2.OVL",
+          "overlay_sha256": "cd98a4e074dbc0eb05bad51d8822e56a0cb95e25e41119cd3c49673de1f1b02b",
+          "overlay_offset": "0x14",
+          "dlf_offset": "0xcc",
+          "equal_run_bytes": 4780
+        }
+      ]
+    },
+    {
+      "resource": "SUBWAY3",
+      "fog_path": "/FOG/SUBWAY3.FOG",
+      "fog_lba": 31668,
+      "fog_iso_bytes": 2807588,
+      "dlf_entry_offset": "0xe7800",
+      "dlf_sector_padded_size": 176128,
+      "dlf_sha256": "8c4f0114a5fa0a0a4a638f8ad8a2db8aa50b0da61e9b00c6abeee20b11f1c6ed",
+      "dlf_candidate_text_start": "0xd0",
+      "dlf_candidate_text_end": "0x596c",
+      "candidate_briefing_overlay": "SUBWAY3.OVL",
+      "candidate_overlay_date_offset": "0x208",
+      "candidate_date": "08/24 00h30",
+      "candidate_title": "Ligne principale du métro",
+      "candidate_date_dlf_offsets": [],
+      "candidate_title_present": false,
+      "all_dlf_date_anchors": [
+        {
+          "date": "08/23 22h45",
+          "dlf_offset": "0x350"
+        }
+      ],
+      "exact_overlay_runs": [
+        {
+          "overlay": "SUBWAY.OVL",
+          "overlay_sha256": "a1edd4a03015d46860c7d37cc8da85003e4331739401b24c17e133446eb716d4",
+          "overlay_offset": "0x14",
+          "dlf_offset": "0xcc",
+          "equal_run_bytes": 13608
+        }
+      ]
+    },
+    {
+      "resource": "PARK",
+      "fog_path": "/FOG/PARK.FOG",
+      "fog_lba": 22280,
+      "fog_iso_bytes": 4689274,
+      "dlf_entry_offset": "0xf8800",
+      "dlf_sector_padded_size": 278528,
+      "dlf_sha256": "70270ce37dd17ce407fb45c184f94e285085bd84626bb9450687dcf99a24ed98",
+      "dlf_candidate_text_start": "0xd0",
+      "dlf_candidate_text_end": "0xc804",
+      "candidate_briefing_overlay": "PARK.OVL",
+      "candidate_overlay_date_offset": "0x1e8",
+      "candidate_date": "08/24 00h45",
+      "candidate_title": "Parc de Washington",
+      "candidate_date_dlf_offsets": [
+        "0x2a0"
+      ],
+      "candidate_title_present": true,
+      "all_dlf_date_anchors": [
+        {
+          "date": "08/24 00h45",
+          "dlf_offset": "0x2a0"
+        }
+      ],
+      "exact_overlay_runs": [
+        {
+          "overlay": "PARK.OVL",
+          "overlay_sha256": "da039b109075494fc621996c4aa202cf4a706628dbd1abf984f304e5163bf2f2",
+          "overlay_offset": "0x14",
+          "dlf_offset": "0xcc",
+          "equal_run_bytes": 14452
+        }
+      ]
+    },
+    {
+      "resource": "PARK2",
+      "fog_path": "/FOG/PARK2.FOG",
+      "fog_lba": 24570,
+      "fog_iso_bytes": 2577411,
+      "dlf_entry_offset": "0xec000",
+      "dlf_sector_padded_size": 204800,
+      "dlf_sha256": "b4a5481ae88e471b405fe18ca1aca710ba3413c78c4d07d9bc558d7beb0b9f8e",
+      "dlf_candidate_text_start": "0xd0",
+      "dlf_candidate_text_end": "0x6da4",
+      "candidate_briefing_overlay": "PARK2.OVL",
+      "candidate_overlay_date_offset": "0x180",
+      "candidate_date": "08/24 01h15",
+      "candidate_title": "Mémorial de la Liberté",
+      "candidate_date_dlf_offsets": [
+        "0x238"
+      ],
+      "candidate_title_present": true,
+      "all_dlf_date_anchors": [
+        {
+          "date": "08/24 01h15",
+          "dlf_offset": "0x238"
+        }
+      ],
+      "exact_overlay_runs": [
+        {
+          "overlay": "PARK2.OVL",
+          "overlay_sha256": "3dc63de29b20f34752dd63778d6c6d9a6a7300703b5effed5581981e94ec8616",
+          "overlay_offset": "0x14",
+          "dlf_offset": "0xcc",
+          "equal_run_bytes": 23172
+        }
+      ]
+    },
+    {
+      "resource": "MUSEUM",
+      "fog_path": "/FOG/MUSEUM.FOG",
+      "fog_lba": 18778,
+      "fog_iso_bytes": 4266400,
+      "dlf_entry_offset": "0xfa000",
+      "dlf_sector_padded_size": 272384,
+      "dlf_sha256": "6f3c0669ea783e567e04cdfde0138d80a4814c3027a0c25180dc73f7dac37690",
+      "dlf_candidate_text_start": "0xd0",
+      "dlf_candidate_text_end": "0xd020",
+      "candidate_briefing_overlay": "MUSEUM.OVL",
+      "candidate_overlay_date_offset": "0x228",
+      "candidate_date": "08/25 19h00",
+      "candidate_title": "Réception de l'Exposition",
+      "candidate_date_dlf_offsets": [
+        "0x2e0"
+      ],
+      "candidate_title_present": true,
+      "all_dlf_date_anchors": [
+        {
+          "date": "08/25 19h00",
+          "dlf_offset": "0x2e0"
+        }
+      ],
+      "exact_overlay_runs": [
+        {
+          "overlay": "MUSEUM.OVL",
+          "overlay_sha256": "9fc1e9ad2effa0d8f5e7813838c30dfe3881043f782938067cd708dbdb0cb679",
+          "overlay_offset": "0x14",
+          "dlf_offset": "0xcc",
+          "equal_run_bytes": 5900
+        }
+      ]
+    },
+    {
+      "resource": "MUSEUM2",
+      "fog_path": "/FOG/MUSEUM2.FOG",
+      "fog_lba": 20862,
+      "fog_iso_bytes": 2902548,
+      "dlf_entry_offset": "0xf6800",
+      "dlf_sector_padded_size": 270336,
+      "dlf_sha256": "b34f7b9890e6b25e114bffd33e1bb928e26830a03aa0bcfe90cdcce0e5acbc87",
+      "dlf_candidate_text_start": "0xd0",
+      "dlf_candidate_text_end": "0x7448",
+      "candidate_briefing_overlay": "MUSEUM2.OVL",
+      "candidate_overlay_date_offset": "0x124",
+      "candidate_date": "08/25 19h15",
+      "candidate_title": "Exposition Dinorama",
+      "candidate_date_dlf_offsets": [
+        "0x1dc"
+      ],
+      "candidate_title_present": true,
+      "all_dlf_date_anchors": [
+        {
+          "date": "08/25 19h15",
+          "dlf_offset": "0x1dc"
+        }
+      ],
+      "exact_overlay_runs": [
+        {
+          "overlay": "MUSEUM2.OVL",
+          "overlay_sha256": "1321d56048246cf6078c102c428431ae3d10bfd02f6d5dd07a90261d72d9952f",
+          "overlay_offset": "0x14",
+          "dlf_offset": "0xcc",
+          "equal_run_bytes": 5860
+        }
+      ]
+    },
+    {
+      "resource": "BASEEXT",
+      "fog_path": "/FOG/BASEEXT.FOG",
+      "fog_lba": 1124,
+      "fog_iso_bytes": 4375590,
+      "dlf_entry_offset": "0x108000",
+      "dlf_sector_padded_size": 284672,
+      "dlf_sha256": "e181730946f5659b38ab5230aea8f2d1ec52783b85c8b672eb6c1db7da2a3cbc",
+      "dlf_candidate_text_start": "0xd0",
+      "dlf_candidate_text_end": "0xde64",
+      "candidate_briefing_overlay": "BASEEXT.OVL",
+      "candidate_overlay_date_offset": "0x200",
+      "candidate_date": "09/01 21h00",
+      "candidate_title": "Base de Rhoemer",
+      "candidate_date_dlf_offsets": [
+        "0x2b8"
+      ],
+      "candidate_title_present": true,
+      "all_dlf_date_anchors": [
+        {
+          "date": "09/01 21h00",
+          "dlf_offset": "0x2b8"
+        },
+        {
+          "date": "09/01 21h30",
+          "dlf_offset": "0x514"
+        },
+        {
+          "date": "09/01 21h45",
+          "dlf_offset": "0x6c4"
+        }
+      ],
+      "exact_overlay_runs": [
+        {
+          "overlay": "BASEEXT.OVL",
+          "overlay_sha256": "b5aa8e59cd79863884f7d879561299781b5588f1253917900cc17ea7ec443b73",
+          "overlay_offset": "0x14",
+          "dlf_offset": "0xcc",
+          "equal_run_bytes": 22140
+        }
+      ]
+    },
+    {
+      "resource": "BUNKER",
+      "fog_path": "/FOG/BUNKER.FOG",
+      "fog_lba": 5341,
+      "fog_iso_bytes": 3806771,
+      "dlf_entry_offset": "0xf8000",
+      "dlf_sector_padded_size": 229376,
+      "dlf_sha256": "e917b6b610e095dd46a12c29372d12d7651e5a4b424255d8095e6256353f096d",
+      "dlf_candidate_text_start": "0xd0",
+      "dlf_candidate_text_end": "0xd694",
+      "candidate_briefing_overlay": "BASEEXT.OVL",
+      "candidate_overlay_date_offset": "0x45c",
+      "candidate_date": "09/01 21h30",
+      "candidate_title": "Bunker de la base",
+      "candidate_date_dlf_offsets": [
+        "0x514"
+      ],
+      "candidate_title_present": true,
+      "all_dlf_date_anchors": [
+        {
+          "date": "09/01 21h00",
+          "dlf_offset": "0x2b8"
+        },
+        {
+          "date": "09/01 21h30",
+          "dlf_offset": "0x514"
+        },
+        {
+          "date": "09/01 21h45",
+          "dlf_offset": "0x6c4"
+        }
+      ],
+      "exact_overlay_runs": [
+        {
+          "overlay": "BASEEXT.OVL",
+          "overlay_sha256": "b5aa8e59cd79863884f7d879561299781b5588f1253917900cc17ea7ec443b73",
+          "overlay_offset": "0x14",
+          "dlf_offset": "0xcc",
+          "equal_run_bytes": 22140
+        }
+      ]
+    },
+    {
+      "resource": "CHOPPER",
+      "fog_path": "/FOG/CHOPPER.FOG",
+      "fog_lba": 12254,
+      "fog_iso_bytes": 2622326,
+      "dlf_entry_offset": "0xf4000",
+      "dlf_sector_padded_size": 188416,
+      "dlf_sha256": "7b3eb619d716864e252911884d01eee5809864eb766ee564e05436b619599ef6",
+      "dlf_candidate_text_start": "0xd0",
+      "dlf_candidate_text_end": "0x6a58",
+      "candidate_briefing_overlay": "CHOPPER.OVL",
+      "candidate_overlay_date_offset": "0x14c",
+      "candidate_date": "09/01 21h40",
+      "candidate_title": "Tour de la base",
+      "candidate_date_dlf_offsets": [
+        "0x204"
+      ],
+      "candidate_title_present": true,
+      "all_dlf_date_anchors": [
+        {
+          "date": "09/01 21h40",
+          "dlf_offset": "0x204"
+        },
+        {
+          "date": "09/01 21h41",
+          "dlf_offset": "0x3fc"
+        }
+      ],
+      "exact_overlay_runs": [
+        {
+          "overlay": "CHOPPER.OVL",
+          "overlay_sha256": "6000bb28e4a803945ae3b044274edb82aef7f3c74b71fa268d858735b2e324f5",
+          "overlay_offset": "0x14",
+          "dlf_offset": "0xcc",
+          "equal_run_bytes": 22020
+        }
+      ]
+    },
+    {
+      "resource": "BASEEXT2",
+      "fog_path": "/FOG/BASEEXT2.FOG",
+      "fog_lba": 3261,
+      "fog_iso_bytes": 4259554,
+      "dlf_entry_offset": "0xf6000",
+      "dlf_sector_padded_size": 262144,
+      "dlf_sha256": "e2cd2eb49653693b8dbf1f152ef4a454a6db7d3b82df40b029215b3d0f234795",
+      "dlf_candidate_text_start": "0xd0",
+      "dlf_candidate_text_end": "0xa6b8",
+      "candidate_briefing_overlay": "BASEEXT.OVL",
+      "candidate_overlay_date_offset": "0x60c",
+      "candidate_date": "09/01 21h45",
+      "candidate_title": "Fuite de la base",
+      "candidate_date_dlf_offsets": [
+        "0x6c4"
+      ],
+      "candidate_title_present": true,
+      "all_dlf_date_anchors": [
+        {
+          "date": "09/01 21h00",
+          "dlf_offset": "0x2b8"
+        },
+        {
+          "date": "09/01 21h30",
+          "dlf_offset": "0x514"
+        },
+        {
+          "date": "09/01 21h45",
+          "dlf_offset": "0x6c4"
+        }
+      ],
+      "exact_overlay_runs": [
+        {
+          "overlay": "BASEEXT.OVL",
+          "overlay_sha256": "b5aa8e59cd79863884f7d879561299781b5588f1253917900cc17ea7ec443b73",
+          "overlay_offset": "0x14",
+          "dlf_offset": "0xcc",
+          "equal_run_bytes": 22140
+        }
+      ]
+    },
+    {
+      "resource": "CHURCH",
+      "fog_path": "/FOG/CHURCH.FOG",
+      "fog_lba": 13535,
+      "fog_iso_bytes": 4476548,
+      "dlf_entry_offset": "0x100800",
+      "dlf_sector_padded_size": 256000,
+      "dlf_sha256": "4ba7f111a9d842f97d98ce7c7aa7e28051cac3a62e6c72f79fe7c2acf3254eae",
+      "dlf_candidate_text_start": "0xd0",
+      "dlf_candidate_text_end": "0x9d14",
+      "candidate_briefing_overlay": "LEVSPEC.OVL",
+      "candidate_overlay_date_offset": "0x1dc",
+      "candidate_date": "09/07 06h30",
+      "candidate_title": "Forteresse de Rhoemer",
+      "candidate_date_dlf_offsets": [
+        "0x294"
+      ],
+      "candidate_title_present": true,
+      "all_dlf_date_anchors": [
+        {
+          "date": "09/07 06h30",
+          "dlf_offset": "0x294"
+        },
+        {
+          "date": "09/07 07h15",
+          "dlf_offset": "0x4d8"
+        }
+      ],
+      "exact_overlay_runs": [
+        {
+          "overlay": "LEVSPEC.OVL",
+          "overlay_sha256": "67105ed1c6e7e51a3ff42e9e6e11ee7f8d7b32a364e232f1da1f77fe6c1e87ec",
+          "overlay_offset": "0x14",
+          "dlf_offset": "0xcc",
+          "equal_run_bytes": 4664
+        }
+      ]
+    },
+    {
+      "resource": "CHURCH2",
+      "fog_path": "/FOG/CHURCH2.FOG",
+      "fog_lba": 15721,
+      "fog_iso_bytes": 3326701,
+      "dlf_entry_offset": "0xf8800",
+      "dlf_sector_padded_size": 260096,
+      "dlf_sha256": "d708e8cb8ff7d6deff9c250e08c2ec86e774df805cf50e711cd84adbbd4d1ac9",
+      "dlf_candidate_text_start": "0xd0",
+      "dlf_candidate_text_end": "0x9760",
+      "candidate_briefing_overlay": "LEVSPEC.OVL",
+      "candidate_overlay_date_offset": "0x420",
+      "candidate_date": "09/07 07h15",
+      "candidate_title": "Niveau le plus bas de la forteresse",
+      "candidate_date_dlf_offsets": [
+        "0x4d8"
+      ],
+      "candidate_title_present": true,
+      "all_dlf_date_anchors": [
+        {
+          "date": "09/07 06h30",
+          "dlf_offset": "0x294"
+        },
+        {
+          "date": "09/07 07h15",
+          "dlf_offset": "0x4d8"
+        }
+      ],
+      "exact_overlay_runs": [
+        {
+          "overlay": "LEVSPEC.OVL",
+          "overlay_sha256": "67105ed1c6e7e51a3ff42e9e6e11ee7f8d7b32a364e232f1da1f77fe6c1e87ec",
+          "overlay_offset": "0x14",
+          "dlf_offset": "0xcc",
+          "equal_run_bytes": 4664
+        }
+      ]
+    },
+    {
+      "resource": "CATACOMB",
+      "fog_path": "/FOG/CATACOMB.FOG",
+      "fog_lba": 7200,
+      "fog_iso_bytes": 4614139,
+      "dlf_entry_offset": "0xed800",
+      "dlf_sector_padded_size": 249856,
+      "dlf_sha256": "76505ee2ce269094a38eb8830f84efc51e7495685ce66fcda213c806081455bc",
+      "dlf_candidate_text_start": "0xd0",
+      "dlf_candidate_text_end": "0x9710",
+      "candidate_briefing_overlay": "CATACOMB.OVL",
+      "candidate_overlay_date_offset": "0x218",
+      "candidate_date": "09/07 08h00",
+      "candidate_title": "Catacombes de la forteresse",
+      "candidate_date_dlf_offsets": [],
+      "candidate_title_present": false,
+      "all_dlf_date_anchors": [
+        {
+          "date": "09/07 06h30",
+          "dlf_offset": "0x294"
+        },
+        {
+          "date": "09/07 07h15",
+          "dlf_offset": "0x4d8"
+        }
+      ],
+      "exact_overlay_runs": [
+        {
+          "overlay": "LEVSPEC.OVL",
+          "overlay_sha256": "67105ed1c6e7e51a3ff42e9e6e11ee7f8d7b32a364e232f1da1f77fe6c1e87ec",
+          "overlay_offset": "0x14",
+          "dlf_offset": "0xcc",
+          "equal_run_bytes": 4664
+        }
+      ]
+    },
+    {
+      "resource": "WHOUSE",
+      "fog_path": "/FOG/WHOUSE.FOG",
+      "fog_lba": 33039,
+      "fog_iso_bytes": 3249919,
+      "dlf_entry_offset": "0xfc800",
+      "dlf_sector_padded_size": 256000,
+      "dlf_sha256": "3227d6ec8fe5a1636c2e383b84f9cc46a0b97ef23401e506cec42c2d01fe37ea",
+      "dlf_candidate_text_start": "0xd0",
+      "dlf_candidate_text_end": "0x8f70",
+      "candidate_briefing_overlay": "WHOUSE.OVL",
+      "candidate_overlay_date_offset": "0x264",
+      "candidate_date": "09/08 03h00",
+      "candidate_title": "Entrepôts PHARCOM",
+      "candidate_date_dlf_offsets": [
+        "0x31c"
+      ],
+      "candidate_title_present": true,
+      "all_dlf_date_anchors": [
+        {
+          "date": "09/08 03h00",
+          "dlf_offset": "0x31c"
+        },
+        {
+          "date": "09/08 03h25",
+          "dlf_offset": "0x5a0"
+        },
+        {
+          "date": "09/08 04h00",
+          "dlf_offset": "0x7e0"
+        }
+      ],
+      "exact_overlay_runs": [
+        {
+          "overlay": "WHOUSE.OVL",
+          "overlay_sha256": "060b626e40f3bb5f03005fac3ff4b99fe6f82875bb5d3d661649d27482ebed0a",
+          "overlay_offset": "0x14",
+          "dlf_offset": "0xcc",
+          "equal_run_bytes": 8464
+        }
+      ]
+    },
+    {
+      "resource": "WHOUSE2",
+      "fog_path": "/FOG/WHOUSE2.FOG",
+      "fog_lba": 34626,
+      "fog_iso_bytes": 3070723,
+      "dlf_entry_offset": "0x10c800",
+      "dlf_sector_padded_size": 278528,
+      "dlf_sha256": "e91aa5572ff290f323be7165c07d8ec77175ce754f92cc8f1f5c15286182db11",
+      "dlf_candidate_text_start": "0xd0",
+      "dlf_candidate_text_end": "0x7008",
+      "candidate_briefing_overlay": "WHOUSE.OVL",
+      "candidate_overlay_date_offset": "0x4e8",
+      "candidate_date": "09/08 03h25",
+      "candidate_title": "Gardes d'élite de PHARCOM",
+      "candidate_date_dlf_offsets": [
+        "0x5a0"
+      ],
+      "candidate_title_present": true,
+      "all_dlf_date_anchors": [
+        {
+          "date": "09/08 03h00",
+          "dlf_offset": "0x31c"
+        },
+        {
+          "date": "09/08 03h25",
+          "dlf_offset": "0x5a0"
+        },
+        {
+          "date": "09/08 04h00",
+          "dlf_offset": "0x7e0"
+        }
+      ],
+      "exact_overlay_runs": [
+        {
+          "overlay": "WHOUSE.OVL",
+          "overlay_sha256": "060b626e40f3bb5f03005fac3ff4b99fe6f82875bb5d3d661649d27482ebed0a",
+          "overlay_offset": "0x14",
+          "dlf_offset": "0xcc",
+          "equal_run_bytes": 8464
+        }
+      ]
+    },
+    {
+      "resource": "INWHOUSE",
+      "fog_path": "/FOG/INWHOUSE.FOG",
+      "fog_lba": 17346,
+      "fog_iso_bytes": 2930767,
+      "dlf_entry_offset": "0x104000",
+      "dlf_sector_padded_size": 212992,
+      "dlf_sha256": "8075f5894ff0dc769765218cab173ddcd91c43399bb6ac4d63a500a19e880734",
+      "dlf_candidate_text_start": "0xd0",
+      "dlf_candidate_text_end": "0x8b30",
+      "candidate_briefing_overlay": "WHOUSE.OVL",
+      "candidate_overlay_date_offset": "0x728",
+      "candidate_date": "09/08 04h00",
+      "candidate_title": "Entrepôt 76",
+      "candidate_date_dlf_offsets": [
+        "0x7e0"
+      ],
+      "candidate_title_present": true,
+      "all_dlf_date_anchors": [
+        {
+          "date": "09/08 03h00",
+          "dlf_offset": "0x31c"
+        },
+        {
+          "date": "09/08 03h25",
+          "dlf_offset": "0x5a0"
+        },
+        {
+          "date": "09/08 04h00",
+          "dlf_offset": "0x7e0"
+        }
+      ],
+      "exact_overlay_runs": [
+        {
+          "overlay": "WHOUSE.OVL",
+          "overlay_sha256": "060b626e40f3bb5f03005fac3ff4b99fe6f82875bb5d3d661649d27482ebed0a",
+          "overlay_offset": "0x14",
+          "dlf_offset": "0xcc",
+          "equal_run_bytes": 8464
+        }
+      ]
+    },
+    {
+      "resource": "CAVE",
+      "fog_path": "/FOG/CAVE.FOG",
+      "fog_lba": 9453,
+      "fog_iso_bytes": 3019860,
+      "dlf_entry_offset": "0xe2800",
+      "dlf_sector_padded_size": 294912,
+      "dlf_sha256": "49a6dad94ff46ec23fcbe7aeb1f10d6e532759da0a5f959b24cebb0947632065",
+      "dlf_candidate_text_start": "0xd0",
+      "dlf_candidate_text_end": "0x81d8",
+      "candidate_briefing_overlay": "CAVE.OVL",
+      "candidate_overlay_date_offset": "0x170",
+      "candidate_date": "09/08 04h15",
+      "candidate_title": "Tunnels d'accès au silo",
+      "candidate_date_dlf_offsets": [],
+      "candidate_title_present": false,
+      "all_dlf_date_anchors": [
+        {
+          "date": "09/08 03h00",
+          "dlf_offset": "0x31c"
+        },
+        {
+          "date": "09/08 03h25",
+          "dlf_offset": "0x5a0"
+        },
+        {
+          "date": "09/08 04h00",
+          "dlf_offset": "0x7e0"
+        }
+      ],
+      "exact_overlay_runs": [
+        {
+          "overlay": "WHOUSE.OVL",
+          "overlay_sha256": "060b626e40f3bb5f03005fac3ff4b99fe6f82875bb5d3d661649d27482ebed0a",
+          "overlay_offset": "0x14",
+          "dlf_offset": "0xcc",
+          "equal_run_bytes": 8464
+        }
+      ]
+    },
+    {
+      "resource": "CAVE2",
+      "fog_path": "/FOG/CAVE2.FOG",
+      "fog_lba": 10928,
+      "fog_iso_bytes": 2713902,
+      "dlf_entry_offset": "0xea800",
+      "dlf_sector_padded_size": 231424,
+      "dlf_sha256": "83a16a8413badb906de3bd327d0b9b3190f577a6768cb18c592dfcea5a0c097c",
+      "dlf_candidate_text_start": "0xd0",
+      "dlf_candidate_text_end": "0x4148",
+      "candidate_briefing_overlay": "CAVE.OVL",
+      "candidate_overlay_date_offset": "0x384",
+      "candidate_date": "09/08 04h45",
+      "candidate_title": "Tunnel blackout",
+      "candidate_date_dlf_offsets": [],
+      "candidate_title_present": false,
+      "all_dlf_date_anchors": [
+        {
+          "date": "09/08 03h00",
+          "dlf_offset": "0x31c"
+        },
+        {
+          "date": "09/08 03h25",
+          "dlf_offset": "0x5a0"
+        },
+        {
+          "date": "09/08 04h00",
+          "dlf_offset": "0x7e0"
+        }
+      ],
+      "exact_overlay_runs": [
+        {
+          "overlay": "WHOUSE.OVL",
+          "overlay_sha256": "060b626e40f3bb5f03005fac3ff4b99fe6f82875bb5d3d661649d27482ebed0a",
+          "overlay_offset": "0x14",
+          "dlf_offset": "0xcc",
+          "equal_run_bytes": 8464
+        }
+      ]
+    },
+    {
+      "resource": "SILO",
+      "fog_path": "/FOG/SILO.FOG",
+      "fog_lba": 25829,
+      "fog_iso_bytes": 3931592,
+      "dlf_entry_offset": "0xfd800",
+      "dlf_sector_padded_size": 266240,
+      "dlf_sha256": "8ce496077e9a09de851d30fbc5c06513998c6a03cb57766428da70bff6d4b3e0",
+      "dlf_candidate_text_start": "0xd0",
+      "dlf_candidate_text_end": "0x6210",
+      "candidate_briefing_overlay": "CAVE.OVL",
+      "candidate_overlay_date_offset": "0x528",
+      "candidate_date": "09/08 05h00",
+      "candidate_title": "Silo à missiles",
+      "candidate_date_dlf_offsets": [],
+      "candidate_title_present": false,
+      "all_dlf_date_anchors": [
+        {
+          "date": "09/08 03h00",
+          "dlf_offset": "0x31c"
+        },
+        {
+          "date": "09/08 03h25",
+          "dlf_offset": "0x5a0"
+        },
+        {
+          "date": "09/08 04h00",
+          "dlf_offset": "0x7e0"
+        }
+      ],
+      "exact_overlay_runs": [
+        {
+          "overlay": "WHOUSE.OVL",
+          "overlay_sha256": "060b626e40f3bb5f03005fac3ff4b99fe6f82875bb5d3d661649d27482ebed0a",
+          "overlay_offset": "0x14",
+          "dlf_offset": "0xcc",
+          "equal_run_bytes": 8464
+        }
+      ]
+    }
+  ]
+}
