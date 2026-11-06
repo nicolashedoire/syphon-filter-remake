@@ -1,11 +1,12 @@
 // Check renderer initialization, texture binding, room visibility and camera output.
 const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
-let draws=[], uniforms=[], models=[], bufferUpdates=0;
+let draws=[], uniforms=[], models=[], bufferUpdates=0,bufferPayloads=[];
 const gl=new Proxy({
+  LINES:1,TRIANGLES:4,
   getShaderParameter(){return true;},getProgramParameter(){return true;},
   getAttribLocation(_,n){return {aPosition:0,aNormal:1,aUv:2,aVertexColor:3}[n];},getUniformLocation(_,n){return n;},
   createBuffer(){return {};},createTexture(){return {};},createShader(){return {};},createProgram(){return {};},
-  uniform1f(name,value){uniforms.push([name,value]);},uniformMatrix4fv(name,transpose,value){if(name==='uModel')models.push(Array.from(value));},drawArrays(...args){draws.push(args);},bufferSubData(){bufferUpdates++;},
+  uniform1f(name,value){uniforms.push([name,value]);},uniformMatrix4fv(name,transpose,value){if(name==='uModel')models.push(Array.from(value));},drawArrays(...args){draws.push(args);},bufferSubData(target,offset,payload){bufferUpdates++;bufferPayloads.push(Array.from(payload));},
   getShaderInfoLog(){return '';},getProgramInfoLog(){return '';}
 },{get(target,key){if(key in target)return target[key];if(typeof key==='string'&&key===key.toUpperCase())return 1;return ()=>{};}});
 const context={console,Float32Array,Uint8Array,Uint16Array,Map,Set,Math,Number,Array,devicePixelRatio:1,Image:class{set src(value){assert.match(value,/^data:image\/png;base64,/);this.onload();}}};
@@ -96,3 +97,14 @@ assert.equal(armedRenderer.characters.gabe.frame,context.SF_EXTRA_ANIMATIONS.gab
 armedRenderer.person({x:0,y:0,z:0,angle:0,moving:true,running:false,animationTime:.2},true,false);
 assert.equal(armedRenderer.characters.terro.clip,'walk','The enemy uses the extracted walk cycle');
 console.log('Original aiming, reload and terrorist animation tests passed.');
+const shotState={player:{x:47.8,y:21.32,z:28.25},enemies:[],time:0};
+const beforeNoShot=draws.length;armedRenderer.render(shotState);const baseline=draws.length-beforeNoShot;
+const beforeShot=draws.length;
+armedRenderer.render({...shotState,enemyShots:[{from:[40,22.5,26],to:[47,22,28]}]});
+assert.equal(draws.length-beforeShot,baseline+2,'One enemy shot adds a tracer and a small muzzle flash');
+assert.ok(draws.slice(beforeShot).some(([mode,,count])=>mode===gl.LINES&&count===2),'The tracer is a single thin line');
+assert.ok(bufferPayloads.some(p=>p.length===12&&p[0]===40&&p[1]===22.5&&p[2]===26&&p[6]===47&&p[7]===22&&p[8]===28),'The tracer connects the supplied shooter and target');
+const beforeBadShot=draws.length;
+armedRenderer.render({...shotState,enemyShots:[{from:[0,NaN,0],to:[0,0,0]},null]});
+assert.equal(draws.length-beforeBadShot,baseline,'Invalid shot data produces no visual effect');
+console.log('Enemy shot tracer tests passed.');

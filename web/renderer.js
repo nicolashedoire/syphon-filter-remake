@@ -142,6 +142,8 @@ void main(){
         0,-1,0, 0,0,1, -1,0,0, 0,-1,0, 1,0,0, 0,0,1,
         0,-1,0, 0,0,-1, 1,0,0, 0,-1,0, -1,0,0, 0,0,-1
       ])));
+      // Two dynamic vertices are enough for a thin, depth-tested enemy tracer.
+      this.enemyShotTrace=makeBuffer(gl,new Float32Array(12));this.enemyShotTrace.mode=gl.LINES;
       this.rooms=Array.isArray(data.rooms)?data.rooms:null;this.visibility=Array.isArray(data.visibility)?data.visibility:null;
       this.currentRoom=73;this.sceneRanges=null;
       this.texturedReady=false;this.atlasTexture=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,this.atlasTexture);
@@ -205,7 +207,7 @@ void main(){
       gl.uniform3fv(loc.color,color);gl.uniform1f(loc.scene,isScene?1:0);
       if(ranges){for(const range of ranges)gl.drawArrays(gl.TRIANGLES,range.start,range.count);}
       else if(isScene&&this.sceneRanges){for(const range of this.sceneRanges)gl.drawArrays(gl.TRIANGLES,range.start,range.count);}
-      else gl.drawArrays(gl.TRIANGLES,0,mesh.count);
+      else gl.drawArrays(mesh.mode===undefined?gl.TRIANGLES:mesh.mode,0,mesh.count);
     }
     updateRooms(player){
       if(!this.rooms||!this.visibility)return;
@@ -302,6 +304,14 @@ void main(){
       if(Array.isArray(state.enemies)) for(const enemy of state.enemies) if(enemy.alive!==false) {
         this.person(enemy,true);
         if(enemy.marked) this.draw(this.enemyMarker,M.model(enemy.x,enemy.y+2.12,enemy.z,0,.13,.19,.13),[1,.13,.08],false);
+      }
+      if(Array.isArray(state.enemyShots))for(const shot of state.enemyShots){
+        if(!shot||!Array.isArray(shot.from)||!Array.isArray(shot.to)||shot.from.length!==3||shot.to.length!==3||![...shot.from,...shot.to].every(Number.isFinite))continue;
+        const [x,y,z]=shot.from,[tx,ty,tz]=shot.to;
+        gl.bindBuffer(gl.ARRAY_BUFFER,this.enemyShotTrace.buffer);
+        gl.bufferSubData(gl.ARRAY_BUFFER,0,new Float32Array([x,y,z,0,1,0,tx,ty,tz,0,1,0]));
+        this.draw(this.enemyShotTrace,M.identity(),[1,.72,.24],false);
+        this.draw(this.enemyMarker,M.model(x,y,z,0,.08,.08,.08),[1,.8,.3],false);
       }
       return {eye,target,yaw};
     }
